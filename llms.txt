@@ -1,0 +1,80 @@
+# Bougnat Burger
+
+> Restaurant de burgers au terroir auvergnat à Clermont-Ferrand, ouvert depuis le 2 février 2012. Burgers maison au Saint-Nectaire fermier, Cantal, Salers et Bleu d'Auvergne (AOP), steak haché façon bouchère VBF (viande bovine française) ou galette de pommes de terre, pain artisanal, frites et salade maison. Sur place, à emporter, en livraison. Réservation possible.
+
+## Informations pratiques
+- Adresse : 10 boulevard Léon-Malfreyt, 63000 Clermont-Ferrand
+- Téléphone : 07 60 12 00 63
+- E-mail : bougnatburger@hotmail.fr
+- Note Google : 4,6/5 sur 2039 avis (au 2026-09-27)
+- Site : https://maliciousmusic.github.io/bougnat-burger/
+- Instagram : https://www.instagram.com/bougnatburger/
+
+## Horaires (heure de Paris)
+- lundi : fermé
+- mardi : fermé
+- mercredi : 11:30–14:00 et 18:30–22:00
+- jeudi : 11:30–14:00 et 18:30–22:00
+- vendredi : 11:30–14:00 et 18:30–22:15
+- samedi : 11:30–14:00 et 18:30–22:15
+- dimanche : fermé
+
+## La carte (prix en euros, service compris)
+Chaque burger existe en « Ti' » (un steak) ou en double, et peut se faire avec une galette de pommes de terre à la place du steak (option végétarienne). Tous sont servis avec frites maison et salade maison.
+- Ti' Mefia Te : 18,90 € ; Mefia Te double 23,90 €. Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, jambon sec, tomates, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.
+- Ti' Bougnat : 16,90 € ; Bougnat double 21,90 €. Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.
+- Ti' Gourmand : 18,90 € ; Gourmand double 23,90 €. Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, jambon sec, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.
+- Ti' Vulcano : 16,90 € ; Vulcano double 21,90 €. Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Cantal jeune AOP, poivrons, chorizo, pomme paillasson, salade et mesclun maison, sauce chili.
+- Ti' Blue : 16,90 € ; Blue double 21,90 €. Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Bleu d'Auvergne AOP, Cantal jeune AOP, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP.
+- Ti' Rillac : 17,90 € ; Rillac double 22,90 €. Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Carré d'Aurillac, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP.
+- Ti' Salers : 20,90 € ; Salers double 25,90 €. Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Cantal Salers AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.
+- Ti' Cabri : 18,90 € ; Cabri double 23,90 €. Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, fromage de chèvre moulé à la louche, jambon sec, miel, salade et mesclun maison, sauce crème ciboulette.
+- Ti' Vegetario : 15,90 € ; Vegetario double 18,90 €. Pain burger artisanal, galette de pommes de terre, Cantal jeune AOP, poivrons, tomates, salade et mesclun maison, sauce crème ciboulette.
+- Ti' Mefiano : 21,90 € ; Mefiano double 26,90 €. Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, fromage de chèvre moulé à la louche, jambon sec, chorizo, tomates, pomme paillasson, poivrons, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.
+
+### Viandes
+- Bavette d'aloyau : 20,90 €. Bavette de bœuf charolais bio, 300 g. Origine France.
+- Steak haché façon bouchère : 16,90 €. Steak haché façon bouchère VBF. Viande bovine, origine France.
+
+### Salades
+- Allier : 16,90 €. Salade et mesclun maison, saumon fumé en Auvergne, Bleu d'Auvergne AOP, Cantal jeune AOP, tomates cerises.
+- Chèvre chaud : 16,90 €. Salade et mesclun maison, toasts chauds de chèvre moulé à la louche, miel, jambon d'Auvergne IGP, pignons de pin, herbes de Provence, tomates cerises.
+- Vercingétorix vs César : 16,90 €. Salade et mesclun maison, Cantal jeune AOP, blanc de poulet, poivrons, croûtons à l'huile d'olive, tomates cerises.
+- Auvergnate : 15,90 €. Salade et mesclun maison, jambon d'Auvergne IGP, Bleu d'Auvergne AOP, Cantal jeune AOP, noix, tomates cerises.
+- Sancy : 16,90 €. Salade et mesclun maison, toasts chauds de Saint-Nectaire fermier AOP et de Bleu d'Auvergne AOP, Cantal jeune AOP, jambon d'Auvergne IGP, tomates cerises.
+
+### Wraps
+- Wrap saumon : 18,90 €. Galette de blé, saumon fumé en Auvergne, tomates, salade et mesclun maison, sauce à l'aneth.
+- Wrap chèvre : 19,90 €. Galette de blé, chèvre moulé à la louche, miel, jambon sec, tomates, salade et mesclun maison, sauce crème ciboulette.
+- Wrap poulet : 18,90 €. Galette de blé, blanc de poulet, tomates, poivrons, salade et mesclun maison, sauce crème curry.
+
+### Enfant
+- Le Petiot : 13,90 €. Pain burger artisanal, steak haché VBF ou galette de pommes de terre, Cantal jeune AOP, tomates, salade et mesclun, sauce au Saint-Nectaire fermier. Avec un sirop et une boule de glace.
+
+### Desserts
+- Framboisier
+- Tiramisu framboise
+- Tiramisu café
+- Forêt noire
+- Mousse au chocolat
+- Moelleux
+- Tarte au citron
+- Nougat glacé
+- Citron, coco ou orange givrés
+- Glaces et sorbets
+- Plateau gourmand
+
+### Boissons
+- Bières de la Brasserie des Sagnes. Brasserie artisanale auvergnate : blonde, ambrée et cuvées plus typées.
+- Bières de la Brasserie Desprat. Une maison historique de la bière en Auvergne.
+- Vins bio et vins d'Auvergne. Au verre ou à la bouteille.
+- Apéritifs. Rhum, vodka, whisky, tequila, pastis.
+- Softs. Sodas, jus Pago, eaux minérales.
+
+## Livraison
+- Uber Eats : https://www.ubereats.com/fr/store/bougnat-burger-clermont/liGEKfrmXW-DfAmCzAOFBA
+- Deliveroo : https://deliveroo.fr/fr/menu/clermont-ferrand/centre-ville/bougnat-burger
+- Raboule : https://cyclome.coopcycle.org/fr/restaurant/15-bougnat-burger
+
+## English
+Bougnat Burger is a burger restaurant in Clermont-Ferrand (Auvergne, France), open since 2012, serving homemade burgers made with local PDO cheeses (Saint-Nectaire, Cantal, Salers, Bleu d'Auvergne), French beef or a potato rösti (veggie), homemade fries. Open Wednesday to Saturday, lunch and dinner. An English version of the site is available at https://maliciousmusic.github.io/bougnat-burger/?lang=en.

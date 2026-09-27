@@ -1,0 +1,27 @@
+{
+  "salut": {
+    "src": "esq-salut", "box": [0, 220, 480, 860], "strength": 0.8, "steps": 10, "cfg": 3.0,
+    "mask": [[40, 830], [60, 600], [120, 520], [180, 460], [214, 400], [222, 330], [256, 296], [312, 290], [338, 306], [338, 346], [322, 366], [312, 396], [300, 440], [262, 530], [240, 600], [300, 680], [320, 780], [250, 830]],
+    "prompt": "his raised right hand tipping his flat cap in a friendly greeting, slender fingers holding the tip of the cap brim, indigo blue work smock sleeve rolled at the wrist",
+    "neg": "extra fingers, deformed hand, claw, glove, mitten, second head"
+  },
+  "tampon": {
+    "src": "esq-tampon", "box": [0, 380, 480, 860], "strength": 0.8, "steps": 10, "cfg": 3.0,
+    "mask": [[0, 570], [60, 560], [150, 520], [196, 436], [286, 432], [300, 500], [304, 600], [306, 668], [260, 690], [250, 790], [160, 800], [60, 740], [0, 700]],
+    "prompt": "his raised hand firmly gripping a wooden rubber stamp with a round knob handle, the rubber stamp face down, indigo blue work smock sleeve rolled at the wrist, clenched fist seen from the back of the hand",
+    "neg": "extra fingers, deformed hand, claw, glove, mitten, hammer, microphone"
+  },
+  "crane": {
+    "src": "esq-crane", "box": [200, 120, 720, 500], "strength": 0.8, "steps": 10, "cfg": 3.0,
+    "mask": [[250, 356], [256, 300], [290, 246], [346, 196], [420, 160], [520, 150], [606, 170], [660, 214], [678, 280], [672, 346], [656, 420], [606, 432], [596, 360], [470, 352], [360, 364]],
+    "prompt": "bald crown of the head of a jolly old man, short grey hair on the sides of his head, bare head, no hat, smooth skin on top of the head",
+    "neg": "hat, cap, beret, headwear, hood, helmet, hair on top"
+  },
+  "yeux": {
+    "src": "base", "box": [300, 300, 560, 460], "strength": 0.95, "steps": 10, "cfg": 3.0, "feather": 4,
+    "mask": [[[350, 378], [370, 372], [395, 376], [402, 392], [388, 403], [360, 403], [348, 392]],
+             [[448, 374], [470, 367], [500, 371], [513, 388], [500, 403], [470, 405], [450, 396]]],
+    "prompt": "his eyes closed, gently closed eyelids with a soft lash line, peaceful smiling closed eyes, rosy cheeks",
+    "neg": "open eyes, eyeballs, iris, pupils, eyelashes extensions, makeup"
+  }
+}

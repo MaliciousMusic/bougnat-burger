@@ -1,0 +1,41 @@
+{
+  "lot": "02-styles",
+  "neg": "photo, photograph, photorealistic, realistic skin, detailed skin texture, wrinkles, hyperrealistic, 3d render, cgi, cartoon, caricature, anime, comic, chibi, grotesque, ugly, deformed face, disfigured, bad anatomy, bad hands, extra fingers, text, letters, words, watermark, signature, logo, frame, border, busy background, scenery, sepia, aged paper, grunge, paper texture, film grain, noise, blurry",
+  "jobs": [
+    {
+      "name": "broders",
+      "w": 896, "h": 1152, "cfg": 3.0, "steps": 10,
+      "seeds": [201, 202, 203],
+      "style": "art deco travel poster illustration in the style of Roger Broders, flat colour lithograph, soft airbrush gradients, simplified smooth shapes, crisp clean edges, elegant, limited palette",
+      "prompt": "stylized portrait of a jovial plump Auvergnat man in his fifties, big bushy grey handlebar moustache, dark flat cap, rosy round cheeks, kind smiling eyes, blue work smock, lime green neckerchief, head and shoulders, three-quarter profile turned to the left, plain flat pale cream background"
+    },
+    {
+      "name": "madsberg",
+      "w": 896, "h": 1152, "cfg": 3.0, "steps": 10,
+      "seeds": [211, 212, 213],
+      "style": "modern art deco poster illustration in the style of Mads Berg, bold flat shapes, smooth airbrush gradients, stylized geometric forms, clean vector edges, warm limited palette",
+      "prompt": "stylized portrait of a jovial plump Auvergnat man in his fifties, big bushy grey handlebar moustache, dark flat cap, rosy round cheeks, kind smiling eyes, blue work smock, lime green neckerchief, head and shoulders, three-quarter profile turned to the left, plain flat pale cream background"
+    },
+    {
+      "name": "cassandre",
+      "w": 896, "h": 1152, "cfg": 3.0, "steps": 10,
+      "seeds": [221, 222, 223],
+      "style": "1930s advertising poster by Cassandre, art deco, geometric stylized figure, airbrushed gradients, flat colour planes, strong graphic silhouette, refined",
+      "prompt": "stylized portrait of a jovial plump Auvergnat man in his fifties, big bushy grey handlebar moustache, dark flat cap, rosy round cheeks, kind smiling eyes, blue work smock, lime green neckerchief, head and shoulders, three-quarter profile turned to the left, plain flat pale cream background"
+    },
+    {
+      "name": "vecteur",
+      "w": 896, "h": 1152, "cfg": 3.0, "steps": 10,
+      "seeds": [231, 232, 233],
+      "style": "flat vector illustration, retro art deco travel poster, clean smooth shapes, soft gradient shading, minimal detail, graphic design, charming character illustration",
+      "prompt": "stylized portrait of a jovial plump Auvergnat man in his fifties, big bushy grey handlebar moustache, dark flat cap, rosy round cheeks, kind smiling eyes, blue work smock, lime green neckerchief, head and shoulders, three-quarter profile turned to the left, plain flat pale cream background"
+    },
+    {
+      "name": "gouache",
+      "w": 896, "h": 1152, "cfg": 3.0, "steps": 10,
+      "seeds": [241, 242, 243],
+      "style": "vintage French poster illustration, gouache and airbrush, flat matte colours, soft gradients, simplified stylized forms, clean silhouette, refined 1930s art deco",
+      "prompt": "stylized portrait of a jovial plump Auvergnat man in his fifties, big bushy grey handlebar moustache, dark flat cap, rosy round cheeks, kind smiling eyes, blue work smock, lime green neckerchief, head and shoulders, three-quarter profile turned to the left, plain flat pale cream background"
+    }
+  ]
+}

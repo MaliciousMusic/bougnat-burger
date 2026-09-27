@@ -1,0 +1,33 @@
+{
+ "lot": "07-planche",
+ "style": "flat vector illustration, modern art deco travel poster in the style of Mads Berg, bold simple shapes, smooth airbrush gradients, clean crisp edges, stylized, charming character design",
+ "neg": "photo, photograph, photorealistic, realistic skin texture, wrinkles, rugged, beard, stubble, goatee, young man, 3d render, cgi, anime, chibi, grotesque, ugly, deformed face, disfigured, bad anatomy, bad hands, extra fingers, extra limbs, glove, text, letters, words, watermark, signature, logo, frame, border, margin, neon green, lime green, busy background, scenery, sepia, grunge, paper texture, film grain, noise, blurry, cropped feet",
+ "jobs": [
+  {
+   "name": "p62",
+   "init": "_gen/layout/planche.png",
+   "strength": 0.62,
+   "cfg": 3.0,
+   "steps": 10,
+   "seeds": [
+    701,
+    702,
+    703
+   ],
+   "prompt": "character model sheet turnaround of the same jolly plump fifty-year-old Auvergnat waiter standing, full body from cap to boots, front view, three-quarter view and side view, grey hair, big bushy grey handlebar moustache, rosy cheeks, kind smile, charcoal flat cap, loose indigo blue work smock, pale green neckerchief, brown leather bib apron, dark trousers, brown leather boots, arms relaxed at his sides, plain flat peach background"
+  },
+  {
+   "name": "p70",
+   "init": "_gen/layout/planche.png",
+   "strength": 0.7,
+   "cfg": 3.0,
+   "steps": 10,
+   "seeds": [
+    711,
+    712,
+    713
+   ],
+   "prompt": "character model sheet turnaround of the same jolly plump fifty-year-old Auvergnat waiter standing, full body from cap to boots, front view, three-quarter view and side view, grey hair, big bushy grey handlebar moustache, rosy cheeks, kind smile, charcoal flat cap, loose indigo blue work smock, pale green neckerchief, brown leather bib apron, dark trousers, brown leather boots, arms relaxed at his sides, plain flat peach background"
+  }
+ ]
+}

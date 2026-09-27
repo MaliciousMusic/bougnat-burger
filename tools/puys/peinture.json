@@ -1,0 +1,26 @@
+{
+  "_": "Peintures SDXL retenues (tools/puys/sdxl.py sur _gen/base.png, 1536 x 1024, DreamShaper XL v2 Turbo, 10 pas) : voir « origine ».",
+  "cone": {
+    "file": "source/peinture-cone.jpg",
+    "origine": "lot e1, prompt v1, force 0.45, graine 2, cfg 2.6",
+    "params": {
+      "lam": 0.01,
+      "k": 18,
+      "min_area": 24,
+      "mode": 4
+    }
+  },
+  "forest": {
+    "file": "source/peinture-foret.jpg",
+    "origine": "lot e1, prompt v1, force 0.55, graine 2, cfg 2.6"
+  },
+  "plain": {
+    "file": "source/peinture-plaine.jpg",
+    "origine": "lot e2, prompt v2, force 0.55, graine 3, cfg 3.2",
+    "grade": {
+      "L": 0.8,
+      "C": 1.05,
+      "warm": 0
+    }
+  }
+}

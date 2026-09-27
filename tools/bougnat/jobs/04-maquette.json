@@ -1,0 +1,19 @@
+{
+  "lot": "04-maquette",
+  "style": "flat vector illustration, modern art deco travel poster in the style of Mads Berg, bold simple shapes, smooth airbrush gradients, clean crisp edges, stylized, charming character design",
+  "neg": "photo, photograph, photorealistic, realistic skin texture, wrinkles, rugged, beard, stubble, goatee, 3d render, cgi, anime, chibi, grotesque, ugly, deformed face, disfigured, bad anatomy, bad hands, extra fingers, text, letters, words, watermark, signature, logo, frame, border, margin, neon green, lime green, busy background, scenery, sepia, grunge, paper texture, film grain, noise, blurry",
+  "jobs": [
+    {
+      "name": "m72", "init": "_gen/layout/a.png", "strength": 0.72, "cfg": 3.0, "steps": 10, "seeds": [401, 402, 403],
+      "prompt": "jovial round-faced Auvergnat waiter with a warm friendly smile, big bushy grey handlebar moustache, clean-shaven chin, rosy cheeks, kind eyes, charcoal flat cap, indigo blue work smock, pale green neckerchief, brown leather apron, proudly carrying a round tray raised on one hand at shoulder height with a burger, french fries and a glass of beer, bust, three-quarter view turned to the left, plain flat peach background"
+    },
+    {
+      "name": "m80", "init": "_gen/layout/a.png", "strength": 0.8, "cfg": 3.0, "steps": 10, "seeds": [411, 412, 413],
+      "prompt": "jovial round-faced Auvergnat waiter with a warm friendly smile, big bushy grey handlebar moustache, clean-shaven chin, rosy cheeks, kind eyes, charcoal flat cap, indigo blue work smock, pale green neckerchief, brown leather apron, proudly carrying a round tray raised on one hand at shoulder height with a burger, french fries and a glass of beer, bust, three-quarter view turned to the left, plain flat peach background"
+    },
+    {
+      "name": "m87", "init": "_gen/layout/a.png", "strength": 0.87, "cfg": 3.0, "steps": 10, "seeds": [421, 422, 423],
+      "prompt": "jovial round-faced Auvergnat waiter with a warm friendly smile, big bushy grey handlebar moustache, clean-shaven chin, rosy cheeks, kind eyes, charcoal flat cap, indigo blue work smock, pale green neckerchief, brown leather apron, proudly carrying a round tray raised on one hand at shoulder height with a burger, french fries and a glass of beer, bust, three-quarter view turned to the left, plain flat peach background"
+    }
+  ]
+}

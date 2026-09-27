@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planche · le bougnat dessiné</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../css/fonts.css">
+<style>
+  :root { --charbon: #1A130F; --charbon-2: #231A14; --charbon-3: #2E231B; --creme: #F5EAD4; --creme-2: #D8C6A8; --creme-3: #A3907A; --pomme: #C8E3A0; --olive: #7C8A3A; --vert: #96C124; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: #120D0A; color: var(--creme); font: 15px/1.45 'Instrument Sans', system-ui, sans-serif; }
+  header { padding: 18px 24px 4px; display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: end; }
+  h1 { font: 400 28px/1.1 Shrikhand, Georgia, serif; margin: 0; }
+  header p { margin: 4px 0 0; color: var(--creme-2); max-width: 78ch; }
+  h2 { font: 700 13px/1 'Instrument Sans'; letter-spacing: .1em; text-transform: uppercase; color: var(--pomme); margin: 26px 24px 10px; }
+  .grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; padding: 0 24px; }
+  figure { margin: 0; background: var(--charbon-2); border-radius: 14px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(245,234,212,.08); }
+  figure svg { display: block; width: 100%; height: auto; background: linear-gradient(#6E97AC, #C9DCE3 70%, #EFD8B8); }
+  figure.sol svg { background: linear-gradient(#557E93 0%, #B7A79C 58%, #88994E 58.2%, #6F7F3A); }
+  figure.mains svg { background: #F3E6D0; }
+  figure.large { grid-column: 1 / -1; }
+  figure.large svg { max-height: 560px; }
+  figcaption { padding: 8px 12px 10px; font-size: 13px; color: var(--creme-2); }
+  figcaption b { color: var(--creme); font-weight: 700; }
+  .ctrl { display: flex; gap: 8px; align-items: center; }
+  button { font: 650 13px/1 'Instrument Sans'; color: var(--creme); background: var(--charbon-3); border: 0; border-radius: 99px; padding: 9px 14px; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(245,234,212,.12); }
+  button.on { background: var(--olive); color: #F2F8E6; }
+  footer { padding: 24px; color: var(--creme-3); font-size: 13px; }
+  body.seul header, body.seul h2, body.seul footer { display: none; }
+  body.seul .grille { display: block; padding: 0; }
+  body.seul figure { border-radius: 0; }
+  body.seul figcaption { display: none; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Le bougnat, planche de dessin</h1>
+    <p>Toutes les vues, poses et expressions du personnage du film, telles que les dessine <code>js/film/bb-bougnat-dessin.js</code>. Adresse utile : <code>?seul=face-peur&amp;z=3</code> (une case seule, agrandie), <code>?t=12.3</code> (fige le temps).</p>
+  </div>
+  <div class="ctrl"><button id="anim" type="button">Animer</button></div>
+</header>
+<main id="main"></main>
+<footer>Référence : assets/bougnat/reference/fiche-personnage.webp · palette.json. Aucune photo : tout est dessiné en code.</footer>
+<script src="../js/film/bb-bougnat-dessin.js"></script>
+<script>
+  (function () {
+    const R = BB.BougnatDessin, NS = 'http://www.w3.org/2000/svg';
+    const q = new URLSearchParams(location.search);
+    const seul = q.get('seul'), zoom = +(q.get('z') || 1), tFixe = q.has('t') ? +q.get('t') : 1.3;
+    if (seul) document.body.classList.add('seul');
+    const main = document.getElementById('main');
+    const cases = [];
+    let section = null;
+    const titre = (txt) => { if (seul) return; const h = document.createElement('h2'); h.textContent = txt; main.appendChild(h); section = document.createElement('div'); section.className = 'grille'; main.appendChild(section); };
+    // une case : vb = [x, y, largeur, hauteur] ; construit(g) → objet ; pose(obj, t)
+    function kase(id, legende, vb, construit, pose, classe) {
+      if (seul && seul !== id) return;
+      if (!section) { section = document.createElement('div'); section.className = 'grille'; main.appendChild(section); }
+      const fig = document.createElement('figure');
+      if (classe) fig.className = classe;
+      const svg = document.createElementNS(NS, 'svg');
+      svg.setAttribute('viewBox', vb.join(' '));
+      if (seul) { svg.setAttribute('width', vb[2] * zoom); svg.setAttribute('height', vb[3] * zoom); svg.style.width = vb[2] * zoom + 'px'; }
+      const g = document.createElementNS(NS, 'g');
+      svg.appendChild(g);
+      fig.appendChild(svg);
+      const cap = document.createElement('figcaption');
+      cap.innerHTML = legende;
+      fig.appendChild(cap);
+      section.appendChild(fig);
+      fig.id = id;
+      const obj = construit(g);
+      cases.push({ obj, pose });
+    }
+    const CHUTE = [-34, -110, 190, 34, 110, 190];
+    const face = (id, leg, o, extra, classe) => kase(id, leg, [-210, -200, 420, 400], (g) => R.makeFace(g), (F, t) => { R.poseFace(F, Object.assign({ t }, o)); extra && extra(F, t); }, classe);
+    const etoiles = (F, t) => [...F.etoiles.children].forEach((e, i) => { const a = t * 5 + (i * Math.PI) / 2; e.setAttribute('transform', `translate(${Math.cos(a) * 58} ${-150 + Math.sin(a) * 14}) rotate(${t * 200})`); });
+    const eclats = (F, t) => [...F.eclats.children].forEach((e, i) => { const a = (i / 6) * Math.PI * 2 + t * 1.5, d = 170 + Math.sin(t * 6 + i) * 20; e.setAttribute('transform', `translate(${Math.cos(a) * d} ${-40 + Math.sin(a) * d * 1.15}) rotate(${t * 90}) scale(${0.5 + 0.5 * Math.abs(Math.sin(t * 5 + i * 1.3))})`); });
+
+    titre('De face · à terre');
+    face('face-normal', '<b>Normal</b> · sourire', { ombre: true }, null, 'sol');
+    face('face-pouce', '<b>Indemne</b> · pouce levé', { bd: [62, -30, 110, -10], pouce: true, ombre: true }, null, 'sol');
+    face('face-etourdi', '<b>Étourdi</b> · étoiles, casquette de travers', { etoiles: true, yeux: 0.3, casq: -16, ombre: true }, etoiles, 'sol');
+    face('face-crunch', '<b>Crunch</b> · il porte la frite à la bouche', { bd: [62, -30, 26, -70], bouche: 10 }, null, 'sol');
+    face('face-anges', '<b>Aux anges</b> · il croque, yeux fermés', { bd: [62, -30, 26, -70], bouche: 5, yeux: 0.25 }, null, 'sol');
+    face('face-casquette', '<b>La dernière</b> · main vers la casquette', { bd: [62, -30, 30, -170], ombre: true }, null, 'sol');
+    face('face-cligne', '<b>Clignement</b> · à mi-course', { ombre: true, t: 2.27 }, null, 'sol');
+    const V16 = R.pointeVisiere(-16), V0 = R.pointeVisiere(0);
+    face('face-visiere-16', '<b>Indemne</b> · il rattrape sa casquette (casq −16, mainG « pince »)', { bd: [62, -30, 110, -10], pouce: true, bg: [-62, -30, V16[0], V16[1]], mainG: 'pince', casq: -16, ombre: true }, null, 'sol');
+    face('face-visiere-0', '<b>Indemne</b> · … et la remet droite (casq 0)', { bd: [62, -30, 110, -10], pouce: true, bg: [-62, -30, V0[0], V0[1]], mainG: 'pince', casq: 0, ombre: true }, null, 'sol');
+    titre('De face · dans la chute (contre-plongée)');
+    face('face-poignee', '<b>La poignée</b> · sûr de lui', { bg: [-62, -30, -150, -120], bd: [62, -30, 150, -120], jambes: CHUTE, yeux: 0.4, bouche: 6, casq: 0 });
+    face('face-tire', '<b>La poignée</b> · il tire', { bg: [-62, -30, -150, -120], bd: [62, -30, 95, 30], jambes: CHUTE, yeux: 0.4, bouche: 6, casq: 0 });
+    face('face-sac-tendu', '<b>La poignée</b> · sac au dos, cordon tendu (sac, cordon « main »)', { bg: [-62, -30, -150, -120], bd: [62, -30, 150, -120], jambes: CHUTE, yeux: 0.4, bouche: 6, casq: 0, sac: true, cordon: 'main' });
+    face('face-sac-ancre', '<b>La poignée</b> · la main part du fourreau (bd = ANCRE_CORDON)', { bg: [-62, -30, -150, -120], bd: [62, -30, R.ANCRE_CORDON[0], R.ANCRE_CORDON[1]], jambes: CHUTE, yeux: 0.4, bouche: 6, casq: 0, sac: true, cordon: 'main' });
+    face('face-sac-mou', '<b>La poignée</b> · il a tiré, le cordon mollit', { bg: [-62, -30, -150, -120], bd: [62, -30, 95, 30], jambes: CHUTE, yeux: 0.4, bouche: 6, casq: 0, sac: true, cordon: 'main' });
+    face('face-sac-libre', '<b>Lâché</b> · le cordon claque au vent (cordon « libre »)', { bg: [-62, -30, -150, -160], bd: [62, -30, 150, -160], jambes: CHUTE, peur: 1, bouche: 16, boucheL: 16, casq: 4, casqY: -26, sac: true, cordon: 'libre' });
+    face('face-sac-force', '<b>La force</b> · avec le sac (le torse s’élargit)', { bg: [-62, -30, -135, -120], bd: [62, -30, 135, -120], jambes: [-34, -100, 190, 34, 100, 190], muscles: 1, halo: 1, eclats: 1, moustHaut: 1, decide: 1, yeux: 0.7, bouche: 3, boucheL: 16, sac: true, cordon: 'libre' }, eclats);
+    face('face-peur', '<b>Oh non !</b> · la peur', { bg: [-62, -30, -150, -160], bd: [62, -30, 150, -160], jambes: CHUTE, peur: 1, bouche: 16, boucheL: 16, casq: 4, casqY: -26 });
+    face('face-peur-mi', '<b>Oh non !</b> · la peur monte', { bg: [-62, -30, -150, -160], bd: [62, -30, 150, -160], jambes: CHUTE, peur: 0.5, bouche: 9.5, boucheL: 14, casq: -3, casqY: -13 });
+    face('face-mange', '<b>Tout manger</b> · il mâche, joues gonflées', { bg: [-62, -30, -40, 30], bd: [62, -30, 40, 30], jambes: CHUTE, bouche: 15, joues: 0.75, yeux: 0.7 });
+    face('face-mange-2', '<b>Tout manger</b> · bouchée avalée', { bg: [-62, -30, -40, 30], bd: [62, -30, 40, 30], jambes: CHUTE, bouche: 4, joues: 0.35, yeux: 0.7 });
+    face('face-force', '<b>La force !</b> · muscles, halo, moustache fière', { bg: [-62, -30, -135, -120], bd: [62, -30, 135, -120], jambes: [-34, -100, 190, 34, 100, 190], muscles: 1, halo: 1, eclats: 1, moustHaut: 1, decide: 1, yeux: 0.7, bouche: 3, boucheL: 16 }, eclats);
+    face('face-force-mi', '<b>La force !</b> · ça monte', { bg: [-62, -30, -103, -30], bd: [62, -30, 103, -30], jambes: [-34, -100, 190, 34, 100, 190], muscles: 0.5, halo: 0.5, eclats: 0.5, moustHaut: 0.5, decide: 0.5, yeux: 0.7, bouche: 3, boucheL: 16 }, eclats);
+
+    const profil = (id, leg, pose, debout, over, rot) => kase(id, leg, debout ? [-150, -190, 300, 330] : [-110, -150, 330, 300], (g) => { const w = document.createElementNS(NS, 'g'); g.appendChild(w); w.setAttribute('transform', debout ? 'rotate(-90)' : rot ? `rotate(${rot})` : ''); return R.makeProfil(w); }, (P, t) => R.poseProfil(P, Object.assign({}, R.POSES[pose], over || {}), t, pose !== 'assis'));
+    titre('De profil · les poses (angles dans le repère du corps)');
+    profil('profil-debout', '<b>debout</b>', 'debout', true);
+    profil('profil-salut', '<b>salut</b> · la main à la visière', 'salut', true);
+    profil('profil-plonge', '<b>plonge</b> · il saute (groupe tourné de +10°, comme à la fin du saut)', 'plonge', false, null, 10);
+    profil('profil-assis', '<b>assis</b> · à genoux sur la banquette, le nez au hublot', 'assis', true, { yeux: 1.6, bouche: 0.3, tete: 88 });
+    profil('profil-chute', '<b>chute</b>', 'chute');
+    profil('profil-tire', '<b>tire</b>', 'tire');
+    profil('profil-tend', '<b>tend</b> · il fonce vers le menu', 'tend');
+    profil('profil-calin', '<b>calin</b> · il serre tout contre lui', 'calin');
+    profil('profil-nage', '<b>nage</b>', 'nage');
+    profil('profil-mange', '<b>mange</b>', 'mange');
+    profil('profil-boit', '<b>boit</b>', 'boit');
+    profil('profil-yeux0', '<b>yeux 0</b> · fermés', 'chute', false, { yeux: 0 });
+    profil('profil-yeux2', '<b>yeux 2</b> · exorbités', 'chute', false, { yeux: 2, bouche: 1 });
+
+    titre('De dos · plongée verticale');
+    const dos = (id, leg, ecart, battre, rabat) => kase(id, leg, [-190, -160, 380, 360], (g) => R.makeDos(g), (D, t) => { R.poseDos(D, t, ecart, battre); D.rabat.setAttribute('transform', rabat ? `translate(0 ${-40 * rabat}) scale(1 ${1 - 1.6 * rabat})` : ''); });
+    dos('dos-chute', '<b>Chute libre</b> · bras et jambes écartés', 1, 0, 0);
+    dos('dos-rabat-mi', '<b>Un menu !</b> · le rabat se soulève', 0.9, 0.6, 0.5);
+    dos('dos-rabat', '<b>Un menu !</b> · rabat ouvert, il bat des bras', 0.8, 1, 1);
+
+    titre('Les expressions, en gros plan');
+    const EXPR = [
+      ['sourire', {}], ['peur', { peur: 1, bouche: 16, boucheL: 16, casqY: -26, casq: 4 }], ['il mâche', { bouche: 15, joues: 0.75, yeux: 0.7 }],
+      ['aux anges', { bouche: 5, yeux: 0.25 }], ['décidé', { decide: 1, moustHaut: 1, yeux: 0.7, bouche: 3, boucheL: 16 }],
+      ['étourdi', { etoiles: true, yeux: 0.3, casq: -16 }], ['sûr de lui', { yeux: 0.4, bouche: 6 }], ['il croque', { bouche: 10 }],
+    ];
+    kase('tetes', '<b>Visages</b> · ' + EXPR.map((e) => e[0]).join(' · '), [-60, -80, 130 * 4, 140 * 2], (g) => EXPR.map((e, i) => {
+      const w = document.createElementNS(NS, 'g');
+      w.setAttribute('transform', `translate(${(i % 4) * 130} ${Math.floor(i / 4) * 140})`);
+      g.appendChild(w);
+      const F = R.makeFace(w);
+      [...F.G.children].forEach((c) => { if (c !== F.tete) c.setAttribute('display', 'none'); });
+      return F;
+    }), (Fs, t) => Fs.forEach((F, i) => { R.poseFace(F, Object.assign({ t }, EXPR[i][1])); F.tete.setAttribute("transform", ""); F.etoiles.setAttribute("display", "none"); }), 'large');
+
+    titre('Les mains');
+    const TOUTES = ['ouverte', 'ecartee', 'detendue', 'poing', 'pouce', 'tient', 'pince', 'anneau'];
+    kase('mains-toutes', '<b>Mains</b> · de face : ' + TOUTES.join(', ') + ' · de profil : ouverte, demi, poing', [-8, -36, 64 * 6, 60 * 2], (g) => {
+      const out = [];
+      TOUTES.forEach((nom, i) => {
+        const w = document.createElementNS(NS, 'g');
+        w.setAttribute('transform', `translate(${(i % 5) * 64 + (nom === 'pouce' ? 14 : 0)} ${Math.floor(i / 5) * 60 + (nom === 'pouce' ? 2 : 0)})`);
+        g.appendChild(w);
+        const F = R.makeFace(w);
+        [...F.G.children].forEach((c) => { if (c !== F.BD.g) c.setAttribute('display', 'none'); });
+        F.BD.haut.setAttribute('display', 'none'); F.BD.avant.setAttribute('display', 'none');
+        out.push([F.BD.M, nom]);
+      });
+      ['ouverte', 'demi', 'poing'].forEach((nom, i) => {
+        const w = document.createElementNS(NS, 'g');
+        w.setAttribute('transform', `translate(${(i + 3) * 64 + 2} 64) scale(1.5)`);
+        g.appendChild(w);
+        const P = R.makeProfil(w);
+        [...P.G.children].forEach((c) => c.setAttribute('display', 'none'));
+        const B = P.BP;
+        B.g.setAttribute('display', 'inline');
+        [...B.haut.children].forEach((c) => { if (c !== B.avant) c.setAttribute('display', 'none'); });
+        [...B.avant.children].forEach((c) => { if (c !== B.main) c.setAttribute('display', 'none'); });
+        B.avant.setAttribute('transform', ''); B.main.setAttribute('transform', '');
+        out.push([B.M, nom]);
+      });
+      return out;
+    }, (out) => out.forEach(([M, nom]) => Object.keys(M.formes).forEach((k) => M.formes[k].setAttribute('display', k === nom ? 'inline' : 'none'))), 'mains large');
+
+    const LIB = { face: ['ouverte', 'ecartee', 'detendue', 'poing', 'pouce', 'tient', 'pince', 'anneau'] };
+    LIB.face.forEach((nom) => kase('main-' + nom, `<b>${nom}</b> · de face`, [-20, -34, 60, 56], (g) => {
+      const F = R.makeFace(g);
+      const B = F.BD;
+      [...F.G.children].forEach((c) => { if (c !== B.g) c.setAttribute('display', 'none'); });
+      B.haut.setAttribute('display', 'none'); B.avant.setAttribute('display', 'none');
+      return F;
+    }, (F) => {
+      const M = F.BD.M;
+      Object.keys(M.formes).forEach((k) => M.formes[k].setAttribute('display', k === nom ? 'inline' : 'none'));
+      F.BD.main.setAttribute('transform', nom === 'pouce' ? 'translate(8 -2)' : '');
+    }, 'mains'));
+    ['ouverte', 'demi', 'poing'].forEach((nom) => kase('mainp-' + nom, `<b>${nom}</b> · de profil`, [-6, -22, 44, 36], (g) => {
+      const P = R.makeProfil(g);
+      [...P.G.children].forEach((c) => c.setAttribute('display', 'none'));
+      const B = P.BP;
+      B.g.setAttribute('display', 'inline');
+      B.haut.firstChild.setAttribute('display', 'none');
+      [...B.haut.children].forEach((c) => { if (c !== B.avant) c.setAttribute('display', 'none'); });
+      [...B.avant.children].forEach((c) => { if (c !== B.main) c.setAttribute('display', 'none'); });
+      B.avant.setAttribute('transform', '');
+      B.main.setAttribute('transform', 'scale(1.1)');
+      return P;
+    }, (P) => { const M = P.BP.M; Object.keys(M.formes).forEach((k) => M.formes[k].setAttribute('display', k === nom ? 'inline' : 'none')); }, 'mains'));
+
+    let anime = false, raf = 0;
+    const tout = (t) => cases.forEach((c) => c.pose(c.obj, t));
+    tout(tFixe);
+    window.__pret = true;
+    const boucle = (now) => { tout(now / 1000); raf = requestAnimationFrame(boucle); };
+    const b = document.getElementById('anim');
+    b.addEventListener('click', () => { anime = !anime; b.classList.toggle('on', anime); cancelAnimationFrame(raf); if (anime) raf = requestAnimationFrame(boucle); else tout(tFixe); });
+  })();
+</script>
+</body>
+</html>

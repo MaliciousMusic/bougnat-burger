@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Animatique · Le bougnat s'est trompé de sac</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../css/fonts.css">
+<style>
+  :root { --charbon: #1A130F; --charbon-2: #231A14; --charbon-3: #2E231B; --creme: #F5EAD4; --creme-2: #D8C6A8; --creme-3: #A3907A; --pomme: #C8E3A0; --olive: #7C8A3A; --vert: #96C124; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: #120D0A; color: var(--creme); font: 15px/1.45 'Instrument Sans', system-ui, sans-serif; }
+  header { padding: 18px 24px 6px; }
+  h1 { font: 400 28px/1.1 Shrikhand, Georgia, serif; margin: 0 0 4px; }
+  header p { margin: 0; color: var(--creme-2); max-width: 70ch; }
+  main { display: grid; grid-template-columns: auto minmax(280px, 1fr); gap: 26px; padding: 18px 24px 30px; align-items: start; }
+  @media (max-width: 820px) { main { grid-template-columns: 1fr; } }
+  .cadre-wrap { display: grid; gap: 12px; justify-items: center; }
+  .cadre { position: relative; width: 390px; height: 506px; overflow: hidden; border-radius: 6px; background: #2E5A6E; box-shadow: 0 0 0 1px rgba(245,234,212,.15), 0 30px 60px -30px #000; }
+  .guides { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+  .guides .ordi { position: absolute; left: 0; right: 0; top: 34px; bottom: 34px; border-top: 1.5px dashed rgba(200,227,160,.85); border-bottom: 1.5px dashed rgba(200,227,160,.85); }
+  .guides .ordi span { position: absolute; right: 6px; top: 4px; font-size: 11px; color: var(--pomme); background: rgba(18,13,10,.7); padding: 1px 6px; border-radius: 99px; }
+  .guides .sur { position: absolute; left: 26px; right: 26px; top: 50px; bottom: 50px; border: 1px dotted rgba(245,234,212,.35); }
+  .guides .plan { position: absolute; left: 8px; top: 8px; font: 700 12px/1 'Instrument Sans'; letter-spacing: .08em; text-transform: uppercase; color: var(--creme); background: rgba(18,13,10,.72); padding: 6px 9px; border-radius: 99px; }
+  .cadre.sans-guides .guides { display: none; }
+  .ctrl { width: 390px; display: grid; gap: 8px; }
+  .row { display: flex; gap: 8px; align-items: center; }
+  button { font: 650 13px/1 'Instrument Sans'; color: var(--creme); background: var(--charbon-3); border: 0; border-radius: 99px; padding: 9px 14px; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(245,234,212,.12); }
+  button.on { background: var(--olive); color: #F2F8E6; }
+  button.main { background: var(--vert); color: #16210A; min-width: 92px; }
+  .temps { font: 700 13px/1 'Instrument Sans'; font-variant-numeric: tabular-nums; color: var(--creme-2); margin-left: auto; }
+  .frise { position: relative; height: 34px; }
+  .frise input { position: absolute; inset: 12px 0 auto; width: 100%; accent-color: #96C124; }
+  .frise i { position: absolute; top: 0; width: 1px; height: 12px; background: var(--pomme); opacity: .7; }
+  .frise b { position: absolute; top: 0; font: 700 10px/1 'Instrument Sans'; color: var(--creme-3); transform: translateX(3px); }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: p; }
+  li { counter-increment: p; display: grid; grid-template-columns: 34px 1fr auto; gap: 2px 12px; align-items: start; padding: 11px 14px; border-radius: 16px; background: var(--charbon-2); box-shadow: inset 0 0 0 1px rgba(245,234,212,.08); cursor: pointer; transition: box-shadow .2s, background .2s; }
+  li::before { content: counter(p); grid-row: span 2; font: 400 22px/1 Shrikhand, Georgia, serif; color: var(--olive); }
+  li h3 { margin: 0; font: 700 15px/1.2 'Instrument Sans'; }
+  li small { font-size: 12px; color: var(--pomme); white-space: nowrap; }
+  li p { grid-column: 2 / -1; margin: 0; font-size: 13.5px; color: var(--creme-2); }
+  li.on { background: #2C3316; box-shadow: inset 0 0 0 1.5px var(--pomme); }
+  li.on::before { color: var(--pomme); }
+  .note { margin-top: 14px; font-size: 13px; color: var(--creme-3); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Le bougnat s'est trompé de sac</h1>
+  <p>Animatique, première passe : les formes sont volontairement simples. Il s'agit de valider les plans, les cadrages, la parallaxe de la chute et le rythme (30 s en boucle). Le cadre fait la taille du film sur un téléphone (390 × 506). Les tirets verts marquent ce qui reste visible sur ordinateur, où le cadre est plus large que haut.</p>
+</header>
+<main>
+  <div class="cadre-wrap">
+    <div class="cadre" id="cadre">
+      <div class="guides"><div class="ordi"><span>cadre ordinateur</span></div><div class="sur"></div><div class="plan" id="plan-lbl"></div></div>
+    </div>
+    <div class="ctrl">
+      <div class="frise" id="frise"><input type="range" id="scrub" min="0" max="30" step="0.02" value="0"></div>
+      <div class="row">
+        <button class="main" id="play" type="button">Pause</button>
+        <button id="v05" type="button">× 0,5</button>
+        <button id="v1" type="button" class="on">× 1</button>
+        <button id="gd" type="button" class="on">Cadres</button>
+        <span class="temps" id="temps">0,0 s</span>
+      </div>
+    </div>
+  </div>
+  <section>
+    <ol id="plans"></ol>
+    <p class="note">Touchez un plan pour y aller. Adresse utile : <code>?plan=4</code> (fige le milieu du plan 4), <code>?t=12.5</code> (fige un instant).</p>
+  </section>
+</main>
+<script src="../js/bb-core.js"></script>
+<script src="../js/film/bb-bougnat-dessin.js" onerror="void 0"></script>
+<script src="../js/film/bb-histoire.js"></script>
+<script>
+  (function () {
+    const $ = (s) => document.querySelector(s);
+    const h = new BB.Histoire($('#cadre'), {});
+    const P = BB.Histoire.PLANS;
+    const ol = $('#plans'), frise = $('#frise'), scrub = $('#scrub');
+    scrub.max = h.duration;
+    P.forEach((p, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<h3>${p.titre}</h3><small>${p.cadre} · ${p.t.toFixed(1).replace('.', ',')} s</small><p>${p.txt}</p>`;
+      li.addEventListener('click', () => { h.seek(p.t + 0.05); scrub.value = p.t; if (h.playing) { h.stop(); h.start(); } });
+      ol.appendChild(li);
+      const tick = document.createElement('i'); tick.style.left = (p.t / h.duration * 100) + '%'; frise.appendChild(tick);
+      const n = document.createElement('b'); n.style.left = (p.t / h.duration * 100) + '%'; n.textContent = i + 1; frise.appendChild(n);
+    });
+    h.onPlan = (i, p) => {
+      [...ol.children].forEach((li, k) => li.classList.toggle('on', k === i));
+      $('#plan-lbl').textContent = `Plan ${i + 1} · ${p.titre} · ${p.cadre}`;
+    };
+    const q = new URLSearchParams(location.search);
+    const setSpeed = (k) => { h.setSpeed(k); $('#v05').classList.toggle('on', k === 0.5); $('#v1').classList.toggle('on', k === 1); };
+    const upd = () => { $('#temps').textContent = h.t.toFixed(1).replace('.', ',') + ' s'; if (!scrub.matches(':active')) scrub.value = h.t; requestAnimationFrame(upd); };
+    scrub.addEventListener('input', () => { h.stop(); $('#play').textContent = 'Lecture'; h.seek(+scrub.value); });
+    $('#play').addEventListener('click', () => { if (h.playing) { h.stop(); $('#play').textContent = 'Lecture'; } else { h.start(); $('#play').textContent = 'Pause'; } });
+    $('#v05').addEventListener('click', () => setSpeed(0.5));
+    $('#v1').addEventListener('click', () => setSpeed(1));
+    $('#gd').addEventListener('click', () => { $('#cadre').classList.toggle('sans-guides'); $('#gd').classList.toggle('on'); });
+    if (q.has('plan')) {
+      const i = Math.max(1, Math.min(P.length, +q.get('plan'))) - 1;
+      const end = i + 1 < P.length ? P[i + 1].t : h.duration;
+      h.seek((P[i].t + end) / 2); $('#play').textContent = 'Lecture';
+    } else if (q.has('t')) { h.seek(+q.get('t')); $('#play').textContent = 'Lecture'; }
+    else h.start();
+    if (q.has('nogd')) $('#cadre').classList.add('sans-guides');
+    upd();
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "lot": "03-berg",
+  "style": "modern art deco poster illustration in the style of Mads Berg and Roger Broders, bold flat shapes, smooth airbrush gradients, clean vector edges, refined and charming, warm muted palette",
+  "neg": "photo, photograph, photorealistic, realistic skin texture, wrinkles, 3d render, cgi, cartoon, caricature, anime, comic, chibi, grotesque, ugly, deformed face, disfigured, bad anatomy, bad hands, extra fingers, missing fingers, fused fingers, text, letters, words, watermark, signature, logo, frame, border, margin, white border, paper edge, printed poster, neon green, lime green, teal background, green background, busy background, scenery, sepia, grunge, paper texture, film grain, noise, blurry",
+  "jobs": [
+    {
+      "name": "buste",
+      "w": 896, "h": 1152, "cfg": 3.0, "steps": 10,
+      "seeds": [301, 302, 303, 304],
+      "prompt": "portrait of a jovial round-faced Auvergnat man, fifty years old, big bushy grey-brown handlebar moustache, warm friendly smile, kind eyes, rosy cheeks, charcoal flat cap, indigo blue work smock, olive green neckerchief, head and shoulders, three-quarter view turned to the left, plain flat warm peach background"
+    },
+    {
+      "name": "plateau",
+      "w": 896, "h": 1152, "cfg": 3.0, "steps": 10,
+      "seeds": [311, 312, 313, 314],
+      "prompt": "jovial round-faced Auvergnat waiter, fifty years old, big bushy grey-brown handlebar moustache, warm friendly smile, rosy cheeks, charcoal flat cap, indigo blue work smock, olive green neckerchief, brown leather apron, proudly carrying a round tray raised on one hand at shoulder height with a burger, french fries and a glass of beer, half-body, three-quarter view turned to the left, plain flat warm peach background"
+    },
+    {
+      "name": "burger",
+      "w": 896, "h": 1152, "cfg": 3.0, "steps": 10,
+      "seeds": [321, 322, 323, 324],
+      "prompt": "jovial round-faced Auvergnat man, fifty years old, big bushy grey-brown handlebar moustache, warm friendly smile, rosy cheeks, charcoal flat cap, indigo blue work smock, olive green neckerchief, brown leather apron, proudly presenting a big burger on a small plate in one hand, half-body, three-quarter view turned to the left, plain flat warm peach background"
+    }
+  ]
+}

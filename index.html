@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Bougnat Burger · Le burger d'Auvergne à Clermont-Ferrand depuis 2012</title>
+  <meta name="description" content="Bougnat Burger, 10 bd Léon-Malfreyt à Clermont-Ferrand : burgers au Saint-Nectaire, Cantal et Bleu d'Auvergne AOP, steak façon bouchère VBF, frites maison. Du mercredi au samedi, midi et soir. Réservation, à emporter, livraison.">
+  <!-- MAQUETTE : adresse GitHub Pages ; le vrai domaine se met partout d'un coup :
+       node tools/set-domain.mjs https://www.bougnatburger.fr -->
+  <link rel="canonical" href="https://maliciousmusic.github.io/bougnat-burger/">
+  <link rel="alternate" hreflang="fr" href="https://maliciousmusic.github.io/bougnat-burger/">
+  <link rel="alternate" hreflang="en" href="https://maliciousmusic.github.io/bougnat-burger/?lang=en">
+  <link rel="alternate" hreflang="x-default" href="https://maliciousmusic.github.io/bougnat-burger/">
+  <meta name="theme-color" content="#1A130F">
+  <meta name="color-scheme" content="light">
+  <!-- MAQUETTE en ligne : pas d'indexation tant que les commandes et les paiements sont fictifs.
+       À la mise en ligne : content="index, follow, max-image-preview:large" -->
+  <meta name="robots" content="noindex, nofollow">
+
+  <meta property="og:type" content="restaurant">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:locale:alternate" content="en_GB">
+  <meta property="og:site_name" content="Bougnat Burger">
+  <meta property="og:title" content="Bougnat Burger · le burger d'Auvergne à Clermont-Ferrand">
+  <meta property="og:description" content="Saint-Nectaire, Cantal, Bleu d'Auvergne, steak façon bouchère et frites maison. Réservez, commandez à emporter ou en livraison.">
+  <meta property="og:url" content="https://maliciousmusic.github.io/bougnat-burger/">
+  <meta property="og:image" content="https://maliciousmusic.github.io/bougnat-burger/assets/img/og-bougnat.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <meta name="geo.region" content="FR-63">
+  <meta name="geo.placename" content="Clermont-Ferrand">
+  <meta name="geo.position" content="45.7739412;3.0856348">
+  <meta name="ICBM" content="45.7739412, 3.0856348">
+
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="Bougnat">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="alternate" type="text/markdown" href="llms.txt" title="Bougnat Burger · résumé pour assistants IA">
+
+  <!-- Polices hébergées sur le site (tools/fetch-fonts.py) : aucun appel à Google -->
+  <link rel="stylesheet" href="css/fonts.css?v=20260927222258">
+  <link rel="stylesheet" href="css/bougnat.css?v=20260927222258">
+  <link rel="stylesheet" href="css/puys.css?v=20260927222258">
+
+  <!-- Données structurées (Google et assistants IA) : le restaurant ; la carte est ajoutée par tools/build-menu.mjs -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "@id": "https://maliciousmusic.github.io/bougnat-burger/#restaurant",
+    "name": "Bougnat Burger",
+    "description": "Restaurant de burgers au terroir auvergnat : Saint-Nectaire, Cantal et Bleu d'Auvergne AOP, steak haché façon bouchère VBF, pain artisanal, frites et desserts maison.",
+    "url": "https://maliciousmusic.github.io/bougnat-burger/",
+    "telephone": "+33 7 60 12 00 63",
+    "email": "bougnatburger@hotmail.fr",
+    "foundingDate": "2012-02-02",
+    "servesCuisine": ["Burgers", "Cuisine auvergnate"],
+    "priceRange": "20–30 €",
+    "acceptsReservations": true,
+    "image": "https://maliciousmusic.github.io/bougnat-burger/assets/img/og-bougnat.png",
+    "logo": "https://maliciousmusic.github.io/bougnat-burger/assets/logo/badge.svg",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "10 boulevard Léon-Malfreyt",
+      "postalCode": "63000",
+      "addressLocality": "Clermont-Ferrand",
+      "addressRegion": "Auvergne-Rhône-Alpes",
+      "addressCountry": "FR"
+    },
+    "geo": { "@type": "GeoCoordinates", "latitude": 45.7739412, "longitude": 3.0856348 },
+    "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJ-SIFuukb90cRnD9t-Ioq67Y",
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Wednesday", "Thursday"], "opens": "11:30", "closes": "14:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Wednesday", "Thursday"], "opens": "18:30", "closes": "22:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday", "Saturday"], "opens": "11:30", "closes": "14:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday", "Saturday"], "opens": "18:30", "closes": "22:15" }
+    ],
+    "sameAs": ["https://www.instagram.com/bougnatburger/", "https://www.facebook.com/BougnatBurger"]
+  }
+  </script>
+  <!-- MENU-JSONLD:START -->
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Menu","@id":"https://maliciousmusic.github.io/bougnat-burger/#carte","name":"La carte du Bougnat Burger","inLanguage":"fr","hasMenuSection":[{"@type":"MenuSection","name":"Burgers","hasMenuItem":[{"@type":"MenuItem","name":"Ti' Mefia Te","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, jambon sec, tomates, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Mefia Te (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, jambon sec, tomates, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"23.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Bougnat","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Bougnat (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"21.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Gourmand","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, jambon sec, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Gourmand (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, jambon sec, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"23.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Vulcano","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Cantal jeune AOP, poivrons, chorizo, pomme paillasson, salade et mesclun maison, sauce chili.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Vulcano (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Cantal jeune AOP, poivrons, chorizo, pomme paillasson, salade et mesclun maison, sauce chili.","offers":{"@type":"Offer","price":"21.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Blue","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Bleu d'Auvergne AOP, Cantal jeune AOP, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Blue (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Bleu d'Auvergne AOP, Cantal jeune AOP, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP.","offers":{"@type":"Offer","price":"21.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Rillac","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Carré d'Aurillac, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP.","offers":{"@type":"Offer","price":"17.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Rillac (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Carré d'Aurillac, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP.","offers":{"@type":"Offer","price":"22.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Salers","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Cantal Salers AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"20.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Salers (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Cantal Salers AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"25.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Cabri","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, fromage de chèvre moulé à la louche, jambon sec, miel, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Cabri (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, fromage de chèvre moulé à la louche, jambon sec, miel, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"23.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Vegetario","description":"Pain burger artisanal, galette de pommes de terre, Cantal jeune AOP, poivrons, tomates, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"15.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Vegetario (double)","description":"Pain burger artisanal, double galette de pommes de terre, Cantal jeune AOP, poivrons, tomates, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Mefiano","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, fromage de chèvre moulé à la louche, jambon sec, chorizo, tomates, pomme paillasson, poivrons, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"21.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Mefiano (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, fromage de chèvre moulé à la louche, jambon sec, chorizo, tomates, pomme paillasson, poivrons, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"26.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Viandes","hasMenuItem":[{"@type":"MenuItem","name":"Bavette d'aloyau","description":"Bavette de bœuf charolais bio, 300 g. Origine France.","offers":{"@type":"Offer","price":"20.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Steak haché façon bouchère","description":"Steak haché façon bouchère VBF. Viande bovine, origine France.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Salades","hasMenuItem":[{"@type":"MenuItem","name":"Allier","description":"Salade et mesclun maison, saumon fumé en Auvergne, Bleu d'Auvergne AOP, Cantal jeune AOP, tomates cerises.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Chèvre chaud","description":"Salade et mesclun maison, toasts chauds de chèvre moulé à la louche, miel, jambon d'Auvergne IGP, pignons de pin, herbes de Provence, tomates cerises.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Vercingétorix vs César","description":"Salade et mesclun maison, Cantal jeune AOP, blanc de poulet, poivrons, croûtons à l'huile d'olive, tomates cerises.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Auvergnate","description":"Salade et mesclun maison, jambon d'Auvergne IGP, Bleu d'Auvergne AOP, Cantal jeune AOP, noix, tomates cerises.","offers":{"@type":"Offer","price":"15.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Sancy","description":"Salade et mesclun maison, toasts chauds de Saint-Nectaire fermier AOP et de Bleu d'Auvergne AOP, Cantal jeune AOP, jambon d'Auvergne IGP, tomates cerises.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Wraps","hasMenuItem":[{"@type":"MenuItem","name":"Wrap saumon","description":"Galette de blé, saumon fumé en Auvergne, tomates, salade et mesclun maison, sauce à l'aneth.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Wrap chèvre","description":"Galette de blé, chèvre moulé à la louche, miel, jambon sec, tomates, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"19.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Wrap poulet","description":"Galette de blé, blanc de poulet, tomates, poivrons, salade et mesclun maison, sauce crème curry.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Enfant","hasMenuItem":[{"@type":"MenuItem","name":"Le Petiot","description":"Pain burger artisanal, steak haché VBF ou galette de pommes de terre, Cantal jeune AOP, tomates, salade et mesclun, sauce au Saint-Nectaire fermier. Avec un sirop et une boule de glace.","offers":{"@type":"Offer","price":"13.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Desserts","hasMenuItem":[{"@type":"MenuItem","name":"Framboisier"},{"@type":"MenuItem","name":"Tiramisu framboise"},{"@type":"MenuItem","name":"Tiramisu café"},{"@type":"MenuItem","name":"Forêt noire"},{"@type":"MenuItem","name":"Mousse au chocolat"},{"@type":"MenuItem","name":"Moelleux"},{"@type":"MenuItem","name":"Tarte au citron"},{"@type":"MenuItem","name":"Nougat glacé"},{"@type":"MenuItem","name":"Citron, coco ou orange givrés"},{"@type":"MenuItem","name":"Glaces et sorbets"},{"@type":"MenuItem","name":"Plateau gourmand"}]},{"@type":"MenuSection","name":"Boissons","hasMenuItem":[{"@type":"MenuItem","name":"Bières de la Brasserie des Sagnes","description":"Brasserie artisanale auvergnate : blonde, ambrée et cuvées plus typées."},{"@type":"MenuItem","name":"Bières de la Brasserie Desprat","description":"Une maison historique de la bière en Auvergne."},{"@type":"MenuItem","name":"Vins bio et vins d'Auvergne","description":"Au verre ou à la bouteille."},{"@type":"MenuItem","name":"Apéritifs","description":"Rhum, vodka, whisky, tequila, pastis."},{"@type":"MenuItem","name":"Softs","description":"Sodas, jus Pago, eaux minérales."}]}]}
+  </script>
+  <!-- MENU-JSONLD:END -->
+
+  <noscript>
+    <style>
+      .app { height: auto; overflow: visible; }
+      .views { position: static; }
+      .view { position: relative; inset: auto; opacity: 1; visibility: visible; transform: none; }
+      .view-scroll { overflow: visible; height: auto; }
+      .splash, .tabbar, .film, .sheet { display: none; }
+    </style>
+  </noscript>
+</head>
+<body>
+
+<!-- Décor pour ordinateur : l'appli est pensée pour le téléphone -->
+<aside class="desk" aria-hidden="true">
+  <div class="desk-inner">
+    <p class="desk-kicker">Bougnat Burger</p>
+    <p class="desk-title">Le burger d'Auvergne<br>se déguste sur téléphone.</p>
+    <div class="desk-qr" id="desk-qr"></div>
+    <p class="desk-note">Scannez pour ouvrir l'appli</p>
+  </div>
+</aside>
+
+<div class="app" id="app">
+
+  <!-- Ouverture : le volcan se compose, les deux mots s'enroulent autour -->
+  <div class="splash" id="splash" role="dialog" aria-label="Bougnat Burger">
+    <div class="splash-paysage" aria-hidden="true">
+      <img class="pl-lointain" src="assets/img/puys/lointain.svg" alt="" width="480" height="320">
+      <img class="pl-dome" src="assets/img/puys/dome.svg" alt="" width="480" height="320">
+      <img class="pl-plaine" src="assets/img/puys/plaine.svg" alt="" width="480" height="320">
+      <img class="pl-premier" src="assets/img/puys/premier.svg" alt="" width="480" height="320">
+    </div>
+    <div class="splash-stage" id="splash-stage"></div>
+    <button class="splash-go" id="splash-go" type="button" data-sfx="none"><span data-i18n="splash.go">Entrer</span></button>
+    <p class="splash-hint" data-i18n="splash.hint">Le son est plus beau, montez le volume.</p>
+  </div>
+
+  <header class="topbar">
+    <a class="brand" href="#accueil" aria-label="Bougnat Burger, accueil" data-sfx="tab">
+      <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true"><use href="#logo-mini"/></svg>
+      <span class="brand-name">Bougnat<br>Burger</span>
+    </a>
+    <div class="top-actions">
+      <button class="top-btn lang-btn" id="lang-btn" type="button" aria-label="English version" data-i18n-attr="aria-label:lang.switch">
+        <span class="lang-on" id="lang-on">FR</span><span class="lang-sep">/</span><span class="lang-off" id="lang-off">EN</span>
+      </button>
+      <button class="top-btn sound-btn" id="sound-btn" type="button" aria-pressed="true" aria-label="Son" data-i18n-attr="aria-label:sound" data-sfx="none">
+        <svg aria-hidden="true"><use href="#i-son"/></svg>
+      </button>
+      <a class="top-btn bag-btn" id="bag-btn" href="#commander" aria-label="Mon sac" data-i18n-attr="aria-label:bag">
+        <svg aria-hidden="true"><use href="#i-sac"/></svg>
+        <span class="bag-count" id="bag-count" hidden>0</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="views" id="views">
+
+    <!-- ============================== ACCUEIL ============================== -->
+    <section class="view" id="accueil" data-view="accueil" aria-labelledby="accueil-title">
+      <div class="view-scroll">
+
+        <!-- L'ardoise des horaires (dépliable) ; version statique pour les robots, enrichie par bb-hours.js -->
+        <div class="ardoise" id="ardoise">
+          <button class="ardoise-face" id="ardoise-face" type="button" aria-expanded="false" aria-controls="ardoise-week" data-sfx="none">
+            <span class="ens-hublot" aria-hidden="true"></span>
+            <span class="ardoise-state" id="ardoise-state">Ouvert du mercredi au samedi</span>
+            <span class="ardoise-more" data-i18n="hours.more">les horaires</span>
+          </button>
+          <div class="ardoise-week" id="ardoise-week">
+            <h2 class="sr-only" data-i18n="hours.title">Horaires d'ouverture</h2>
+            <ul class="week" id="week">
+              <li data-day="3"><b>Mercredi</b> 11h30–14h · 18h30–22h</li>
+              <li data-day="4"><b>Jeudi</b> 11h30–14h · 18h30–22h</li>
+              <li data-day="5"><b>Vendredi</b> 11h30–14h · 18h30–22h15</li>
+              <li data-day="6"><b>Samedi</b> 11h30–14h · 18h30–22h15</li>
+              <li data-day="0"><b>Dimanche, lundi, mardi</b> fermé</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="film" id="film" role="img" aria-label="Petit film : un bougnat saute en chute libre au-dessus de la chaîne des Puys, mais il s'est trompé de sac ; au lieu du parachute, un menu s'envole. Il rattrape et mange le burger, les frites et la boisson, s'écrase dans un nuage de fumée, se relève indemne et croque une dernière frite." data-i18n-attr="aria-label:film.alt">
+          <div class="film-fallback" aria-hidden="true"></div>
+        </div>
+
+        <div class="accroche reveal">
+          <p class="kicker">Clermont-Ferrand</p>
+          <h1 id="accueil-title"><span data-i18n="home.title1">Le burger d'Auvergne,</span> <em data-i18n="home.title2">depuis 2012</em></h1>
+          <p data-i18n="home.lede">Saint-Nectaire, Cantal et Bleu d'Auvergne AOP, steak façon bouchère VBF, pain artisanal et frites maison. Au 10 boulevard Léon-Malfreyt, à Clermont-Ferrand.</p>
+        </div>
+
+        <nav class="quick reveal" aria-label="Accès rapides" data-i18n-attr="aria-label:quick">
+          <a class="quick-btn" href="#reserver" data-sfx="tab"><svg aria-hidden="true"><use href="#i-couverts"/></svg><span data-i18n="quick.book">Réserver</span></a>
+          <a class="quick-btn" href="#commander" data-sfx="tab"><svg aria-hidden="true"><use href="#i-sac"/></svg><span data-i18n="quick.order">Commander</span></a>
+          <a class="quick-btn" href="tel:+33760120063"><svg aria-hidden="true"><use href="#i-tel"/></svg><span data-i18n="quick.call">Appeler</span></a>
+          <a class="quick-btn" id="quick-route" href="https://www.google.com/maps/dir/?api=1&amp;destination=45.7739412,3.0856348&amp;destination_place_id=ChIJ-SIFuukb90cRnD9t-Ioq67Y" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-pin"/></svg><span data-i18n="quick.route">Itinéraire</span></a>
+        </nav>
+
+        <section class="signatures reveal" aria-labelledby="sig-title">
+          <div class="sec-head">
+            <h2 id="sig-title" data-i18n="sig.title">Les incontournables</h2>
+            <a class="link-more" href="#carte" data-sfx="tab" data-i18n="sig.all">Toute la carte</a>
+          </div>
+          <div class="sig-row" id="sig-row"></div>
+        </section>
+
+        <a class="note-google reveal" href="#nous-avis" data-sfx="tab">
+          <span class="ng-score">4,6</span>
+          <span class="ng-stars" aria-hidden="true"><svg><use href="#i-etoile"/></svg><svg><use href="#i-etoile"/></svg><svg><use href="#i-etoile"/></svg><svg><use href="#i-etoile"/></svg><svg class="half"><use href="#i-etoile"/></svg></span>
+          <span class="ng-text" data-i18n="rating.text">2 039 avis sur Google</span>
+        </a>
+
+        <p class="fine" data-i18n="home.fine">Sur place, à emporter ou en livraison. Terrasse aux beaux jours.</p>
+      </div>
+    </section>
+
+    <!-- ============================== CARTE ============================== -->
+    <section class="view" id="carte" data-view="carte" aria-labelledby="carte-title">
+      <div class="view-scroll" id="carte-scroll">
+        <header class="view-head">
+          <h2 id="carte-title" data-i18n="carte.title">La carte</h2>
+          <p data-i18n="carte.lede">Chaque burger est servi avec frites maison et salade. Steak façon bouchère ou galette de pommes de terre, au choix.</p>
+        </header>
+        <nav class="chips" id="chips" aria-label="Rubriques de la carte" data-i18n-attr="aria-label:carte.nav"></nav>
+        <div class="menu" id="menu">
+<!-- MENU:START -->
+<section class="menu-sec" id="m-burgers"><h3>Burgers</h3>
+<ul class="list-items">
+<li class="item plain"><h4>Ti' Mefia Te</h4><span class="price">18,90 € · Mefia Te double 23,90 €</span><p>Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, jambon sec, tomates, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP. Servi avec frites faites maison et salade maison.</p></li>
+<li class="item plain"><h4>Ti' Bougnat</h4><span class="price">16,90 € · Bougnat double 21,90 €</span><p>Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP. Servi avec frites faites maison et salade maison.</p></li>
+<li class="item plain"><h4>Ti' Gourmand</h4><span class="price">18,90 € · Gourmand double 23,90 €</span><p>Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, jambon sec, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP. Servi avec frites faites maison et salade maison.</p></li>
+<li class="item plain"><h4>Ti' Vulcano</h4><span class="price">16,90 € · Vulcano double 21,90 €</span><p>Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Cantal jeune AOP, poivrons, chorizo, pomme paillasson, salade et mesclun maison, sauce chili. Servi avec frites faites maison et salade maison.</p></li>
+<li class="item plain"><h4>Ti' Blue</h4><span class="price">16,90 € · Blue double 21,90 €</span><p>Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Bleu d'Auvergne AOP, Cantal jeune AOP, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP. Servi avec frites faites maison et salade maison.</p></li>
+<li class="item plain"><h4>Ti' Rillac</h4><span class="price">17,90 € · Rillac double 22,90 €</span><p>Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Carré d'Aurillac, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP. Servi avec frites faites maison et salade maison.</p></li>
+<li class="item plain"><h4>Ti' Salers</h4><span class="price">20,90 € · Salers double 25,90 €</span><p>Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Cantal Salers AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP. Servi avec frites faites maison et salade maison.</p></li>
+<li class="item plain"><h4>Ti' Cabri</h4><span class="price">18,90 € · Cabri double 23,90 €</span><p>Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, fromage de chèvre moulé à la louche, jambon sec, miel, salade et mesclun maison, sauce crème ciboulette. Servi avec frites faites maison et salade maison.</p></li>
+<li class="item plain"><h4>Ti' Vegetario</h4><span class="price">15,90 € · Vegetario double 18,90 €</span><p>Pain burger artisanal, galette de pommes de terre, Cantal jeune AOP, poivrons, tomates, salade et mesclun maison, sauce crème ciboulette. Servi avec frites faites maison et salade maison.</p></li>
+<li class="item plain"><h4>Ti' Mefiano</h4><span class="price">21,90 € · Mefiano double 26,90 €</span><p>Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, fromage de chèvre moulé à la louche, jambon sec, chorizo, tomates, pomme paillasson, poivrons, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP. Servi avec frites faites maison et salade maison.</p></li>
+</ul>
+</section>
+<section class="menu-sec" id="m-viandes"><h3>Viandes</h3>
+<ul class="list-items">
+<li class="item plain"><h4>Bavette d'aloyau</h4><span class="price">20,90 €</span><p>Bavette de bœuf charolais bio, 300 g. Origine France.</p></li>
+<li class="item plain"><h4>Steak haché façon bouchère</h4><span class="price">16,90 €</span><p>Steak haché façon bouchère VBF. Viande bovine, origine France.</p></li>
+</ul>
+</section>
+<section class="menu-sec" id="m-salades"><h3>Salades</h3>
+<ul class="list-items">
+<li class="item plain"><h4>Allier</h4><span class="price">16,90 €</span><p>Salade et mesclun maison, saumon fumé en Auvergne, Bleu d'Auvergne AOP, Cantal jeune AOP, tomates cerises.</p></li>
+<li class="item plain"><h4>Chèvre chaud</h4><span class="price">16,90 €</span><p>Salade et mesclun maison, toasts chauds de chèvre moulé à la louche, miel, jambon d'Auvergne IGP, pignons de pin, herbes de Provence, tomates cerises.</p></li>
+<li class="item plain"><h4>Vercingétorix vs César</h4><span class="price">16,90 €</span><p>Salade et mesclun maison, Cantal jeune AOP, blanc de poulet, poivrons, croûtons à l'huile d'olive, tomates cerises.</p></li>
+<li class="item plain"><h4>Auvergnate</h4><span class="price">15,90 €</span><p>Salade et mesclun maison, jambon d'Auvergne IGP, Bleu d'Auvergne AOP, Cantal jeune AOP, noix, tomates cerises.</p></li>
+<li class="item plain"><h4>Sancy</h4><span class="price">16,90 €</span><p>Salade et mesclun maison, toasts chauds de Saint-Nectaire fermier AOP et de Bleu d'Auvergne AOP, Cantal jeune AOP, jambon d'Auvergne IGP, tomates cerises.</p></li>
+</ul>
+</section>
+<section class="menu-sec" id="m-wraps"><h3>Wraps</h3>
+<ul class="list-items">
+<li class="item plain"><h4>Wrap saumon</h4><span class="price">18,90 €</span><p>Galette de blé, saumon fumé en Auvergne, tomates, salade et mesclun maison, sauce à l'aneth.</p></li>
+<li class="item plain"><h4>Wrap chèvre</h4><span class="price">19,90 €</span><p>Galette de blé, chèvre moulé à la louche, miel, jambon sec, tomates, salade et mesclun maison, sauce crème ciboulette.</p></li>
+<li class="item plain"><h4>Wrap poulet</h4><span class="price">18,90 €</span><p>Galette de blé, blanc de poulet, tomates, poivrons, salade et mesclun maison, sauce crème curry.</p></li>
+</ul>
+</section>
+<section class="menu-sec" id="m-enfant"><h3>Enfant</h3>
+<ul class="list-items">
+<li class="item plain"><h4>Le Petiot</h4><span class="price">13,90 €</span><p>Pain burger artisanal, steak haché VBF ou galette de pommes de terre, Cantal jeune AOP, tomates, salade et mesclun, sauce au Saint-Nectaire fermier. Avec un sirop et une boule de glace.</p></li>
+</ul>
+</section>
+<section class="menu-sec" id="m-desserts"><h3>Desserts</h3>
+<ul class="list-items">
+<li class="item plain"><h4>Framboisier</h4></li>
+<li class="item plain"><h4>Tiramisu framboise</h4></li>
+<li class="item plain"><h4>Tiramisu café</h4></li>
+<li class="item plain"><h4>Forêt noire</h4></li>
+<li class="item plain"><h4>Mousse au chocolat</h4></li>
+<li class="item plain"><h4>Moelleux</h4></li>
+<li class="item plain"><h4>Tarte au citron</h4></li>
+<li class="item plain"><h4>Nougat glacé</h4></li>
+<li class="item plain"><h4>Citron, coco ou orange givrés</h4></li>
+<li class="item plain"><h4>Glaces et sorbets</h4></li>
+<li class="item plain"><h4>Plateau gourmand</h4></li>
+</ul>
+</section>
+<section class="menu-sec" id="m-boissons"><h3>Boissons</h3>
+<ul class="list-items">
+<li class="item plain"><h4>Bières de la Brasserie des Sagnes</h4><p>Brasserie artisanale auvergnate : blonde, ambrée et cuvées plus typées.</p></li>
+<li class="item plain"><h4>Bières de la Brasserie Desprat</h4><p>Une maison historique de la bière en Auvergne.</p></li>
+<li class="item plain"><h4>Vins bio et vins d'Auvergne</h4><p>Au verre ou à la bouteille.</p></li>
+<li class="item plain"><h4>Apéritifs</h4><p>Rhum, vodka, whisky, tequila, pastis.</p></li>
+<li class="item plain"><h4>Softs</h4><p>Sodas, jus Pago, eaux minérales.</p></li>
+</ul>
+</section>
+<!-- MENU:END -->
+        </div>
+        <p class="fine" data-i18n="carte.fine">Prix nets, service compris. Allergènes : demandez à l'équipe, elle vous renseigne plat par plat.</p>
+      </div>
+    </section>
+
+    <!-- ============================== COMMANDER ============================== -->
+    <section class="view" id="commander" data-view="commander" aria-labelledby="cmd-title">
+      <div class="view-scroll">
+        <header class="view-head">
+          <h2 id="cmd-title" data-i18n="cmd.title">Commander</h2>
+        </header>
+        <div class="seg" id="cmd-seg" role="tablist" aria-label="Mode de commande">
+          <button role="tab" aria-selected="true" data-mode="emporter" type="button" data-sfx="tab" data-sfx-i="1"><svg aria-hidden="true"><use href="#i-sac"/></svg><span data-i18n="cmd.takeaway">À emporter</span></button>
+          <button role="tab" aria-selected="false" data-mode="livraison" type="button" data-sfx="tab" data-sfx-i="2"><svg aria-hidden="true"><use href="#i-velo"/></svg><span data-i18n="cmd.delivery">En livraison</span></button>
+        </div>
+
+        <div class="mode" id="mode-emporter">
+          <div class="cart" id="cart">
+            <div class="cart-empty" id="cart-empty">
+              <svg class="cart-empty-art" aria-hidden="true"><use href="#i-sac"/></svg>
+              <p data-i18n="cart.empty">Votre sac est vide.</p>
+              <a class="btn btn-ghost" href="#carte" data-sfx="tab" data-i18n="cart.browse">Voir la carte</a>
+            </div>
+            <ul class="cart-list" id="cart-list"></ul>
+          </div>
+          <form class="checkout" id="checkout" hidden novalidate>
+            <fieldset>
+              <legend data-i18n="co.when">Retrait au comptoir</legend>
+              <div class="slots" id="slots" role="radiogroup"></div>
+            </fieldset>
+            <fieldset class="who">
+              <legend data-i18n="co.who">À quel nom ?</legend>
+              <label><span data-i18n="co.name">Prénom</span><input id="co-name" name="name" autocomplete="given-name" required></label>
+              <label><span data-i18n="co.phone">Téléphone</span><input id="co-phone" name="tel" type="tel" autocomplete="tel" inputmode="tel" required></label>
+              <label><span data-i18n="co.note">Allergies ou précisions pour la cuisine (facultatif)</span><textarea id="co-note" name="note" rows="2" maxlength="240" placeholder="Ex. : allergie aux noix, sans tomate…" data-i18n-attr="placeholder:co.note.ph"></textarea></label>
+            </fieldset>
+            <div class="co-total"><span data-i18n="co.total">Total</span><b id="co-total">0,00 €</b></div>
+            <button class="btn btn-main" id="co-pay" type="submit" data-sfx="none"><svg aria-hidden="true"><use href="#i-carte-bancaire"/></svg><span data-i18n="co.pay">Payer et commander</span></button>
+            <p class="fine" data-i18n="co.fine">Maquette : le paiement est simulé, aucune commande n'est transmise.</p>
+          </form>
+          <div class="ticket" id="ticket" hidden></div>
+        </div>
+
+        <div class="mode" id="mode-livraison" hidden>
+          <p class="lede-sm" data-i18n="del.lede">Aujourd'hui, la livraison passe par ces plateformes :</p>
+          <div class="delivery" id="delivery"></div>
+          <div class="soon">
+            <svg aria-hidden="true"><use href="#i-velo"/></svg>
+            <div>
+              <h3 data-i18n="del.soon.title">Bientôt, directement ici</h3>
+              <p data-i18n="del.soon.text">Vous commandez dans l'appli Bougnat Burger, un coursier vous livre. Mêmes prix qu'au restaurant, sans commission de plateforme.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== RÉSERVER ============================== -->
+    <section class="view" id="reserver" data-view="reserver" aria-labelledby="resa-title">
+      <div class="view-scroll">
+        <header class="view-head">
+          <h2 id="resa-title" data-i18n="resa.title">Réserver une table</h2>
+          <p data-i18n="resa.lede">Dites-nous quand, on vous garde la table. Au-delà de 10 personnes, appelez-nous.</p>
+        </header>
+        <form class="resa" id="resa-form" novalidate>
+          <fieldset>
+            <legend data-i18n="resa.day">Quel jour ?</legend>
+            <div class="days" id="resa-days" role="radiogroup"></div>
+          </fieldset>
+          <fieldset>
+            <legend data-i18n="resa.service">Quel service ?</legend>
+            <div class="seg seg-sm" id="resa-service" role="radiogroup">
+              <button type="button" role="radio" aria-checked="true" data-service="midi" data-sfx="tab" data-sfx-i="1"><span data-i18n="resa.lunch">Midi</span></button>
+              <button type="button" role="radio" aria-checked="false" data-service="soir" data-sfx="tab" data-sfx-i="3"><span data-i18n="resa.dinner">Soir</span></button>
+            </div>
+            <div class="times" id="resa-times" role="radiogroup"></div>
+          </fieldset>
+          <fieldset>
+            <legend data-i18n="resa.guests">Combien de couverts ?</legend>
+            <div class="stepper" id="resa-guests">
+              <button type="button" data-step="-1" aria-label="Moins" data-sfx="down"><svg aria-hidden="true"><use href="#i-moins"/></svg></button>
+              <output id="resa-count">2</output>
+              <button type="button" data-step="1" aria-label="Plus" data-sfx="up"><svg aria-hidden="true"><use href="#i-plus"/></svg></button>
+            </div>
+          </fieldset>
+          <fieldset class="who">
+            <legend data-i18n="resa.who">À quel nom ?</legend>
+            <label><span data-i18n="co.name">Prénom</span><input id="resa-name" name="name" autocomplete="given-name" required></label>
+            <label><span data-i18n="co.phone">Téléphone</span><input id="resa-phone" name="tel" type="tel" autocomplete="tel" inputmode="tel" required></label>
+            <label><span data-i18n="resa.note">Un mot pour l'équipe (facultatif)</span><input id="resa-note" name="note" autocomplete="off"></label>
+          </fieldset>
+          <button class="btn btn-main" type="submit" data-sfx="none"><svg aria-hidden="true"><use href="#i-couverts"/></svg><span data-i18n="resa.send">Demander la table</span></button>
+          <p class="fine" data-i18n="resa.fine">Maquette : la demande n'est pas transmise. En vrai, le restaurant confirme par SMS.</p>
+        </form>
+        <div class="resa-done" id="resa-done" hidden></div>
+      </div>
+    </section>
+
+    <!-- ============================== NOUS (la nuit tombe sur les banquettes vertes) ============================== -->
+    <section class="view view-nous" id="nous" data-view="nous" aria-labelledby="nous-title">
+      <div class="view-scroll">
+        <header class="nous-hero">
+          <p class="kicker" data-i18n="nous.kicker">Depuis le 2 février 2012</p>
+          <h2 id="nous-title" data-i18n="nous.title">Un bougnat, c'est un Auvergnat qui régale.</h2>
+          <!-- Le hublot : les photos du restaurant (photos du propriétaire sur sa fiche Google), en diaporama -->
+          <figure class="nous-photo diapo" id="diapo">
+            <img src="assets/img/nous/01-burger-double.webp" width="720" height="720" alt="Un burger double du Bougnat Burger, tenu à deux mains" class="on">
+            <img src="assets/img/nous/02-devanture.webp" width="720" height="720" alt="La salle et la devanture du Bougnat Burger, le soir" loading="lazy">
+            <img src="assets/img/nous/03-burger-jambon.webp" width="720" height="720" alt="Un burger au jambon sec, sur l'ardoise" loading="lazy">
+            <img src="assets/img/nous/04-cuisine.webp" width="720" height="720" alt="En cuisine : les toasts au Saint-Nectaire et au Bleu d'Auvergne" loading="lazy">
+            <img src="assets/img/nous/05-bieres.webp" width="720" height="720" alt="Les bières artisanales" loading="lazy">
+            <img src="assets/img/nous/06-salade.webp" width="720" height="720" alt="Une salade aux toasts de Bleu d'Auvergne" loading="lazy">
+            <img src="assets/img/nous/07-bavette-frites.webp" width="720" height="720" alt="La bavette, frites maison et salade" loading="lazy">
+            <img src="assets/img/nous/08-tarte-citron.webp" width="720" height="720" alt="La tarte au citron meringuée" loading="lazy">
+          </figure>
+          <p class="diapo-credit" data-i18n="nous.photos">Photos : Bougnat Burger</p>
+        </header>
+
+        <section class="nous-story reveal">
+          <p data-i18n="nous.story1">Aux XIX<sup>e</sup> et XX<sup>e</sup> siècles, les « bougnats » étaient ces Auvergnats montés à Paris qui tenaient les cafés-charbons : du vin, du bois, du charbon, et une table pour tout le monde.</p>
+          <p data-i18n="nous.story2">Au Bougnat Burger, on garde l'esprit et on change le menu : le burger, fait maison, avec ce que l'Auvergne a de meilleur. Tout le reste suit la même idée, des frites coupées ici aux desserts maison.</p>
+        </section>
+
+        <section class="terroir reveal" aria-labelledby="terroir-title">
+          <h3 id="terroir-title" data-i18n="terroir.title">Ce qu'il y a dans le pain</h3>
+          <ul class="terroir-list">
+            <li><svg aria-hidden="true"><use href="#i-fromage"/></svg><div><b data-i18n="terroir.aop">Quatre AOP d'Auvergne</b><span data-i18n="terroir.aop.t">Saint-Nectaire fermier, Cantal, Salers et Bleu d'Auvergne.</span></div></li>
+            <li><svg aria-hidden="true"><use href="#i-steak"/></svg><div><b data-i18n="terroir.beef">Du bœuf français</b><span data-i18n="terroir.beef.t">Steak haché façon bouchère VBF, bavette de charolais bio.</span></div></li>
+            <li><svg aria-hidden="true"><use href="#i-frites"/></svg><div><b data-i18n="terroir.fries">Frites maison</b><span data-i18n="terroir.fries.t">Avec chaque burger, et une salade maison.</span></div></li>
+            <li><svg aria-hidden="true"><use href="#i-biere"/></svg><div><b data-i18n="terroir.beer">Bières du coin</b><span data-i18n="terroir.beer.t">Brasserie des Sagnes, Brasserie Desprat, vins d'Auvergne.</span></div></li>
+          </ul>
+        </section>
+
+        <section class="avis reveal" id="nous-avis" aria-labelledby="avis-title">
+          <h3 id="avis-title" data-i18n="avis.title">Ce que disent les clients</h3>
+          <div class="avis-score">
+            <span class="avis-num">4,6<small>/5</small></span>
+            <span class="avis-meta"><span data-i18n="avis.count">2 039 avis Google</span><span data-i18n="avis.asof">au 27 septembre 2026</span></span>
+          </div>
+          <!-- La fenêtre sur les avis Google (bb-avis.js) ; le premier avis est écrit ici pour les robots -->
+          <div class="avis-fenetre" role="region" aria-label="Avis Google" data-i18n-attr="aria-label:avis.window">
+            <div class="avis-barre">
+              <span class="avis-pastilles" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="avis-titre"><b data-i18n="avis.bar">Avis Google</b> · 4,6 <svg aria-hidden="true"><use href="#i-etoile"/></svg></span>
+              <a class="avis-ext" href="https://www.google.com/maps/place/?q=place_id:ChIJ-SIFuukb90cRnD9t-Ioq67Y" target="_blank" rel="noopener" aria-label="Ouvrir les avis sur Google" data-i18n-attr="aria-label:avis.open"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5h10v10M19 5 6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            </div>
+            <div class="avis-piste" id="avis-piste">
+              <article class="avis-carte"><p class="avis-texte">« Toujours bien accueilli, on mange bien et c'est très bon. On adore et recommande »</p><footer><b>Mika</b><span>août 2026</span></footer></article>
+            </div>
+            <div class="avis-points" id="avis-points"></div>
+          </div>
+          <p class="fine" data-i18n="avis.fine">Une sélection d'avis Google, reproduits tels quels avec leur date, et non vérifiés par le restaurant. Tous les avis, bons et moins bons, sont à lire sur Google. En production, ils s'affichent ici en direct.</p>
+          <div class="avis-links">
+            <a class="btn btn-ghost" href="https://www.google.com/maps/place/?q=place_id:ChIJ-SIFuukb90cRnD9t-Ioq67Y" target="_blank" rel="noopener" data-i18n="avis.read">Lire les avis</a>
+            <a class="btn btn-ghost" href="https://search.google.com/local/writereview?placeid=ChIJ-SIFuukb90cRnD9t-Ioq67Y" target="_blank" rel="noopener" data-i18n="avis.write">Laisser un avis</a>
+          </div>
+        </section>
+
+        <section class="infos reveal" aria-labelledby="infos-title">
+          <h3 id="infos-title" data-i18n="infos.title">Nous trouver</h3>
+          <address class="infos-card">
+            <p><svg aria-hidden="true"><use href="#i-pin"/></svg><span>10 boulevard Léon-Malfreyt<br>63000 Clermont-Ferrand</span></p>
+            <p><svg aria-hidden="true"><use href="#i-tel"/></svg><a href="tel:+33760120063">07 60 12 00 63</a></p>
+            <p><svg aria-hidden="true"><use href="#i-mail"/></svg><a href="mailto:bougnatburger@hotmail.fr">bougnatburger@hotmail.fr</a></p>
+          </address>
+          <div class="infos-actions">
+            <a class="btn btn-main" id="route-google" href="https://www.google.com/maps/dir/?api=1&amp;destination=45.7739412,3.0856348&amp;destination_place_id=ChIJ-SIFuukb90cRnD9t-Ioq67Y" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-pin"/></svg><span data-i18n="infos.route">Itinéraire</span></a>
+            <a class="btn btn-ghost" href="https://www.instagram.com/bougnatburger/" target="_blank" rel="noopener">Instagram</a>
+            <a class="btn btn-ghost" href="https://www.facebook.com/BougnatBurger" target="_blank" rel="noopener">Facebook</a>
+          </div>
+        </section>
+
+        <footer class="nous-foot">
+          <a href="mentions-legales.html" data-i18n="foot.legal">Mentions légales et confidentialité</a>
+          <p data-i18n="foot.demo">Maquette de démonstration. Prix et informations issus de la carte du restaurant, septembre 2026.</p>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar" id="tabbar" aria-label="Navigation">
+    <a href="#accueil" class="tab" data-tab="accueil" data-sfx="tab" data-sfx-i="0"><svg aria-hidden="true"><use href="#i-volcan"/></svg><span data-i18n="tab.home">Accueil</span></a>
+    <a href="#carte" class="tab" data-tab="carte" data-sfx="tab" data-sfx-i="1"><svg aria-hidden="true"><use href="#i-burger"/></svg><span data-i18n="tab.menu">Carte</span></a>
+    <a href="#commander" class="tab" data-tab="commander" data-sfx="tab" data-sfx-i="2"><svg aria-hidden="true"><use href="#i-sac"/></svg><span data-i18n="tab.order">Commander</span><i class="tab-dot" id="tab-dot" hidden></i></a>
+    <a href="#reserver" class="tab" data-tab="reserver" data-sfx="tab" data-sfx-i="3"><svg aria-hidden="true"><use href="#i-couverts"/></svg><span data-i18n="tab.book">Réserver</span></a>
+    <a href="#nous" class="tab" data-tab="nous" data-sfx="tab" data-sfx-i="4"><svg aria-hidden="true"><use href="#i-casquette"/></svg><span data-i18n="tab.us">Nous</span></a>
+  </nav>
+
+  <!-- Fiche d'un plat -->
+  <div class="sheet" id="sheet-product" role="dialog" aria-modal="true" aria-labelledby="p-name" hidden>
+    <div class="sheet-scrim" data-close></div>
+    <div class="sheet-panel">
+      <button class="sheet-close" type="button" data-close aria-label="Fermer" data-i18n-attr="aria-label:close" data-sfx="close"><svg aria-hidden="true"><use href="#i-fermer"/></svg></button>
+      <div class="sheet-grab" aria-hidden="true"></div>
+      <div class="p-visual" id="p-visual"></div>
+      <div class="p-body">
+        <span class="p-tampon" id="p-tampon" hidden></span>
+        <h3 class="p-name" id="p-name"></h3>
+        <p class="p-tagline" id="p-tagline"></p>
+        <div class="p-options" id="p-options"></div>
+        <p class="p-desc" id="p-desc"></p>
+        <ul class="p-notes" id="p-notes"></ul>
+      </div>
+      <div class="p-foot">
+        <div class="p-qty stepper" id="p-qty">
+          <button type="button" data-step="-1" aria-label="Moins" data-sfx="down"><svg aria-hidden="true"><use href="#i-moins"/></svg></button>
+          <output id="p-count">1</output>
+          <button type="button" data-step="1" aria-label="Plus" data-sfx="up"><svg aria-hidden="true"><use href="#i-plus"/></svg></button>
+        </div>
+        <button class="btn btn-main p-add" id="p-add" type="button" data-sfx="none"><span data-i18n="p.add">Ajouter</span><b id="p-price"></b></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<!-- ============================== ICÔNES (dessinées pour Bougnat Burger) ============================== -->
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- L'encre des tampons : densité inégale (le tampon appuie plus ou moins), bord qui bave, petits manques -->
+    <filter id="encre" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="2" seed="3" result="b"/>
+      <feDisplacementMap in="SourceGraphic" in2="b" scale="0.75" xChannelSelector="R" yChannelSelector="G" result="bave"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.3" numOctaves="2" seed="8" result="nappe"/>
+      <feColorMatrix in="nappe" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -0.9 1.4" result="densite"/>
+      <feTurbulence type="fractalNoise" baseFrequency="1.05" numOctaves="1" seed="21" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -20 15.4" result="trous"/>
+      <feComposite in="densite" in2="trous" operator="in" result="masque"/>
+      <feComposite in="bave" in2="masque" operator="in"/>
+    </filter>
+    <!-- La même encre pour le grand cachet du ticket (grain à son échelle) -->
+    <filter id="encre-cachet" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="2" seed="5" result="b"/>
+      <feDisplacementMap in="SourceGraphic" in2="b" scale="1.6" xChannelSelector="R" yChannelSelector="G" result="bave"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="12" result="nappe"/>
+      <feColorMatrix in="nappe" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.8 2.25" result="densite"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.42" numOctaves="1" seed="31" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -18 12.9" result="trous"/>
+      <feComposite in="densite" in2="trous" operator="in" result="masque"/>
+      <feComposite in="bave" in2="masque" operator="in"/>
+    </filter>
+    <!-- L'encre du tampon « frites maison » de la fiche : à son échelle, moins de bave et de manques -->
+    <filter id="encre-tampon" x="-6%" y="-6%" width="112%" height="112%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" result="b"/>
+      <feDisplacementMap in="SourceGraphic" in2="b" scale="0.9" xChannelSelector="R" yChannelSelector="G" result="bave"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="9" result="nappe"/>
+      <feColorMatrix in="nappe" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.75" result="densite"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="1" seed="17" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -16 11.4" result="trous"/>
+      <feComposite in="densite" in2="trous" operator="in" result="masque"/>
+      <feComposite in="bave" in2="masque" operator="in"/>
+    </filter>
+    <!-- Le cachet du ticket : un tampon postal « Bougnat Burger · Clermont-Ferrand », le puy de Dôme, « merci » -->
+    <symbol id="tampon" viewBox="0 0 152 100">
+      <g filter="url(#encre-cachet)" fill="currentColor" stroke="currentColor">
+        <circle cx="50" cy="50" r="45" fill="none" stroke-width="3.2"/>
+        <circle cx="50" cy="50" r="39.2" fill="none" stroke-width="1.3"/>
+        <circle cx="50" cy="50" r="26.4" fill="none" stroke-width="1.3"/>
+        <path id="tampon-haut" d="M19.30 54.31A31 31 0 1 1 80.70 54.31" fill="none" stroke="none"/>
+        <path id="tampon-bas" d="M18.92 66.53A35.2 35.2 0 0 0 81.08 66.53" fill="none" stroke="none"/>
+        <text stroke="none" font-family="'Instrument Sans', Arial, sans-serif" font-weight="700" font-size="9" letter-spacing="1.3" text-anchor="middle"><textPath href="#tampon-haut" startOffset="50%">BOUGNAT BURGER</textPath></text>
+        <text stroke="none" font-family="'Instrument Sans', Arial, sans-serif" font-weight="700" font-size="7.6" letter-spacing="2" text-anchor="middle"><textPath href="#tampon-bas" startOffset="50%">CLERMONT-FD</textPath></text>
+        <path stroke="none" d="M18.62 57.10L19.44 59.07L21.56 59.24L19.94 60.63L20.44 62.71L18.62 61.59L16.79 62.71L17.29 60.63L15.67 59.24L17.80 59.07ZM81.38 57.10L82.20 59.07L84.33 59.24L82.71 60.63L83.21 62.71L81.38 61.59L79.56 62.71L80.06 60.63L78.44 59.24L80.56 59.07Z"/>
+        <path stroke="none" d="M31 46.5C34 45.9 36.3 44.7 38.3 42.8C40 41.3 41.3 39.4 42.8 38.1L43.6 37.7H44.5C46.3 38 48.5 38.4 49.6 39.2C51.1 40.3 52.4 42.4 54.1 44.1C55 45 56.3 45.7 69 46.5V47.6H31Z"/>
+        <path stroke="none" d="M44 37.8V32.4h.9v5.4z"/>
+        <text x="50" y="60.4" stroke="none" text-anchor="middle" font-family="Shrikhand, Georgia, serif" font-size="12.4">merci</text>
+        <text x="50" y="67.6" stroke="none" text-anchor="middle" font-family="'Instrument Sans', Arial, sans-serif" font-weight="700" font-size="4.8" letter-spacing="1">DEPUIS 2012</text>
+        <g fill="none" stroke-width="2.3" stroke-linecap="round"><path d="M94 35q5.5-3.6 11 0t11 0 11 0 11 0 11 0"/><path d="M94 44.5q5.5-3.6 11 0t11 0 11 0 11 0 11 0"/><path d="M94 54q5.5-3.6 11 0t11 0 11 0 11 0 11 0"/><path d="M94 63.5q5.5-3.6 11 0t11 0 11 0 11 0 11 0"/></g>
+      </g>
+    </symbol>
+    <!-- PUYS:START (généré par tools/puys/build.py) -->
+    <symbol id="puys-fill" viewBox="0 0 520 40" preserveAspectRatio="none"><path d="M0 34.83 4 34.49 8 34.4 19.5 34.95 24.5 33.03 29 31.67 33 30.87 37 30.58 39 30.72 41 31.19 43 32.05 46 33.73 50 33.71 54 33.96 68.5 35.96 75 36.41 86 31.91 92 29.84 95 29.06 98 28.48 101 28.12 103.5 28 106.5 28.08 109.5 28.4 112.5 28.95 115.5 29.7 121.5 31.71 131.5 35.84 132 35.94 139 35.04 142.5 33.32 145 32.34 147.5 31.72 149.5 31.51 152 31.64 155 32.34 158 33.55 161.5 35.4 168 35.2 181 33.81 187 33.55 191 32.31 193 32.2 194 31.92 195 31.8 196.5 30.96 198.5 30.39 199.5 29.85 201 29.68 202 29.26 203 29.36 203.5 29.21 206.5 27.74 207 27.62 210 27.53 211 27.18 212 26.63 215 26.1 216 25.64 217.5 25.39 219 24.87 223.5 23.74 226 23.7 227 23.4 228 23.29 229 22.79 230 22 231.5 21.23 232.5 20.46 234.5 19.23 238 17.46 240.5 16.03 241.5 15.62 242.5 15.38 243.5 14.88 246 12.99 250.5 10.34 255.5 8.01 257.5 7.46 258.5 7.33 260 6.07 260.5 6.3 261.5 7.32 262.5 7.55 265 8.95 267.5 9.89 268.5 9.93 269.5 10.23 271 10.29 274 11.27 275.5 11.34 277.5 11.97 279.5 12.06 280.5 12.36 282 12.39 283.5 12.73 286 12.8 287 13.08 288.5 13.16 289.5 13.44 290.5 13.48 291.5 13.78 293 13.95 295 15.2 296.5 16.55 299 18.2 300.5 19.38 303 21.87 305 24.11 307 25.67 313 28.84 317 30.36 319.5 31.43 323 33.16 324 33.51 328 30.52 331 28.74 332.5 28.12 334 27.7 336.5 27.51 338 27.7 339.5 28.12 341 28.74 342.5 29.55 345.5 31.62 350.5 35.72 355 35.65 365.5 35.14 371.5 35.22 372 35.03 377 31.24 380.5 28.8 383 27.32 385.5 26.23 387 25.88 388.5 25.81 393 26.54 394.5 26.59 398.5 25.9 400 25.8 401 25.88 402.5 26.23 404 26.82 405.5 27.59 409.5 30.15 416.5 35.41 417 35.49 421 35.44 427.5 35.63 437 31.17 440 29.93 443 28.86 446 28 448.5 27.48 451.5 27.1 454 27 456.5 27.1 459 27.4 461.5 27.88 464.5 28.7 470 30.74 479 34.88 483.5 35.27 487.5 35.42 491.5 35.37 497 35.08 500.5 33.32 503.5 32.19 506 31.64 508.5 31.51 511 31.81 513.5 32.51 516.5 33.8 520 35.68 L520 40 L0 40Z"/><path d="M259.3 6.67L259.55 0.84L260 0.2L260.45 0.84L260.7 6.67ZM258.4 4.67h3.2v1.9h-3.2z"/></symbol>
+    <symbol id="puys-line" viewBox="0 0 520 40" preserveAspectRatio="none"><path d="M0 34.83 4 34.49 8 34.4 19.5 34.95 24.5 33.03 29 31.67 33 30.87 37 30.58 39 30.72 41 31.19 43 32.05 46 33.73 50 33.71 54 33.96 68.5 35.96 75 36.41 86 31.91 92 29.84 95 29.06 98 28.48 101 28.12 103.5 28 106.5 28.08 109.5 28.4 112.5 28.95 115.5 29.7 121.5 31.71 131.5 35.84 132 35.94 139 35.04 142.5 33.32 145 32.34 147.5 31.72 149.5 31.51 152 31.64 155 32.34 158 33.55 161.5 35.4 168 35.2 181 33.81 187 33.55 191 32.31 193 32.2 194 31.92 195 31.8 196.5 30.96 198.5 30.39 199.5 29.85 201 29.68 202 29.26 203 29.36 203.5 29.21 206.5 27.74 207 27.62 210 27.53 211 27.18 212 26.63 215 26.1 216 25.64 217.5 25.39 219 24.87 223.5 23.74 226 23.7 227 23.4 228 23.29 229 22.79 230 22 231.5 21.23 232.5 20.46 234.5 19.23 238 17.46 240.5 16.03 241.5 15.62 242.5 15.38 243.5 14.88 246 12.99 250.5 10.34 255.5 8.01 257.5 7.46 258.5 7.33 260 6.07 260.5 6.3 261.5 7.32 262.5 7.55 265 8.95 267.5 9.89 268.5 9.93 269.5 10.23 271 10.29 274 11.27 275.5 11.34 277.5 11.97 279.5 12.06 280.5 12.36 282 12.39 283.5 12.73 286 12.8 287 13.08 288.5 13.16 289.5 13.44 290.5 13.48 291.5 13.78 293 13.95 295 15.2 296.5 16.55 299 18.2 300.5 19.38 303 21.87 305 24.11 307 25.67 313 28.84 317 30.36 319.5 31.43 323 33.16 324 33.51 328 30.52 331 28.74 332.5 28.12 334 27.7 336.5 27.51 338 27.7 339.5 28.12 341 28.74 342.5 29.55 345.5 31.62 350.5 35.72 355 35.65 365.5 35.14 371.5 35.22 372 35.03 377 31.24 380.5 28.8 383 27.32 385.5 26.23 387 25.88 388.5 25.81 393 26.54 394.5 26.59 398.5 25.9 400 25.8 401 25.88 402.5 26.23 404 26.82 405.5 27.59 409.5 30.15 416.5 35.41 417 35.49 421 35.44 427.5 35.63 437 31.17 440 29.93 443 28.86 446 28 448.5 27.48 451.5 27.1 454 27 456.5 27.1 459 27.4 461.5 27.88 464.5 28.7 470 30.74 479 34.88 483.5 35.27 487.5 35.42 491.5 35.37 497 35.08 500.5 33.32 503.5 32.19 506 31.64 508.5 31.51 511 31.81 513.5 32.51 516.5 33.8 520 35.68" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/><path d="M260 6.07V0.3" fill="none" stroke="currentColor" stroke-width="1.4" vector-effect="non-scaling-stroke"/></symbol>
+    <!-- PUYS:END -->
+    <!-- Le mini-logo : le volcan et son filet de lave-fromage -->
+    <symbol id="logo-mini" viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="23.5" fill="#2B1A10"/><g transform="translate(6.00 13.24) scale(0.08571)"><path d="M24.4 225.25C24.55 227.5 24.75 229.15 25.34 231.25C25.92 233.35 26.17 236.34 27.91 237.82C29.65 239.31 33.19 239.75 35.75 240.18C38.31 240.61 41.4 239.96 43.25 240.41C45.1 240.86 46.17 242.16 46.82 242.87C47.47 243.59 47.25 244.19 47.14 244.71C47.03 245.24 47.54 245.8 46.15 246.03C44.76 246.26 39.97 245.98 38.78 246.1C37.59 246.23 38.43 246.53 39.01 246.8C39.59 247.07 38.96 247.49 42.25 247.72C45.54 247.96 55.02 248.27 58.75 248.19C62.48 248.1 62.4 248.24 64.65 247.21C66.9 246.18 69.48 243.32 72.25 242.02C75.02 240.72 79.02 239.86 81.25 239.43C83.48 239.01 84.61 239.08 85.65 239.47C86.69 239.87 86.87 241.41 87.47 241.81C88.07 242.22 88.39 242.2 89.25 241.9C90.12 241.6 91.72 240.9 92.65 240.01C93.58 239.12 93.49 237.73 94.84 236.54C96.19 235.36 97.93 233.79 100.75 232.88C103.57 231.97 109 231.76 111.75 231.09C114.5 230.43 115.08 229.21 117.25 228.88C119.42 228.55 123 229.22 124.75 229.12C126.5 229.03 125.67 229.24 127.75 228.33C129.83 227.42 135.74 224.55 137.22 223.64C138.7 222.72 137.48 223.12 136.64 222.85C135.8 222.58 132.97 222.45 132.18 222.03C131.38 221.6 131.75 220.8 131.86 220.29C131.97 219.77 131.54 219.53 132.85 218.95C134.16 218.36 138.3 217.08 139.75 216.79C141.19 216.5 140.99 216.66 141.53 217.18C142.06 217.69 141.77 219.66 142.97 219.88C144.18 220.1 147.04 219.29 148.75 218.51C150.46 217.73 152.26 216.55 153.21 215.18C154.17 213.8 154.04 211.34 154.47 210.26C154.9 209.18 154.99 209.1 155.79 208.68C156.58 208.25 157.76 208.38 159.25 207.71C160.74 207.05 162.58 205.54 164.75 204.7C166.92 203.87 169.62 203.99 172.25 202.71C174.88 201.43 178.54 198.25 180.54 197.02C182.55 195.79 182.91 195.62 184.28 195.34C185.64 195.06 187.46 195.13 188.71 195.35C189.97 195.56 190.53 196.65 191.79 196.64C193.04 196.64 194.26 195.63 196.25 195.32C198.24 195.01 198.58 194.79 203.75 194.78C208.92 194.76 222.42 195.36 227.25 195.22C232.08 195.09 230.99 194.64 232.74 193.97C234.49 193.31 236.5 191.77 237.75 191.23C239 190.7 239.04 190.69 240.25 190.76C241.46 190.83 243.93 190.96 245.03 191.67C246.13 192.38 245.73 194.44 246.85 195.03C247.97 195.62 250.63 195.36 251.74 195.21C252.85 195.07 253.12 195.02 253.53 194.15C253.93 193.28 253.72 190.79 254.18 189.97C254.63 189.16 255.51 189.34 256.25 189.26C257 189.18 257.89 189.17 258.65 189.47C259.42 189.77 259.84 190.86 260.85 191.09C261.86 191.32 263.63 190.67 264.71 190.85C265.8 191.03 266.25 191.85 267.34 192.15C268.43 192.46 269.51 192.66 271.25 192.69C272.99 192.71 276.05 192.1 277.75 192.31C279.45 192.52 279.85 194.16 281.43 193.95C283.02 193.74 285.95 191.58 287.25 191.05C288.55 190.52 288.01 190.51 289.25 190.76C290.49 191.02 293.29 192.57 294.71 192.59C296.14 192.6 295.95 191.15 297.79 190.85C299.63 190.55 303.59 190.71 305.75 190.81C307.91 190.92 309.24 190.98 310.74 191.47C312.24 191.96 312.67 193.19 314.76 193.74C316.84 194.28 321.12 194.61 323.25 194.74C325.38 194.87 326.38 194.92 327.56 194.53C328.73 194.13 329.31 192.64 330.28 192.36C331.25 192.09 332.21 192.89 333.37 192.88C334.53 192.87 336.38 192.32 337.24 192.29C338.1 192.26 338.01 192.26 338.53 192.68C339.05 193.09 339.15 194.19 340.35 194.77C341.55 195.35 344.58 196.01 345.74 196.14C346.9 196.27 346.81 196.05 347.32 195.53C347.84 195 347.61 193.2 348.85 192.97C350.09 192.75 353.14 194.06 354.75 194.15C356.36 194.24 357.81 193.78 358.5 193.53C359.18 193.28 359.16 193.36 358.85 192.65C358.55 191.94 358.04 190.8 356.69 189.25C355.33 187.7 352.62 184.78 350.75 183.32C348.88 181.87 347.06 182.23 345.44 180.51C343.82 178.79 342.69 174.78 341.03 173.02C339.37 171.26 336.62 171.09 335.47 169.97C334.33 168.85 334.96 167.57 334.15 166.31C333.34 165.06 332.46 163.7 330.63 162.43C328.79 161.17 325.26 159.44 323.13 158.73C321 158.01 318.89 158.64 317.85 158.15C316.81 157.66 316.72 156.49 316.86 155.79C317.01 155.08 318.45 154.34 318.72 153.93C319 153.51 319.07 153.72 318.49 153.27C317.91 152.83 316.34 151.75 315.25 151.26C314.16 150.77 312.72 151.05 311.97 150.32C311.22 149.59 311.37 147.9 310.74 146.87C310.11 145.84 309.91 145.03 308.19 144.15C306.46 143.26 302.9 143.79 300.4 141.55C297.9 139.32 295.25 133.39 293.18 130.75C291.1 128.11 289.55 127.06 287.95 125.72C286.36 124.37 284.55 123.92 283.61 122.68C282.68 121.43 282.51 119.22 282.32 118.25C282.13 117.28 282.23 117.38 282.47 116.85C282.72 116.32 283.69 115.55 283.81 115.07C283.93 114.58 292.38 122.63 283.2 113.94C274.02 105.26 238.24 71.58 228.75 62.97C219.26 54.37 227.5 62.2 226.25 62.33C225 62.45 222.57 63.25 221.25 63.71C219.93 64.17 219.2 64.36 218.32 65.09C217.44 65.81 216.65 67.39 215.97 68.05C215.29 68.72 217.61 68.13 214.24 69.07C210.87 70.01 202 72.73 195.75 73.68C189.5 74.62 181.58 74.88 176.75 74.74C171.92 74.6 169.08 73.03 166.75 72.86C164.42 72.68 163.83 73.63 162.75 73.69C161.67 73.74 162.16 73.95 160.25 73.18C158.34 72.41 154.03 70.58 151.28 69.08C148.53 67.58 146.17 66.22 143.75 64.16C141.33 62.11 139.22 60.65 136.78 56.75C134.34 52.85 130.9 44.92 129.1 40.75C127.31 36.58 126.87 34.98 126.02 31.75C125.17 28.52 124.58 23.29 124.03 21.34C123.48 19.39 123.42 20.44 122.71 20.06C122 19.68 120.59 18.98 119.78 19.06C118.97 19.14 118.62 19.28 117.85 20.56C117.07 21.84 117.51 22.85 115.13 26.75C112.75 30.65 106.79 38.7 103.54 43.95C100.29 49.2 98.13 52.87 95.63 58.25C93.14 63.63 90.72 71.58 88.59 76.25C86.47 80.92 83.91 83.79 82.87 86.25C81.82 88.71 83.17 89.74 82.32 91.03C81.48 92.31 79.42 92.46 77.8 93.96C76.19 95.45 73.59 98.02 72.61 99.98C71.64 101.95 72.27 104.14 71.94 105.75C71.61 107.36 70.63 108.64 70.64 109.65C70.66 110.67 71.8 111.18 72.03 111.85C72.26 112.51 72.17 113.2 72.03 113.65C71.88 114.1 71.85 114.22 71.15 114.53C70.45 114.83 69.42 113.75 67.84 115.47C66.26 117.19 62.29 122.89 61.68 124.85C61.06 126.82 63.87 126.07 64.15 127.29C64.43 128.5 63.67 131.19 63.35 132.15C63.03 133.11 62.71 132.88 62.21 133.03C61.71 133.17 60.9 133.48 60.35 133.03C59.8 132.57 59.26 130.7 58.89 130.28C58.51 129.86 58.87 129.53 58.1 130.51C57.32 131.49 55.26 134.91 54.24 136.15C53.22 137.39 52.46 137.05 51.97 137.97C51.49 138.89 52.3 139.63 51.32 141.69C50.35 143.75 48.61 145.23 46.12 150.32C43.63 155.42 38.25 167.11 36.37 172.25C34.5 177.39 34.64 179.36 34.88 181.15C35.12 182.94 37.27 182.29 37.82 182.97C38.37 183.66 38.95 181.88 38.19 185.25C37.42 188.62 34.23 200 33.22 203.21C32.22 206.42 32.64 204.31 32.15 204.53C31.66 204.74 30.96 205 30.29 204.53C29.62 204.05 28.72 201.82 28.12 201.7C27.52 201.57 26.9 202.53 26.71 203.75C26.51 204.97 26.37 207.91 26.97 209.03C27.58 210.15 29.7 209.6 30.32 210.47C30.94 211.34 30.71 213.3 30.69 214.25C30.66 215.2 30.48 215.67 30.15 216.15C29.82 216.63 29.25 217.03 28.72 217.14C28.19 217.25 27.44 217.22 26.97 216.82C26.5 216.43 26.22 215.02 25.9 214.78C25.57 214.53 25.27 214.87 25.02 215.36C24.77 215.86 24.5 216.1 24.4 217.75C24.3 219.4 24.24 223 24.4 225.25ZM52.15 148.47C52.71 148.71 53.05 149.16 53.14 149.79C53.23 150.42 53.21 151.22 52.69 152.25C52.16 153.28 50.53 154.83 49.97 155.96C49.41 157.09 49.84 158.43 49.32 159.03C48.8 159.62 47.43 159.82 46.85 159.53C46.27 159.23 45.75 158.03 45.86 157.29C45.97 156.54 47.11 156.36 47.53 155.04C47.94 153.72 47.97 150.46 48.35 149.35C48.73 148.24 49.15 148.5 49.79 148.35C50.42 148.2 51.59 148.23 52.15 148.47Z" fill="#96c124" stroke="#FFFFFF" stroke-width="15" stroke-linejoin="round" paint-order="stroke" fill-rule="evenodd"/></g>
+    </symbol>
+
+    <!-- Onglets (tampons gravés : aplats et réserves en creux) -->
+    <symbol id="i-volcan" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M18.2 3.4a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2zm0 1.5a2.1 2.1 0 1 0 0 4.2 2.1 2.1 0 0 0 0-4.2z"/><path d="M1 21v-1.9c2.4-.5 4.6-1.7 6.4-3.4 1.4-1.4 2.6-3.1 4-4.3l.8-.4h.8c1.6.3 3.4.7 4.4 1.4 1.4 1 2.4 3 3.9 4.4.7.7 1.6 1.2 2.5 1.6V21zM3.6 19.4c2.1-.6 4-1.7 5.5-3.2l.5.5c-1.6 1.6-3.6 2.8-5.8 3.4z"/><path d="M11.9 11.7V6.4h.8v5.3z"/><path d="M11.1 8h2.4v.7h-2.4z"/></g></symbol>
+    <symbol id="i-burger" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M12 3.2c4.7 0 8.5 2.6 8.5 6.5 0 .5-.4.9-.9.9H4.4c-.5 0-.9-.4-.9-.9 0-3.9 3.8-6.5 8.5-6.5zM8.40 6.18a0.72 0.42 0 1 0 0 0.84a0.72 0.42 0 1 0 0 -0.84zM12.00 5.08a0.72 0.42 0 1 0 0 0.84a0.72 0.42 0 1 0 0 -0.84zM15.60 6.18a0.72 0.42 0 1 0 0 0.84a0.72 0.42 0 1 0 0 -0.84zM10.20 8.08a0.72 0.42 0 1 0 0 0.84a0.72 0.42 0 1 0 0 -0.84zM13.80 8.08a0.72 0.42 0 1 0 0 0.84a0.72 0.42 0 1 0 0 -0.84z"/><path d="M2.6 12.2c.6 0 .9.9 1.8.9s1.2-.9 1.8-.9c.6 0 .9.9 1.8.9s1.2-.9 1.8-.9c.6 0 .9.9 1.8.9s1.2-.9 1.8-.9c.6 0 .9.9 1.8.9s1.2-.9 1.8-.9c.6 0 .9.9 1.8.9s1.2-.9 1.8-.9c.6 0 .9.9 1.8.9V14.2H2.6z"/><path d="M3.5 15h17a1.25 1.25 0 0 1 1.25 1.25v.5A1.25 1.25 0 0 1 20.5 18h-17a1.25 1.25 0 0 1-1.25-1.25v-.5A1.25 1.25 0 0 1 3.5 15zM6.6 16.9l1.6-.7v.6l-1.6.7zm4.6 0 1.6-.7v.6l-1.6.7zm4.6 0 1.6-.7v.6l-1.6.7z"/><path d="M3.5 18.9h17v.2c0 1.4-1.1 2.5-2.5 2.5H6c-1.4 0-2.5-1.1-2.5-2.5z"/></g></symbol>
+    <symbol id="i-sac" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M5 8.1h14l-1.1 12.1c-.1 1-1 1.8-2 1.8H8.1c-1 0-1.9-.8-2-1.8zM5.9 10.3h12.2l-.1.9H5.8zM9.2 18.5l2-2.8 1 .9 1.5-2 2.1 3.9z"/><path d="M8.7 9.1V7.2a3.3 3.3 0 0 1 6.6 0v1.9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g></symbol>
+    <symbol id="i-couverts" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M5.8 2.8H7v4.8h1V2.8h1.2v4.8h1V2.8h1.2v5.5c0 1.4-.9 2.5-2.1 2.9v9.3a1.15 1.15 0 0 1-2.3 0v-9.3c-1.2-.4-2.2-1.5-2.2-2.9z"/><path d="M17.4 2.8c-2.6.8-4.2 3.6-4.2 7.1 0 2 .6 3.3 1.6 3.8v7.1a1.3 1.3 0 0 0 2.6 0z"/></g></symbol>
+    <!-- Nous : la casquette du bougnat -->
+    <symbol id="i-casquette" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M2.8 14.2C2.9 10.5 6.6 7.5 12 7.3c4.6-.2 8.6 1.4 9.3 4.2.3 1.3-.4 2.4-1.8 2.7l-8.1 1.4zM6.2 11.2c3-1.8 7.3-2.3 11.4-1.2l-.2.8c-3.9-1-7.9-.5-10.8 1.1z"/><path d="M11 16.5c-3 .5-6 1.5-8 2.8-.6.4-.3 1.2.4 1.1 3.2-.5 6.3-1.4 8.8-2.4z"/><path d="M11.9 5.4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></g></symbol>
+
+    <!-- Rubriques -->
+    <symbol id="i-steak" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M5 8.8c1.5-3.8 6-5.6 10.1-4.6 4 1 6.3 4.8 4.9 8.4-1.1 2.8-3.6 3.9-5.4 5.7-1.8 1.7-4 2.9-6.4 2-2.8-1.2-3.3-3.9-3.8-6.2-.2-1.9-.1-3.6.6-5.3zM7.2 13.2l6.8-6.8.8.8-6.8 6.8zM9.2 16l6.9-6.9.8.8-6.9 6.9zM6.2 9.1c1.4-2.6 4.2-3.9 7-3.6l-.1.8c-2.5-.3-4.9.9-6.1 3.1z"/></g></symbol>
+    <symbol id="i-salade" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M2.8 12.3h18.4c-.4 4.6-4.4 7.9-9.2 7.9s-8.8-3.3-9.2-7.9zM4.6 13.6h14.8l-.2.8H4.8z"/><path d="M6.3 11.5c-1-2.7.3-5.6 3.1-6.5 1 2.7-.3 5.5-3.1 6.5zM11.1 11.5c-.4-3.1 1.3-6 4.4-6.7.4 3.1-1.3 5.9-4.4 6.7zM15.9 11.5c.3-1.9 1.6-3.2 3.3-3.6-.3 1.9-1.6 3.2-3.3 3.6z"/></g></symbol>
+    <symbol id="i-wrap" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M8.6 7.6h8.2c2.5 0 4.5 2 4.5 4.5v.8c0 2.5-2 4.5-4.5 4.5H8.6zM12.8 7.6h1.6v9.8h-1.6z"/><path d="M6.60 7.50a3.9 5 0 1 0 0 10.00a3.9 5 0 1 0 0 -10.00zM6.60 9.00a2.6 3.5 0 1 0 0 7.00a2.6 3.5 0 1 0 0 -7.00zM6.60 10.60a1.4 1.9 0 1 0 0 3.80a1.4 1.9 0 1 0 0 -3.80z"/></g></symbol>
+    <symbol id="i-petiot" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M7.8 6.1 9.1 3.3l1.7 2.1L12 2.9l1.2 2.5 1.7-2.1 1.3 2.8z"/><path d="M6 12.6c0-3 2.7-5 6-5s6 2 6 5c0 .4-.3.7-.7.7H6.7c-.4 0-.7-.3-.7-.7z"/><path d="M5.5 14.5h13a1 1 0 0 1 1 1v.3a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1v-.3a1 1 0 0 1 1-1zM6 17.8h12v.2c0 1.1-.9 2-2 2H8c-1.1 0-2-.9-2-2z"/></g></symbol>
+    <symbol id="i-dessert" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M3.2 11.9 14.6 7.9l6.2 4z"/><path d="M3.2 12.8h17.6v7.2H3.2zM3.2 15.1h17.6v.9H3.2zM3.2 17.4h17.6v.9H3.2z"/><path d="M14.9 3.6a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6z"/><path d="M15.4 3.9c.5-1.2 1.5-1.9 2.8-2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></g></symbol>
+    <symbol id="i-biere" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M6.4 8.5h10.8v11.2c0 1.3-1 2.3-2.3 2.3H8.7c-1.3 0-2.3-1-2.3-2.3zM9 11v8h1.2v-8zM12.8 11v8H14v-8z"/><path d="M6.1 7.7c-.6-2 1-3.8 3-3.6 1-1.4 3.1-1.6 4.2-.5 1.8-.4 3.4 1 3.2 2.7 1.1.3 1.5 1.3 1.1 2.1z"/><path d="M18 10.4h1.2c1.6 0 2.6 1.3 2.4 2.8l-.3 2.3c-.2 1.4-1.4 2.3-2.7 2.3H18v-1.7h.6c.5 0 1-.4 1-.9l.3-2.2c.1-.5-.3-.9-.8-.9H18z"/></g></symbol>
+    <symbol id="i-frites" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M7.2 3.5l1.3.2-.7 7.3-1.3-.1zM10 2.7h1.3V11H10zM13 3l1.3.1-.4 8-1.3-.1zM15.9 3.9l1.3.3-1.2 7-1.3-.2z"/><path d="M4.9 10.5h14.2l-1.9 9.6c-.2 1-1 1.7-2 1.7H8.8c-1 0-1.8-.7-2-1.7zM9.5 14.3c1.7 1.1 3.3 1.1 5 0l.4.7c-1.9 1.3-3.8 1.3-5.8 0z"/></g></symbol>
+    <symbol id="i-fromage" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M12.00 6.10a8.8 3.3 0 1 0 0 6.60a8.8 3.3 0 1 0 0 -6.60zM12 9.4l8.2 1.3-2.4 1.7z"/><path d="M3.2 10.4c.3 2.1 4.1 3.4 8.8 3.4s8.5-1.3 8.8-3.4v4.4c0 2.4-3.9 4.3-8.8 4.3s-8.8-1.9-8.8-4.3zM4.4 14.6c1.8 1.3 4.5 1.9 7.6 1.9s5.8-.6 7.6-1.9v.9c-1.8 1.2-4.6 1.9-7.6 1.9s-5.8-.7-7.6-1.9z"/></g></symbol>
+
+    <!-- Actions -->
+    <symbol id="i-tel" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M6.4 3.3 9 2.8c.6-.1 1.2.2 1.4.8l1.2 3.2c.2.6 0 1.2-.5 1.5l-1.5 1c.9 2 2.4 3.5 4.4 4.4l1-1.5c.3-.5 1-.7 1.5-.5l3.2 1.2c.6.2.9.8.8 1.4l-.5 2.5c-.1.8-.8 1.3-1.6 1.3C9.2 19.9 4.1 14.8 4.1 6c0-.8.9-1.9 2.3-2.7z"/></g></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M12 21.7c3.9-3.8 7-7.6 7-11.4a7 7 0 0 0-14 0c0 3.8 3.1 7.6 7 11.4zM8.4 12.6l2.4-3.3 1 .9 1.6-2.1 2.1 4.5z"/></g></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M4.8 5.1h14.4c1.3 0 2.3 1 2.3 2.3v9.2c0 1.3-1 2.3-2.3 2.3H4.8c-1.3 0-2.3-1-2.3-2.3V7.4c0-1.3 1-2.3 2.3-2.3zM4.4 7.3l6.8 5.3c.5.4 1.1.4 1.6 0l6.8-5.3.6.8-6.8 5.3c-.8.7-2 .7-2.8 0L3.8 8.1z"/></g></symbol>
+    <symbol id="i-velo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" filter="url(#encre)"><circle cx="5.6" cy="16.4" r="3.4"/><circle cx="18.4" cy="16.4" r="3.4"/><path d="m5.6 16.4 3.3-6.6h6.8l2.7 6.6M8.9 9.8l3.5 6.6h1.6M11.3 6.6h3"/><rect x="14.4" y="4" width="5.2" height="4.2" rx=".8" fill="currentColor"/></g></symbol>
+    <symbol id="i-son" viewBox="0 0 24 24"><g fill="currentColor" filter="url(#encre)"><path d="M3.6 9.2h3.3l4.9-4.2c.5-.4 1.3 0 1.3.6v12.8c0 .6-.8 1-1.3.6l-4.9-4.2H3.6c-.5 0-.9-.4-.9-.9v-3.8c0-.5.4-.9.9-.9z"/><path class="wave" d="M15.6 9a4 4 0 0 1 0 6M18.2 6.6a7.4 7.4 0 0 1 0 10.8" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/><path class="mute" d="m15.6 9.5 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></g></symbol>
+    <symbol id="i-fermer" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M6.4 6.4l11.2 11.2M17.6 6.4 6.4 17.6"/></g></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></g></symbol>
+    <symbol id="i-moins" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M5.5 12h13"/></g></symbol>
+    <symbol id="i-etoile" viewBox="0 0 24 24"><path filter="url(#encre)" d="M12.00 3.00L14.41 9.08L20.94 9.50L15.90 13.67L17.53 20.00L12.00 16.50L6.47 20.00L8.10 13.67L3.06 9.50L9.59 9.08Z" fill="currentColor"/></symbol>
+    <symbol id="i-lait-cru" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M9 2.6h6v2.3l2.6 3.5c.5.6.7 1.3.7 2.1v8.7c0 1.3-1 2.3-2.3 2.3H8c-1.3 0-2.3-1-2.3-2.3v-8.7c0-.8.2-1.5.7-2.1L9 4.9zM7.5 12.4h9v4.6h-9zM9.8 13.9h4.4v.8H9.8zM10.6 15.3h2.8v.6h-2.8z"/></g></symbol>
+    <symbol id="i-feuille" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M4.3 19.9C3.8 12 8.9 5.1 20.1 4.1c.6 10-5.5 16.3-13.4 15zM5.7 18.8c3.1-4.7 6.5-8 10.4-10.4l.4.6c-3.8 2.4-7.1 5.7-10.2 10.3z"/></g></symbol>
+    <symbol id="i-piment" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M16.8 7.2c2.8 1.5 3.6 5.1 1.7 8.7-2.6 4.8-8.6 6.7-14.8 5 5.3-1.9 7.8-5.5 9.1-9.4.7-2 2.1-3.6 4-4.3zM15.5 10.2c-.8 2.6-2.3 4.8-4.4 6.4l-.5-.6c2-1.5 3.4-3.6 4.1-6z"/><path d="M16.9 7.4c-.2-1.7.4-3.2 1.9-4.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g></symbol>
+    <symbol id="i-horloge" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M12 3.1a8.9 8.9 0 1 1 0 17.8 8.9 8.9 0 0 1 0-17.8zM11.3 6.6h1.4v5l3.2 1.9-.7 1.2-3.9-2.3zM11.6 4.4h.8v1.1h-.8zM11.6 18.5h.8v1.1h-.8zM4.4 11.6h1.1v.8H4.4zM18.5 11.6h1.1v.8h-1.1z"/></g></symbol>
+    <symbol id="i-carte-bancaire" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M5.2 5.4h13.6c1.3 0 2.4 1.1 2.4 2.4v8.4c0 1.3-1.1 2.4-2.4 2.4H5.2c-1.3 0-2.4-1.1-2.4-2.4V7.8c0-1.3 1.1-2.4 2.4-2.4zM2.8 8.6h18.4v1.8H2.8zM5.6 13.1h3.6v2.5H5.6z"/></g></symbol>
+  </defs>
+</svg>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
+<script src="js/bb-core.js?v=20260927222258"></script>
+<script src="js/bb-anim.js?v=20260927222258"></script>
+<script src="js/bb-data.js?v=20260927222258"></script>
+<script src="js/bb-i18n.js?v=20260927222258"></script>
+<script src="js/bb-logo.js?v=20260927222258"></script>
+<script src="js/bb-splash.js?v=20260927222258"></script>
+<script src="js/bb-hours.js?v=20260927222258"></script>
+<script src="js/bb-bake.js?v=20260927222258" onerror="void 0"></script>
+<script src="js/bb-burger.js?v=20260927222258" onerror="void 0"></script>
+<script src="js/film/bb-bougnat-dessin.js?v=20260927222258" onerror="void 0"></script>
+<script src="js/film/bb-histoire.js?v=20260927222258" onerror="void 0"></script>
+<script src="js/bb-film-sound.js?v=20260927222258"></script>
+<script src="js/bb-carte.js?v=20260927222258"></script>
+<script src="js/bb-shop.js?v=20260927222258"></script>
+<script src="js/bb-avis.js?v=20260927222258"></script>
+<script src="js/bb-resa.js?v=20260927222258"></script>
+<script src="js/bb-app.js?v=20260927222258"></script>
+</body>
+</html>

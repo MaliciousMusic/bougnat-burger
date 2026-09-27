@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Labo — burgers éclatés · Bougnat Burger</title>
+<link rel="stylesheet" href="../css/fonts.css">
+<style>
+  /* les couleurs de l'appli : charbon, crème, vert du logo, pomme pastel */
+  :root {
+    --charbon: #1A130F; --charbon-2: #231A14; --charbon-3: #2E231B; --charbon-4: #3D2F24;
+    --creme: #F5EAD4; --creme-2: #D8C6A8; --creme-3: #A3907A;
+    --vert: #96C124; --pomme: #C8E3A0; --pomme-encre: #24300F; --olive: #7C8A3A;
+    --line: rgba(245, 234, 212, .12);
+    --ciel-hublot: url("../assets/img/hublot-ciel.svg");
+    --f-display: 'Shrikhand', 'Cooper Black', Georgia, serif;
+    --f-ui: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--charbon); color: var(--creme); font: 15px/1.45 var(--f-ui); }
+  h1, h2 { font-family: var(--f-display); font-weight: 400; letter-spacing: 0; margin: 0; }
+  h1 { font-size: 28px; }
+  h2 { font-size: 23px; margin-bottom: 4px; }
+  header, section { padding: 18px 16px; max-width: 1180px; margin: 0 auto; }
+  header p, section > p { margin: 6px 0 0; color: var(--creme-2); max-width: 64ch; }
+  section { border-top: 1px solid var(--line); }
+
+  /* le visuel : le hublot de l'appli, une lumière de studio chaude derrière le produit */
+  .vis { position: relative; --bb-lab-ink: var(--creme); --bb-lab-halo: rgba(20, 14, 10, .88); --bb-lab-dot: var(--pomme); --bb-lab-ring: var(--charbon); }
+  .vis::before {
+    content: ''; position: absolute; left: 50%; bottom: 10px; width: min(74%, 150px); aspect-ratio: 1; transform: translateX(-50%);
+    border-radius: 50%; background: radial-gradient(circle at 50% 36%, #FFF4DE 0%, #F7DFB6 42%, #E8BC86 74%, #CF955E 100%);
+    box-shadow: 0 0 0 1.5px rgba(150, 193, 36, .9), 0 0 0 6px var(--olive), 0 0 0 8px rgba(0, 0, 0, .45),
+      inset 0 0 0 2px rgba(0, 0, 0, .18), inset 0 -14px 26px -10px rgba(120, 60, 20, .45), 0 18px 30px -14px #000;
+  }
+  /* la pastille « frites maison » des cartes (comme dans l'appli) */
+  .card { position: relative; }
+  .avec-frites { position: absolute; z-index: 3; right: 6px; top: 82px; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--pomme); color: var(--pomme-encre); font: 800 9.5px/1.05 var(--f-ui); letter-spacing: .03em; text-transform: uppercase; text-align: center;
+    transform: rotate(-10deg); box-shadow: 0 0 0 2.5px var(--charbon-2), 0 0 0 4px rgba(200, 227, 160, .35), 0 8px 14px -6px #000; }
+  .vis > * { position: relative; z-index: 1; }
+
+  /* --- grand format (la fiche produit de l'appli : 340 px de haut sur téléphone) --- */
+  .hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; align-items: start; }
+  @media (min-width: 820px) { .hero { grid-template-columns: 300px minmax(0, 1fr); } }
+  .ctrl { display: grid; gap: 12px; align-content: start; }
+  .ctrl label { font-size: 13px; color: var(--creme-2); display: grid; gap: 4px; }
+  .ctrl select, .ctrl button { font: inherit; color: var(--creme); background: var(--charbon-3); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
+  .ctrl button { cursor: pointer; }
+  .ctrl button[aria-pressed="true"] { background: var(--vert); color: #16210A; border-color: var(--vert); font-weight: 650; }
+  .seg { display: flex; gap: 6px; flex-wrap: wrap; }
+  .seg button { flex: 1 1 auto; }
+  input[type=range] { width: 100%; accent-color: var(--vert); }
+  .stage-hero { width: 100%; max-width: 520px; height: 340px; margin: 0 auto; border-radius: 26px; background: radial-gradient(90% 60% at 50% 0%, rgba(242, 180, 140, .14), transparent 70%), #1E1611; }
+  .stage-hero.vis::before { width: min(66%, 250px); bottom: 26px; }
+  @media (min-width: 820px) { .stage-hero { height: 460px; } .stage-hero.vis::before { width: min(60%, 300px); } }
+  .meta { font-size: 13px; color: var(--creme-2); }
+  .meta b { color: var(--creme); font-family: var(--f-display); font-weight: 400; font-size: 18px; }
+
+  /* --- grille des cartes (celles de l'appli : 158 px de visuel) --- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 12px; margin-top: 12px; }
+  .card { background: var(--charbon-2); border-radius: 22px; padding: 0 0 12px; cursor: pointer; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+  .card:hover, .card:focus-visible { box-shadow: inset 0 0 0 1px rgba(200, 227, 160, .4); outline: none; }
+  .card .st { width: 100%; height: 158px; }
+  .card .nm { font: 400 18px/1.05 var(--f-display); margin: 6px 12px 6px; }
+  .card .pr { margin: 0 12px; display: inline-block; padding: 5px 10px; border-radius: 999px; background: var(--pomme); color: var(--pomme-encre); font-weight: 800; font-size: 14px; }
+  .card .tg { font-size: 11.5px; color: var(--creme-3); margin: 6px 12px 0; }
+
+  /* --- galerie des textures --- */
+  .gal { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 12px; }
+  .gal figure { margin: 0; background: var(--charbon-2); border: 1px solid var(--line); border-radius: 14px; padding: 8px; display: grid; gap: 4px; }
+  .gal img { width: 100%; height: 150px; object-fit: contain; }
+  .gal figcaption { font-size: 12px; color: var(--creme-3); }
+  .gal figcaption b { color: var(--creme); font-weight: 600; }
+  .stat { font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; color: var(--creme-3); white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Labo — burgers « éclatés »</h1>
+  <p>Chaque couche est cuisinée pixel par pixel (relief, couleur, lumière de studio) puis posée en vue plongeante ; le burger se compose, s'écarte en étiquetant ses ingrédients, puis se ré-assemble. Les compositions sont celles de la carte, à la lettre.</p>
+</header>
+
+<section id="hero">
+  <div class="hero">
+    <div class="ctrl">
+      <label>Recette <select id="recipe"></select></label>
+      <div class="seg" role="group" aria-label="Galette">
+        <button type="button" data-patty="steak" aria-pressed="true">Steak VBF</button>
+        <button type="button" data-patty="galette" aria-pressed="false">Galette végé</button>
+      </div>
+      <div class="seg" role="group" aria-label="Langue">
+        <button type="button" data-lang="fr" aria-pressed="true">FR</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <label>Écartement <input id="ex" type="range" min="0" max="1" step="0.01" value="0"></label>
+      <div class="seg">
+        <button type="button" id="compose">Composer</button>
+        <button type="button" id="play">▶ Cycle</button>
+        <button type="button" id="stop">■ Arrêt</button>
+      </div>
+      <p class="meta" id="meta"></p>
+    </div>
+    <div class="stage-hero vis" id="heroStage"></div>
+  </div>
+</section>
+
+<section id="cards">
+  <h2>La carte</h2>
+  <p id="cardsNote"></p>
+  <div class="grid" id="grid"></div>
+</section>
+
+<section id="plats">
+  <h2>Les autres plats</h2>
+  <p>Viandes, salades, wraps : même cuisine que les burgers. Les ingrédients sont ceux du texte de la carte ; les viandes viennent avec leurs frites maison et leur salade maison.</p>
+  <div class="hero">
+    <div class="ctrl">
+      <label>Plat <select id="plat"></select></label>
+      <div class="seg" role="group" aria-label="Langue du plat">
+        <button type="button" data-plang="fr" aria-pressed="true">FR</button>
+        <button type="button" data-plang="en" aria-pressed="false">EN</button>
+      </div>
+      <label>Détail <input id="pex" type="range" min="0" max="1" step="0.01" value="0"></label>
+      <div class="seg">
+        <button type="button" id="pcompose">Composer</button>
+        <button type="button" id="pplay">▶ Cycle</button>
+        <button type="button" id="pstop">■ Arrêt</button>
+      </div>
+      <p class="meta" id="pmeta"></p>
+    </div>
+    <div class="stage-hero vis" id="platStage"></div>
+  </div>
+  <div class="grid" id="pgrid"></div>
+</section>
+
+<section id="gallery">
+  <h2>Les ingrédients</h2>
+  <p>Chaque texture est calculée une fois, partagée par tous les burgers, et gardée dans le téléphone.</p>
+  <div class="gal" id="gal"></div>
+  <p class="stat" id="stat"></p>
+</section>
+
+<script src="../js/bb-core.js"></script>
+<script src="../js/bb-data.js"></script>
+<script src="../js/bb-bake.js"></script>
+<script src="../js/bb-burger.js"></script>
+<script src="../js/bb-plat.js"></script>
+<script>
+(function () {
+  'use strict';
+  const qs = new URLSearchParams(location.search);
+  const still = qs.has('still');
+  const $ = (s) => document.querySelector(s);
+  const fmt = (n) => n.toFixed(2).replace('.', ',') + ' €';
+  const state = { recipe: qs.get('recipe') || 'ti-mefia-te', patty: qs.get('patty') || 'steak', lang: qs.get('lang') || 'fr' };
+  // cartes : composition unique puis image figée (comme dans l'appli) ; ?loop pour les voir tourner
+  const cardPlay = still ? false : qs.has('loop') ? true : 'once';
+  $('#cardsNote').textContent = cardPlay === 'once'
+    ? 'Toutes les recettes (Ti\', doubles, Petiot) : chaque carte se compose une fois en entrant à l\'écran, puis se fige en image (plus rien ne tourne). Touchez une carte pour l\'ouvrir en grand. (?loop : cartes en boucle)'
+    : 'Toutes les recettes : chaque carte tourne en boucle quand elle est à l\'écran.';
+
+  // --- sélecteur de recette
+  const sel = $('#recipe');
+  Object.values(BB.BURGERS).forEach((r) => {
+    const o = document.createElement('option');
+    o.value = r.id;
+    o.textContent = r.name + (r.double ? ' (double)' : '') + ' — ' + fmt(r.price);
+    sel.appendChild(o);
+  });
+  sel.value = state.recipe;
+
+  // --- grand format
+  const hero = new BB.Burger($('#heroStage'), state.recipe, {
+    size: 'hero', autoplay: !still && !qs.has('explode') && !qs.has('seek'), labels: true, lang: state.lang, interactive: true,
+  });
+  if (qs.has('explode')) hero.explode = +qs.get('explode');
+  if (qs.has('seek')) hero._seek(+qs.get('seek')); // tests : image figée du cycle
+  const meta = () => {
+    const r = hero.recipe;
+    $('#meta').innerHTML = '<b>' + r.name + '</b> · ' + fmt(r.price) + '<br>' + r.ingredients.map((i) => BB.INGREDIENTS[i][state.lang]).join(', ');
+  };
+  meta();
+  const setPressed = (attr, v) => document.querySelectorAll('[data-' + attr + ']').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset[attr] === v)));
+  setPressed('patty', state.patty);
+  setPressed('lang', state.lang);
+  const applyRecipe = () => {
+    hero.setRecipe(BB.withPatty(state.recipe, state.patty));
+    meta();
+  };
+  applyRecipe();
+  sel.addEventListener('change', () => { state.recipe = sel.value; applyRecipe(); });
+  document.querySelectorAll('[data-patty]').forEach((b) => b.addEventListener('click', () => { state.patty = b.dataset.patty; setPressed('patty', state.patty); applyRecipe(); }));
+  document.querySelectorAll('[data-lang]').forEach((b) => b.addEventListener('click', () => { state.lang = b.dataset.lang; setPressed('lang', state.lang); hero.setLang(state.lang); meta(); buildGallery(); }));
+  const ex = $('#ex');
+  ex.addEventListener('input', () => { hero.explode = +ex.value; });
+  $('#play').addEventListener('click', () => hero.play());
+  $('#compose').addEventListener('click', () => hero.compose());
+  $('#stop').addEventListener('click', () => { hero.stop(); ex.value = hero.explode.toFixed(2); });
+
+  // --- la carte
+  const cards = [];
+  const grid = $('#grid');
+  Object.values(BB.BURGERS).forEach((r) => {
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.tabIndex = 0;
+    c.innerHTML = '<div class="st vis"></div><div class="nm">' + r.name + '</div><span class="pr">' + fmt(r.price) + '</span><div class="tg">' + (r.kids ? 'Menu enfant' : r.double ? 'Double' : r.veggie ? 'Végétarien' : 'Simple') + '</div>';
+    grid.appendChild(c);
+    const b = new BB.Burger(c.querySelector('.st'), r, { size: 'card', autoplay: cardPlay, labels: false, interactive: false, lang: state.lang });
+    if (qs.has('cardsExplode')) b.explode = +qs.get('cardsExplode');
+    cards.push(b);
+    const open = () => { state.recipe = r.id; sel.value = r.id; applyRecipe(); $('#hero').scrollIntoView({ behavior: 'smooth' }); };
+    c.addEventListener('click', open);
+    c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+
+  // --- galerie des textures (grand format)
+  const NAMES = { 'bun-top': { fr: 'Pain (haut)', en: 'Bun (top)' }, 'bun-bottom': { fr: 'Pain (bas)', en: 'Bun (bottom)' } };
+  function ingOf(id) {
+    const base = id.replace(/-melt2?$/, '').replace(/^(spread|drape)-/, 'sauce-');
+    return BB.INGREDIENTS[base];
+  }
+  function buildGallery() {
+    const gal = $('#gal');
+    gal.innerHTML = '';
+    const en = state.lang === 'en';
+    BB.bake.ids.forEach((id) => {
+      const ing = ingOf(id);
+      const f = document.createElement('figure');
+      const im = new Image();
+      im.alt = id;
+      f.appendChild(im);
+      const cap = document.createElement('figcaption');
+      const how = /-melt2$/.test(id) ? (en ? ' · melted, under another' : ' · fondu, sous un autre')
+        : /-melt$/.test(id) ? (en ? ' · melted' : ' · fondu')
+        : /^drape-/.test(id) ? (en ? ' · under the top bun' : ' · nappée sous le pain')
+        : /^spread-/.test(id) ? (en ? ' · spread' : ' · étalée') : '';
+      cap.innerHTML = '<b>' + (NAMES[id] ? NAMES[id][state.lang] : ing ? ing[state.lang] : id) + '</b>' + how + '<br>' + id;
+      f.appendChild(cap);
+      gal.appendChild(f);
+      BB.bake.get(id, 2, 0).then((t) => { im.src = t.url; cap.innerHTML += ' · ' + t.w + '×' + t.h; });
+    });
+  }
+  if (!qs.has('nogal')) buildGallery();
+
+  // --- pour les tests : tout est-il cuit et posé ?
+  // --- les autres plats
+  const CAT = { viandes: 'Viandes', salades: 'Salades', wraps: 'Wraps' };
+  const psel = $('#plat');
+  Object.keys(CAT).forEach((cat) => {
+    const og = document.createElement('optgroup');
+    og.label = CAT[cat];
+    BB.MENU_OTHER.filter((it) => it.cat === cat && BB.hasPlat(it.id)).forEach((it) => {
+      const o = document.createElement('option');
+      o.value = it.id;
+      o.textContent = it.name.fr + ' — ' + fmt(it.price);
+      og.appendChild(o);
+    });
+    psel.appendChild(og);
+  });
+  const pstate = { id: qs.get('plat') || 'allier', lang: qs.get('lang') || 'fr' };
+  psel.value = pstate.id;
+  const pStill = still || qs.has('pexplode') || qs.has('pseek');
+  let plat = null;
+  const mountPlat = () => {
+    if (plat) plat.destroy();
+    const st = $('#platStage');
+    st.innerHTML = '';
+    plat = new BB.Plat(st, pstate.id, { size: 'hero', autoplay: !pStill, labels: true, lang: pstate.lang, interactive: true });
+    if (qs.has('pexplode')) plat.explode = +qs.get('pexplode');
+    if (qs.has('pseek')) plat._seek(+qs.get('pseek'));
+    LAB.plat = plat;
+    const it = BB.MENU_OTHER.find((x) => x.id === pstate.id);
+    $('#pmeta').innerHTML = '<b>' + it.name[pstate.lang] + '</b> · ' + fmt(it.price) + '<br>' + (it.desc ? it.desc[pstate.lang] : '');
+  };
+  psel.addEventListener('change', () => { pstate.id = psel.value; mountPlat(); });
+  document.querySelectorAll('[data-plang]').forEach((b) => b.addEventListener('click', () => {
+    pstate.lang = b.dataset.plang;
+    document.querySelectorAll('[data-plang]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.plang === pstate.lang)));
+    plat.setLang(pstate.lang);
+    const it = BB.MENU_OTHER.find((x) => x.id === pstate.id);
+    $('#pmeta').innerHTML = '<b>' + it.name[pstate.lang] + '</b> · ' + fmt(it.price) + '<br>' + (it.desc ? it.desc[pstate.lang] : '');
+  }));
+  $('#pex').addEventListener('input', () => { plat.explode = +$('#pex').value; });
+  $('#pplay').addEventListener('click', () => plat.play());
+  $('#pcompose').addEventListener('click', () => plat.compose());
+  $('#pstop').addEventListener('click', () => { plat.stop(); $('#pex').value = plat.explode.toFixed(2); });
+  const platCards = [];
+  Object.keys(CAT).forEach((cat) => {
+    BB.MENU_OTHER.filter((it) => it.cat === cat && BB.hasPlat(it.id)).forEach((it) => {
+      const c = document.createElement('div');
+      c.className = 'card';
+      c.tabIndex = 0;
+      c.innerHTML = '<div class="st vis"></div>' + (it.sides ? '<span class="avec-frites"><b>frites maison</b></span>' : '') + '<div class="nm">' + it.name.fr + '</div><span class="pr">' + fmt(it.price) + '</span><div class="tg">' + CAT[cat] + '</div>';
+      $('#pgrid').appendChild(c);
+      const b = new BB.Plat(c.querySelector('.st'), it.id, { size: 'card', autoplay: cardPlay, labels: false, interactive: false, lang: state.lang });
+      platCards.push(b);
+      const open = () => { pstate.id = it.id; psel.value = it.id; mountPlat(); $('#plats').scrollIntoView({ behavior: 'smooth' }); };
+      c.addEventListener('click', open);
+    });
+  });
+
+  window.LAB = {
+    hero, cards, plat: null, platCards,
+    ready() {
+      if (BB.bake.pending()) return false;
+      const all = [hero].concat(cards.filter((b) => b._seen || b._frozen));
+      const okB = all.every((b) => b._frozen || b.layers.every((L) => L.imgOk && (!L.melt || L.meltOk)));
+      const okP = [LAB.plat].concat(platCards.filter((b) => b._seen || b._frozen)).every((b) => !b || b._frozen || b._texReady());
+      return okB && okP;
+    },
+    frozen: () => cards.filter((b) => b._frozen).length,
+    platFrozen: () => platCards.filter((b) => b._frozen).length,
+  };
+  mountPlat();
+  const t0 = performance.now();
+  const stat = () => {
+    const s = BB.bake.stats();
+    const done = s.filter((x) => x.done).length;
+    $('#stat').textContent = 'textures : ' + done + '/' + s.length + ' · workers : ' + BB.bake.workers() + ' · ' + Math.round(performance.now() - t0) + ' ms' + (s.some((x) => x.cached) ? ' · (en partie depuis la mémoire du téléphone)' : '') + ' · cartes figées : ' + LAB.frozen() + '/' + cards.length;
+    if (BB.bake.pending() || LAB.frozen() < cards.length) setTimeout(stat, 400);
+  };
+  setTimeout(stat, 300);
+  if (qs.get('sec')) { const el = document.getElementById(qs.get('sec')); if (el) el.scrollIntoView(); }
+})();
+</script>
+</body>
+</html>

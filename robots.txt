@@ -1,0 +1,15 @@
+# MAQUETTE : le site est en noindex tant que les commandes et paiements sont fictifs (balise robots de index.html).
+# À la mise en ligne, ce fichier reste ouvert aux moteurs et aux assistants IA.
+User-agent: *
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://maliciousmusic.github.io/bougnat-burger/sitemap.xml

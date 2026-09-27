@@ -1,0 +1,30 @@
+{
+  "lot": "01-essais",
+  "jobs": [
+    {
+      "name": "plateauA",
+      "w": 896, "h": 1152, "cfg": 2.6, "steps": 10,
+      "seeds": [101, 102, 103, 104],
+      "prompt": "half-body portrait of a jovial Auvergnat man in his fifties, big well-groomed grey handlebar moustache, charcoal flat cap, rosy cheeks, kind smiling eyes, wearing a traditional blue work smock with a lime green neckerchief and a brown leather apron, proudly holding up a round serving tray on the palm of one hand at shoulder height, on the tray a burger, a paper cone of french fries and a glass of beer, three-quarter view facing left, isolated on a plain flat pale cream background"
+    },
+    {
+      "name": "plateauB",
+      "w": 896, "h": 1152, "cfg": 2.6, "steps": 10,
+      "seeds": [111, 112, 113, 114],
+      "style": "modern editorial illustration inspired by 1930s art deco travel posters by Cassandre and Roger Broders, smooth flat vector shapes, subtle airbrush gradients, minimal detail, crisp edges, sophisticated and charming, matte colours",
+      "prompt": "half-body portrait of a jovial Auvergnat man in his fifties, big well-groomed grey handlebar moustache, dark flat cap, rosy cheeks, kind smiling eyes, blue work smock, lime green neckerchief, brown leather apron, proudly holding up a serving tray on one hand with a burger, french fries and a glass of beer, three-quarter view facing left, isolated on a plain flat pale cream background"
+    },
+    {
+      "name": "burgerA",
+      "w": 896, "h": 1152, "cfg": 2.6, "steps": 10,
+      "seeds": [121, 122, 123, 124],
+      "prompt": "half-body portrait of a jovial Auvergnat man in his fifties, big well-groomed grey handlebar moustache, charcoal flat cap, rosy cheeks, kind smiling eyes, wearing a traditional blue work smock with a lime green neckerchief and a brown leather apron, proudly presenting a big gourmet burger on the flat palm of his hand, three-quarter view facing left, isolated on a plain flat pale cream background"
+    },
+    {
+      "name": "busteA",
+      "w": 896, "h": 1152, "cfg": 2.6, "steps": 10,
+      "seeds": [131, 132, 133, 134],
+      "prompt": "bust portrait of a jovial Auvergnat man in his fifties, big well-groomed grey handlebar moustache, charcoal flat cap, rosy cheeks, kind smiling eyes, wearing a traditional blue work smock with a lime green neckerchief, head and shoulders, three-quarter view facing left, isolated on a plain flat pale cream background"
+    }
+  ]
+}

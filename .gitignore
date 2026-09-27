@@ -1,0 +1,26 @@
+# Jamais publiés : les images de référence et les sources (photos, fiches, générations intermédiaires)
+assets/ref/
+assets/bougnat/reference/
+tools/*/source/
+tools/*/_gen/
+tools/*/_work/
+tools/*/_cache/
+
+# L'ancien film de la fille, découpé dans une image de référence : remplacé par l'histoire du bougnat
+assets/film/
+tools/film/
+js/film/bb-film.js
+js/film/bb-film-manifest.js
+js/film/bb-girl.js
+lab/film.html
+lab/girl.html
+
+# Local
+.claude/
+__pycache__/
+*.pyc
+*-profile/
+node_modules/
+*.bak
+.DS_Store
+Thumbs.db

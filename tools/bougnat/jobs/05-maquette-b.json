@@ -1,0 +1,19 @@
+{
+  "lot": "05-maquette-b",
+  "style": "flat vector illustration, modern art deco travel poster in the style of Mads Berg, bold simple shapes, smooth airbrush gradients, clean crisp edges, stylized, charming character design",
+  "neg": "photo, photograph, photorealistic, realistic skin texture, wrinkles, rugged, beard, stubble, goatee, young man, 3d render, cgi, anime, chibi, grotesque, ugly, deformed face, disfigured, bad anatomy, bad hands, extra fingers, glove, text, letters, words, watermark, signature, logo, frame, border, margin, neon green, lime green, busy background, scenery, sepia, grunge, paper texture, film grain, noise, blurry",
+  "jobs": [
+    {
+      "name": "b66", "init": "_gen/layout/b.png", "strength": 0.66, "cfg": 3.0, "steps": 10, "seeds": [501, 502, 503, 504],
+      "prompt": "jolly plump fifty-year-old Auvergnat waiter with grey hair, big bushy grey handlebar moustache, warm friendly smile, rosy cheeks, kind eyes, charcoal flat cap, indigo blue work smock, pale green neckerchief, brown leather apron, proudly carrying a round tray on the palm of his hand at shoulder height with a burger, french fries and a glass of beer, bust, three-quarter view looking to the left, plain flat peach background"
+    },
+    {
+      "name": "b72", "init": "_gen/layout/b.png", "strength": 0.72, "cfg": 3.0, "steps": 10, "seeds": [511, 512, 513, 514],
+      "prompt": "jolly plump fifty-year-old Auvergnat waiter with grey hair, big bushy grey handlebar moustache, warm friendly smile, rosy cheeks, kind eyes, charcoal flat cap, indigo blue work smock, pale green neckerchief, brown leather apron, proudly carrying a round tray on the palm of his hand at shoulder height with a burger, french fries and a glass of beer, bust, three-quarter view looking to the left, plain flat peach background"
+    },
+    {
+      "name": "b78", "init": "_gen/layout/b.png", "strength": 0.78, "cfg": 3.0, "steps": 10, "seeds": [521, 522, 523, 524],
+      "prompt": "jolly plump fifty-year-old Auvergnat waiter with grey hair, big bushy grey handlebar moustache, warm friendly smile, rosy cheeks, kind eyes, charcoal flat cap, indigo blue work smock, pale green neckerchief, brown leather apron, proudly carrying a round tray on the palm of his hand at shoulder height with a burger, french fries and a glass of beer, bust, three-quarter view looking to the left, plain flat peach background"
+    }
+  ]
+}
