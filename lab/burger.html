@@ -114,14 +114,17 @@
 
 <section id="plats">
   <h2>Les autres plats</h2>
-  <p>Viandes, salades, wraps : même cuisine que les burgers. Les ingrédients sont ceux du texte de la carte ; les viandes viennent avec leurs frites maison et leur salade maison.</p>
+  <p>Viandes, salades, wraps, desserts, boissons : même cuisine que les burgers. Les éléments sont ceux du texte de la carte ; les viandes viennent avec leurs frites maison et leur salade maison ; les verres se posent vides puis se remplissent.</p>
   <div class="hero">
     <div class="ctrl">
       <label>Plat <select id="plat"></select></label>
       <div class="seg" role="group" aria-label="Langue du plat">
         <button type="button" data-plang="fr" aria-pressed="true">FR</button>
         <button type="button" data-plang="en" aria-pressed="false">EN</button>
+        <button type="button" data-plang="es" aria-pressed="false">ES</button>
+        <button type="button" data-plang="zh" aria-pressed="false">ZH</button>
       </div>
+      <label id="pvarL" hidden>Variante <select id="pvar"></select></label>
       <label>Détail <input id="pex" type="range" min="0" max="1" step="0.01" value="0"></label>
       <div class="seg">
         <button type="button" id="pcompose">Composer</button>
@@ -129,6 +132,7 @@
         <button type="button" id="pstop">■ Arrêt</button>
       </div>
       <p class="meta" id="pmeta"></p>
+      <p class="meta" id="pev"></p>
     </div>
     <div class="stage-hero vis" id="platStage"></div>
   </div>
@@ -247,7 +251,12 @@
 
   // --- pour les tests : tout est-il cuit et posé ?
   // --- les autres plats
-  const CAT = { viandes: 'Viandes', salades: 'Salades', wraps: 'Wraps' };
+  const CAT = { viandes: 'Viandes', salades: 'Salades', wraps: 'Wraps', desserts: 'Desserts', boissons: 'Boissons' };
+  const fmtP = (it) => (it.price != null ? fmt(it.price) : it.variants ? 'dès ' + fmt(Math.min.apply(null, it.variants.map((v) => v.price))) : 'sur place');
+  const tr = (o, l) => (!o ? '' : BB.trLang ? BB.trLang(o, l) : o[l] || (l !== 'fr' && o.en) || o.fr);
+  // les temps forts (pour le son) : on les note, pour les tests
+  const EV = [];
+  const onEvent = (type, info) => { EV.push([Math.round(performance.now()), type, info]); const e = $('#pev'); if (e && info.hero) e.textContent = EV.filter((x) => x[2].hero).slice(-6).map((x) => x[1] + (x[2].kind ? ':' + x[2].kind : '')).join(' · '); };
   const psel = $('#plat');
   Object.keys(CAT).forEach((cat) => {
     const og = document.createElement('optgroup');
@@ -255,7 +264,7 @@
     BB.MENU_OTHER.filter((it) => it.cat === cat && BB.hasPlat(it.id)).forEach((it) => {
       const o = document.createElement('option');
       o.value = it.id;
-      o.textContent = it.name.fr + ' — ' + fmt(it.price);
+      o.textContent = it.name.fr + ' — ' + fmtP(it);
       og.appendChild(o);
     });
     psel.appendChild(og);
@@ -268,20 +277,30 @@
     if (plat) plat.destroy();
     const st = $('#platStage');
     st.innerHTML = '';
-    plat = new BB.Plat(st, pstate.id, { size: 'hero', autoplay: !pStill, labels: true, lang: pstate.lang, interactive: true });
+    plat = new BB.Plat(st, pstate.id, { size: 'hero', autoplay: !pStill, labels: true, lang: pstate.lang, interactive: true, onEvent, variant: qs.get('variant') || undefined });
     if (qs.has('pexplode')) plat.explode = +qs.get('pexplode');
     if (qs.has('pseek')) plat._seek(+qs.get('pseek'));
     LAB.plat = plat;
     const it = BB.MENU_OTHER.find((x) => x.id === pstate.id);
-    $('#pmeta').innerHTML = '<b>' + it.name[pstate.lang] + '</b> · ' + fmt(it.price) + '<br>' + (it.desc ? it.desc[pstate.lang] : '');
+    $('#pmeta').innerHTML = '<b>' + tr(it.name, pstate.lang) + '</b> · ' + fmtP(it) + '<br>' + (it.desc ? tr(it.desc, pstate.lang) : '');
+    // les variantes (boissons) : la teinte colore le verre
+    const vs = $('#pvar');
+    vs.innerHTML = '';
+    $('#pvarL').hidden = !it.variants;
+    (it.variants || []).forEach((v) => { const o = document.createElement('option'); o.value = v.id; o.textContent = tr(v.name, pstate.lang) + ' (' + v.teinte + ')'; vs.appendChild(o); });
   };
+  $('#pvar').addEventListener('change', () => {
+    const it = BB.MENU_OTHER.find((x) => x.id === pstate.id);
+    const v = (it.variants || []).find((x) => x.id === $('#pvar').value);
+    if (v) plat.setVariant(v.teinte, tr(v.name, pstate.lang));
+  });
   psel.addEventListener('change', () => { pstate.id = psel.value; mountPlat(); });
   document.querySelectorAll('[data-plang]').forEach((b) => b.addEventListener('click', () => {
     pstate.lang = b.dataset.plang;
     document.querySelectorAll('[data-plang]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.plang === pstate.lang)));
     plat.setLang(pstate.lang);
     const it = BB.MENU_OTHER.find((x) => x.id === pstate.id);
-    $('#pmeta').innerHTML = '<b>' + it.name[pstate.lang] + '</b> · ' + fmt(it.price) + '<br>' + (it.desc ? it.desc[pstate.lang] : '');
+    $('#pmeta').innerHTML = '<b>' + tr(it.name, pstate.lang) + '</b> · ' + fmtP(it) + '<br>' + (it.desc ? tr(it.desc, pstate.lang) : '');
   }));
   $('#pex').addEventListener('input', () => { plat.explode = +$('#pex').value; });
   $('#pplay').addEventListener('click', () => plat.play());
@@ -293,9 +312,9 @@
       const c = document.createElement('div');
       c.className = 'card';
       c.tabIndex = 0;
-      c.innerHTML = '<div class="st vis"></div>' + (it.sides ? '<span class="avec-frites"><b>frites maison</b></span>' : '') + '<div class="nm">' + it.name.fr + '</div><span class="pr">' + fmt(it.price) + '</span><div class="tg">' + CAT[cat] + '</div>';
+      c.innerHTML = '<div class="st vis"></div>' + (it.sides ? '<span class="avec-frites"><b>frites maison</b></span>' : '') + '<div class="nm">' + it.name.fr + '</div><span class="pr">' + fmtP(it) + '</span><div class="tg">' + CAT[cat] + '</div>';
       $('#pgrid').appendChild(c);
-      const b = new BB.Plat(c.querySelector('.st'), it.id, { size: 'card', autoplay: cardPlay, labels: false, interactive: false, lang: state.lang });
+      const b = new BB.Plat(c.querySelector('.st'), it.id, { size: 'card', autoplay: cardPlay, labels: false, interactive: false, lang: state.lang, onEvent });
       platCards.push(b);
       const open = () => { pstate.id = it.id; psel.value = it.id; mountPlat(); $('#plats').scrollIntoView({ behavior: 'smooth' }); };
       c.addEventListener('click', open);
@@ -303,7 +322,7 @@
   });
 
   window.LAB = {
-    hero, cards, plat: null, platCards,
+    hero, cards, plat: null, platCards, events: EV,
     ready() {
       if (BB.bake.pending()) return false;
       const all = [hero].concat(cards.filter((b) => b._seen || b._frozen));

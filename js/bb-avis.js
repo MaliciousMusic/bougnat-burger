@@ -15,7 +15,7 @@
     const n = Math.round(a.note);
     const txt = esc(a.texte).replace(/\n+/g, '<br>');
     return `<article class="avis-carte">
-      <div class="avis-etoiles" role="img" aria-label="${n} ${BB.lang === 'en' ? 'stars out of 5' : 'étoiles sur 5'}">${etoile.repeat(n)}${'<i></i>'.repeat(5 - n)}</div>
+      <div class="avis-etoiles" role="img" aria-label="${esc(BB.t('etoiles', { n }))}">${etoile.repeat(n)}${'<i></i>'.repeat(5 - n)}</div>
       <p class="avis-texte" lang="fr">« ${txt} »</p>
       <footer><b>${esc(a.nom)}</b><span>${esc(BB.tr(a.date))}</span></footer>
     </article>`;
@@ -26,7 +26,7 @@
     const piste = $('#avis-piste'), points = $('#avis-points');
     if (!piste || !BB.AVIS) return;
     piste.innerHTML = BB.AVIS.map(carte).join('');
-    points.innerHTML = BB.AVIS.map((_, i) => `<button type="button" aria-label="${BB.lang === 'en' ? 'Review' : 'Avis'} ${i + 1}" data-i="${i}"></button>`).join('');
+    points.innerHTML = BB.AVIS.map((_, i) => `<button type="button" aria-label="${esc(BB.t('avisN', { n: i + 1 }))}" data-i="${i}"></button>`).join('');
     points.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { touche = true; aller(+b.dataset.i); }));
     majPoints();
   }

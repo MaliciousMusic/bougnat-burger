@@ -10,6 +10,8 @@
   <link rel="canonical" href="https://maliciousmusic.github.io/bougnat-burger/">
   <link rel="alternate" hreflang="fr" href="https://maliciousmusic.github.io/bougnat-burger/">
   <link rel="alternate" hreflang="en" href="https://maliciousmusic.github.io/bougnat-burger/?lang=en">
+  <link rel="alternate" hreflang="es" href="https://maliciousmusic.github.io/bougnat-burger/?lang=es">
+  <link rel="alternate" hreflang="zh-Hans" href="https://maliciousmusic.github.io/bougnat-burger/?lang=zh">
   <link rel="alternate" hreflang="x-default" href="https://maliciousmusic.github.io/bougnat-burger/">
   <meta name="theme-color" content="#1A130F">
   <meta name="color-scheme" content="light">
@@ -44,9 +46,9 @@
   <link rel="alternate" type="text/markdown" href="llms.txt" title="Bougnat Burger · résumé pour assistants IA">
 
   <!-- Polices hébergées sur le site (tools/fetch-fonts.py) : aucun appel à Google -->
-  <link rel="stylesheet" href="css/fonts.css?v=20260927222648">
-  <link rel="stylesheet" href="css/bougnat.css?v=20260927222648">
-  <link rel="stylesheet" href="css/puys.css?v=20260927222648">
+  <link rel="stylesheet" href="css/fonts.css?v=20260927234419">
+  <link rel="stylesheet" href="css/bougnat.css?v=20260927234419">
+  <link rel="stylesheet" href="css/puys.css?v=20260927234419">
 
   <!-- Données structurées (Google et assistants IA) : le restaurant ; la carte est ajoutée par tools/build-menu.mjs -->
   <script type="application/ld+json">
@@ -81,12 +83,21 @@
       { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday", "Saturday"], "opens": "11:30", "closes": "14:00" },
       { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday", "Saturday"], "opens": "18:30", "closes": "22:15" }
     ],
-    "sameAs": ["https://www.instagram.com/bougnatburger/", "https://www.facebook.com/BougnatBurger"]
+    "sameAs": ["https://www.instagram.com/bougnatburger/", "https://www.facebook.com/BougnatBurger"],
+    "hasMenu": { "@id": "https://maliciousmusic.github.io/bougnat-burger/#carte" },
+    "currenciesAccepted": "EUR",
+    "potentialAction": [
+      { "@type": "ReserveAction", "name": "Réserver une table", "target": { "@type": "EntryPoint", "urlTemplate": "https://maliciousmusic.github.io/bougnat-burger/#reserver", "inLanguage": ["fr", "en", "es", "zh-Hans"], "actionPlatform": ["https://schema.org/MobileWebPlatform", "https://schema.org/DesktopWebPlatform"] }, "result": { "@type": "FoodEstablishmentReservation" } },
+      { "@type": "OrderAction", "name": "Commander à emporter", "target": { "@type": "EntryPoint", "urlTemplate": "https://maliciousmusic.github.io/bougnat-burger/#commander", "inLanguage": ["fr", "en", "es", "zh-Hans"], "actionPlatform": ["https://schema.org/MobileWebPlatform", "https://schema.org/DesktopWebPlatform"] }, "deliveryMethod": "http://purl.org/goodrelations/v1#DeliveryModePickUp" }
+    ]
   }
+  </script>
+  <script type="application/ld+json">
+  { "@context": "https://schema.org", "@type": "WebSite", "@id": "https://maliciousmusic.github.io/bougnat-burger/#site", "url": "https://maliciousmusic.github.io/bougnat-burger/", "name": "Bougnat Burger", "inLanguage": ["fr", "en", "es", "zh-Hans"], "publisher": { "@id": "https://maliciousmusic.github.io/bougnat-burger/#restaurant" } }
   </script>
   <!-- MENU-JSONLD:START -->
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"Menu","@id":"https://maliciousmusic.github.io/bougnat-burger/#carte","name":"La carte du Bougnat Burger","inLanguage":"fr","hasMenuSection":[{"@type":"MenuSection","name":"Burgers","hasMenuItem":[{"@type":"MenuItem","name":"Ti' Mefia Te","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, jambon sec, tomates, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Mefia Te (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, jambon sec, tomates, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"23.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Bougnat","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Bougnat (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"21.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Gourmand","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, jambon sec, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Gourmand (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, jambon sec, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"23.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Vulcano","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Cantal jeune AOP, poivrons, chorizo, pomme paillasson, salade et mesclun maison, sauce chili.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Vulcano (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Cantal jeune AOP, poivrons, chorizo, pomme paillasson, salade et mesclun maison, sauce chili.","offers":{"@type":"Offer","price":"21.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Blue","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Bleu d'Auvergne AOP, Cantal jeune AOP, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Blue (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Bleu d'Auvergne AOP, Cantal jeune AOP, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP.","offers":{"@type":"Offer","price":"21.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Rillac","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Carré d'Aurillac, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP.","offers":{"@type":"Offer","price":"17.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Rillac (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Carré d'Aurillac, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP.","offers":{"@type":"Offer","price":"22.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Salers","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Cantal Salers AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"20.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Salers (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Cantal Salers AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"25.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Cabri","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, fromage de chèvre moulé à la louche, jambon sec, miel, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Cabri (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, fromage de chèvre moulé à la louche, jambon sec, miel, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"23.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Vegetario","description":"Pain burger artisanal, galette de pommes de terre, Cantal jeune AOP, poivrons, tomates, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"15.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Vegetario (double)","description":"Pain burger artisanal, double galette de pommes de terre, Cantal jeune AOP, poivrons, tomates, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Mefiano","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, fromage de chèvre moulé à la louche, jambon sec, chorizo, tomates, pomme paillasson, poivrons, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"21.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Mefiano (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, fromage de chèvre moulé à la louche, jambon sec, chorizo, tomates, pomme paillasson, poivrons, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"26.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Viandes","hasMenuItem":[{"@type":"MenuItem","name":"Bavette d'aloyau","description":"Bavette de bœuf charolais bio, 300 g. Origine France.","offers":{"@type":"Offer","price":"20.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Steak haché façon bouchère","description":"Steak haché façon bouchère VBF. Viande bovine, origine France.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Salades","hasMenuItem":[{"@type":"MenuItem","name":"Allier","description":"Salade et mesclun maison, saumon fumé en Auvergne, Bleu d'Auvergne AOP, Cantal jeune AOP, tomates cerises.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Chèvre chaud","description":"Salade et mesclun maison, toasts chauds de chèvre moulé à la louche, miel, jambon d'Auvergne IGP, pignons de pin, herbes de Provence, tomates cerises.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Vercingétorix vs César","description":"Salade et mesclun maison, Cantal jeune AOP, blanc de poulet, poivrons, croûtons à l'huile d'olive, tomates cerises.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Auvergnate","description":"Salade et mesclun maison, jambon d'Auvergne IGP, Bleu d'Auvergne AOP, Cantal jeune AOP, noix, tomates cerises.","offers":{"@type":"Offer","price":"15.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Sancy","description":"Salade et mesclun maison, toasts chauds de Saint-Nectaire fermier AOP et de Bleu d'Auvergne AOP, Cantal jeune AOP, jambon d'Auvergne IGP, tomates cerises.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Wraps","hasMenuItem":[{"@type":"MenuItem","name":"Wrap saumon","description":"Galette de blé, saumon fumé en Auvergne, tomates, salade et mesclun maison, sauce à l'aneth.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Wrap chèvre","description":"Galette de blé, chèvre moulé à la louche, miel, jambon sec, tomates, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"19.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Wrap poulet","description":"Galette de blé, blanc de poulet, tomates, poivrons, salade et mesclun maison, sauce crème curry.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Enfant","hasMenuItem":[{"@type":"MenuItem","name":"Le Petiot","description":"Pain burger artisanal, steak haché VBF ou galette de pommes de terre, Cantal jeune AOP, tomates, salade et mesclun, sauce au Saint-Nectaire fermier. Avec un sirop et une boule de glace.","offers":{"@type":"Offer","price":"13.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Desserts","hasMenuItem":[{"@type":"MenuItem","name":"Framboisier"},{"@type":"MenuItem","name":"Tiramisu framboise"},{"@type":"MenuItem","name":"Tiramisu café"},{"@type":"MenuItem","name":"Forêt noire"},{"@type":"MenuItem","name":"Mousse au chocolat"},{"@type":"MenuItem","name":"Moelleux"},{"@type":"MenuItem","name":"Tarte au citron"},{"@type":"MenuItem","name":"Nougat glacé"},{"@type":"MenuItem","name":"Citron, coco ou orange givrés"},{"@type":"MenuItem","name":"Glaces et sorbets"},{"@type":"MenuItem","name":"Plateau gourmand"}]},{"@type":"MenuSection","name":"Boissons","hasMenuItem":[{"@type":"MenuItem","name":"Bières de la Brasserie des Sagnes","description":"Brasserie artisanale auvergnate : blonde, ambrée et cuvées plus typées."},{"@type":"MenuItem","name":"Bières de la Brasserie Desprat","description":"Une maison historique de la bière en Auvergne."},{"@type":"MenuItem","name":"Vins bio et vins d'Auvergne","description":"Au verre ou à la bouteille."},{"@type":"MenuItem","name":"Apéritifs","description":"Rhum, vodka, whisky, tequila, pastis."},{"@type":"MenuItem","name":"Softs","description":"Sodas, jus Pago, eaux minérales."}]}]}
+  {"@context":"https://schema.org","@type":"Menu","@id":"https://maliciousmusic.github.io/bougnat-burger/#carte","name":"La carte du Bougnat Burger","inLanguage":"fr","hasMenuSection":[{"@type":"MenuSection","name":"Burgers","hasMenuItem":[{"@type":"MenuItem","name":"Ti' Mefia Te","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, jambon sec, tomates, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Mefia Te (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, jambon sec, tomates, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"23.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Bougnat","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Bougnat (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"21.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Gourmand","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, jambon sec, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Gourmand (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, jambon sec, pomme paillasson, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"23.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Vulcano","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Cantal jeune AOP, poivrons, chorizo, pomme paillasson, salade et mesclun maison, sauce chili.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Vulcano (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Cantal jeune AOP, poivrons, chorizo, pomme paillasson, salade et mesclun maison, sauce chili.","offers":{"@type":"Offer","price":"21.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Blue","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Bleu d'Auvergne AOP, Cantal jeune AOP, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Blue (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Bleu d'Auvergne AOP, Cantal jeune AOP, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP.","offers":{"@type":"Offer","price":"21.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Rillac","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Carré d'Aurillac, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP.","offers":{"@type":"Offer","price":"17.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Rillac (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Carré d'Aurillac, pomme paillasson, noix, salade et mesclun maison, sauce au Bleu d'Auvergne AOP.","offers":{"@type":"Offer","price":"22.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Salers","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Cantal Salers AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"20.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Salers (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Cantal Salers AOP, jambon sec, pomme paillasson, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"25.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Cabri","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, fromage de chèvre moulé à la louche, jambon sec, miel, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Cabri (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, fromage de chèvre moulé à la louche, jambon sec, miel, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"23.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ti' Vegetario","description":"Pain burger artisanal, galette de pommes de terre, Cantal jeune AOP, poivrons, tomates, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"15.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Vegetario (double)","description":"Pain burger artisanal, double galette de pommes de terre, Cantal jeune AOP, poivrons, tomates, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"},"suitableForDiet":"https://schema.org/VegetarianDiet"},{"@type":"MenuItem","name":"Ti' Mefiano","description":"Pain burger artisanal, steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, fromage de chèvre moulé à la louche, jambon sec, chorizo, tomates, pomme paillasson, poivrons, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"21.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Mefiano (double)","description":"Pain burger artisanal, double steak haché façon bouchère VBF ou galette de pommes de terre, Saint-Nectaire fermier AOP, Bleu d'Auvergne AOP, Cantal jeune AOP, fromage de chèvre moulé à la louche, jambon sec, chorizo, tomates, pomme paillasson, poivrons, noix, salade et mesclun maison, sauce au Saint-Nectaire fermier AOP.","offers":{"@type":"Offer","price":"26.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Viandes","hasMenuItem":[{"@type":"MenuItem","name":"Bavette d'aloyau","description":"Bavette de bœuf charolais bio, 300 g. Origine France.","offers":{"@type":"Offer","price":"20.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Steak haché façon bouchère","description":"Steak haché façon bouchère VBF. Viande bovine, origine France.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Salades","hasMenuItem":[{"@type":"MenuItem","name":"Allier","description":"Salade et mesclun maison, saumon fumé en Auvergne, Bleu d'Auvergne AOP, Cantal jeune AOP, tomates cerises.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Chèvre chaud","description":"Salade et mesclun maison, toasts chauds de chèvre moulé à la louche, miel, jambon d'Auvergne IGP, pignons de pin, herbes de Provence, tomates cerises.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Vercingétorix vs César","description":"Salade et mesclun maison, Cantal jeune AOP, blanc de poulet, poivrons, croûtons à l'huile d'olive, tomates cerises.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Auvergnate","description":"Salade et mesclun maison, jambon d'Auvergne IGP, Bleu d'Auvergne AOP, Cantal jeune AOP, noix, tomates cerises.","offers":{"@type":"Offer","price":"15.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Sancy","description":"Salade et mesclun maison, toasts chauds de Saint-Nectaire fermier AOP et de Bleu d'Auvergne AOP, Cantal jeune AOP, jambon d'Auvergne IGP, tomates cerises.","offers":{"@type":"Offer","price":"16.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Wraps","hasMenuItem":[{"@type":"MenuItem","name":"Wrap saumon","description":"Galette de blé, saumon fumé en Auvergne, tomates, salade et mesclun maison, sauce à l'aneth.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Wrap chèvre","description":"Galette de blé, chèvre moulé à la louche, miel, jambon sec, tomates, salade et mesclun maison, sauce crème ciboulette.","offers":{"@type":"Offer","price":"19.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Wrap poulet","description":"Galette de blé, blanc de poulet, tomates, poivrons, salade et mesclun maison, sauce crème curry.","offers":{"@type":"Offer","price":"18.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Enfant","hasMenuItem":[{"@type":"MenuItem","name":"Le Petiot","description":"Pain burger artisanal, steak haché VBF ou galette de pommes de terre, Cantal jeune AOP, tomates, salade et mesclun, sauce au Saint-Nectaire fermier. Avec un sirop et une boule de glace.","offers":{"@type":"Offer","price":"13.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Desserts","hasMenuItem":[{"@type":"MenuItem","name":"Tarte au citron meringuée","description":"Pâte sucrée, crème au citron et meringue.","offers":{"@type":"Offer","price":"7.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Framboisier","description":"Génoise nature, mousse bavaroise, framboises, amandes hachées torréfiées.","offers":{"@type":"Offer","price":"7.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Forêt noire","description":"Génoise au chocolat, chantilly maison, copeaux de chocolat au lait. Sans cerises, sans alcool.","offers":{"@type":"Offer","price":"7.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Moelleux au chocolat","description":"Gâteau au chocolat au cœur fondant, servi tiède.","offers":{"@type":"Offer","price":"5.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Nougat glacé","description":"Crème fraîche, abricots, raisins secs, noisettes, pistaches et amandes.","offers":{"@type":"Offer","price":"5.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Tiramisu framboise","description":"Sur place uniquement."},{"@type":"MenuItem","name":"Tiramisu café","description":"Sur place uniquement."},{"@type":"MenuItem","name":"Mousse au chocolat","description":"Sur place uniquement."},{"@type":"MenuItem","name":"Citron, coco ou orange givrés","description":"Sur place uniquement."},{"@type":"MenuItem","name":"Glaces et sorbets","description":"Sur place uniquement."},{"@type":"MenuItem","name":"Plateau gourmand","description":"Sur place uniquement."}]},{"@type":"MenuSection","name":"Boissons","hasMenuItem":[{"@type":"MenuItem","name":"Apéritifs","description":"Rhum, vodka, whisky, tequila, pastis. Sur place uniquement."}],"hasMenuSection":[{"@type":"MenuSection","name":"Softs","description":"Sodas, thé glacé, jus Pago, eau minérale.","hasMenuItem":[{"@type":"MenuItem","name":"Coca-Cola","description":"33 cl","offers":{"@type":"Offer","price":"3.00","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Coca-Cola Zero","description":"33 cl","offers":{"@type":"Offer","price":"3.00","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Fuze Tea pêche intense","description":"33 cl","offers":{"@type":"Offer","price":"3.00","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Orangina","description":"33 cl","offers":{"@type":"Offer","price":"3.00","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Perrier","description":"33 cl","offers":{"@type":"Offer","price":"3.00","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Eau minérale","description":"33 cl","offers":{"@type":"Offer","price":"3.00","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Jus Pago","description":"20 cl · parfum au choix, à préciser dans le mot pour la cuisine","offers":{"@type":"Offer","price":"3.30","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Bières de la Brasserie des Sagnes","description":"Brasserie artisanale auvergnate. Bouteilles de 33 cl.","hasMenuItem":[{"@type":"MenuItem","name":"Blonde des Sagnes","description":"Blonde · maltée, douce amertume · 5 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Ambrée des Sagnes","description":"Ambrée · notes caramélisées, légère amertume · 6 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"White Pale Ale","description":"Blanche pale ale · fruitée, amertume équilibrée · 5,5 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Boom Shiva","description":"IPA · fruitée, amertume désaltérante · 5 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Owl Beer Pale Ale","description":"Blonde pale ale · fruitée, amertume équilibrée · 5,5 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Black Sands","description":"Noire · veloutée, douce amertume · 5,9 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Bières de la Brasserie Desprat","description":"Une maison historique de la bière en Auvergne. Bouteilles de 33 cl.","hasMenuItem":[{"@type":"MenuItem","name":"Flagrant Désir","description":"Blanche · myrtille et céréales d'Auvergne · 6 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Antidote bio","description":"Ambrée bio · châtaigne et gentiane · 6 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Cloche Rouge","description":"Blonde · céréales d'Auvergne, notes de sureau · 6 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Noix de Dordogne","description":"Ambrée aux noix · 6 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Fée de l'Effet","description":"Blonde · orge d'Auvergne, houblon d'Alsace, refermentée au miel d'Auvergne · 6 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"La Bière des Druides","description":"Blanche · verveine, orge et blé d'Auvergne · 5 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"La Planèze","description":"Blonde · aux lentilles de Saint-Flour · 5 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Organic bio","description":"Blonde bio · céréales d'Auvergne · 5 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Bière de Lave","description":"Noire · céréales d'Auvergne · 7 %","offers":{"@type":"Offer","price":"6.90","priceCurrency":"EUR"}}]},{"@type":"MenuSection","name":"Vins bio et vins d'Auvergne","description":"À emporter à la bouteille (75 cl) ; au verre, sur place.","hasMenuItem":[{"@type":"MenuItem","name":"Boudes","description":"Rouge fruité · Côtes d'Auvergne AOC","offers":{"@type":"Offer","price":"19.00","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Belleruche","description":"Rouge fruité · Côtes du Rhône AOC","offers":{"@type":"Offer","price":"19.00","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Pic Saint-Loup","description":"Rouge épicé · Château de Lascaux, Languedoc AOC","offers":{"@type":"Offer","price":"24.00","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Corent","description":"Rosé floral · Côtes d'Auvergne AOC","offers":{"@type":"Offer","price":"19.00","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Charme des Demoiselles","description":"Rosé frais · Château des Demoiselles, Côtes de Provence AOP","offers":{"@type":"Offer","price":"18.00","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Domaine des Cailles","description":"Blanc sec · Saint-Pourçain AOP","offers":{"@type":"Offer","price":"19.00","priceCurrency":"EUR"}},{"@type":"MenuItem","name":"Villa Dria","description":"Blanc moelleux · Côtes de Gascogne IGP","offers":{"@type":"Offer","price":"18.00","priceCurrency":"EUR"}}]}]}]}
   </script>
   <!-- MENU-JSONLD:END -->
 
@@ -101,6 +112,7 @@
   </noscript>
 </head>
 <body>
+  <a class="skip-link" href="#views" data-i18n="skip">Aller au contenu</a>
 
 <!-- Décor pour ordinateur : l'appli est pensée pour le téléphone -->
 <aside class="desk" aria-hidden="true">
@@ -133,9 +145,17 @@
       <span class="brand-name">Bougnat<br>Burger</span>
     </a>
     <div class="top-actions">
-      <button class="top-btn lang-btn" id="lang-btn" type="button" aria-label="English version" data-i18n-attr="aria-label:lang.switch">
-        <span class="lang-on" id="lang-on">FR</span><span class="lang-sep">/</span><span class="lang-off" id="lang-off">EN</span>
-      </button>
+      <div class="lang-choix">
+        <button class="top-btn lang-btn" id="lang-btn" type="button" aria-expanded="false" aria-controls="lang-list" aria-label="Langue : Français" data-sfx="none">
+          <span class="lang-on" id="lang-cur">FR</span><svg class="lang-fleche" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.6l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <ul class="lang-list" id="lang-list" hidden>
+          <li><a href="?lang=fr" data-lang="fr" lang="fr" hreflang="fr">Français</a></li>
+          <li><a href="?lang=en" data-lang="en" lang="en" hreflang="en">English</a></li>
+          <li><a href="?lang=es" data-lang="es" lang="es" hreflang="es">Español</a></li>
+          <li><a href="?lang=zh" data-lang="zh" lang="zh-Hans" hreflang="zh-Hans">中文</a></li>
+        </ul>
+      </div>
       <button class="top-btn sound-btn" id="sound-btn" type="button" aria-pressed="true" aria-label="Son" data-i18n-attr="aria-label:sound" data-sfx="none">
         <svg aria-hidden="true"><use href="#i-son"/></svg>
       </button>
@@ -146,7 +166,7 @@
     </div>
   </header>
 
-  <main class="views" id="views">
+  <main class="views" id="views" tabindex="-1">
 
     <!-- ============================== ACCUEIL ============================== -->
     <section class="view" id="accueil" data-view="accueil" aria-labelledby="accueil-title">
@@ -197,7 +217,7 @@
         </section>
 
         <a class="note-google reveal" href="#nous-avis" data-sfx="tab">
-          <span class="ng-score">4,6</span>
+          <span class="ng-score" data-nombre="4.6">4,6</span>
           <span class="ng-stars" aria-hidden="true"><svg><use href="#i-etoile"/></svg><svg><use href="#i-etoile"/></svg><svg><use href="#i-etoile"/></svg><svg><use href="#i-etoile"/></svg><svg class="half"><use href="#i-etoile"/></svg></span>
           <span class="ng-text" data-i18n="rating.text">2 039 avis sur Google</span>
         </a>
@@ -259,28 +279,29 @@
 </section>
 <section class="menu-sec" id="m-desserts"><h3>Desserts</h3>
 <ul class="list-items">
-<li class="item plain"><h4>Framboisier</h4></li>
-<li class="item plain"><h4>Tiramisu framboise</h4></li>
-<li class="item plain"><h4>Tiramisu café</h4></li>
-<li class="item plain"><h4>Forêt noire</h4></li>
-<li class="item plain"><h4>Mousse au chocolat</h4></li>
-<li class="item plain"><h4>Moelleux</h4></li>
-<li class="item plain"><h4>Tarte au citron</h4></li>
-<li class="item plain"><h4>Nougat glacé</h4></li>
-<li class="item plain"><h4>Citron, coco ou orange givrés</h4></li>
-<li class="item plain"><h4>Glaces et sorbets</h4></li>
-<li class="item plain"><h4>Plateau gourmand</h4></li>
+<li class="item plain"><h4>Tarte au citron meringuée</h4><span class="price">7,90 €</span><p>Pâte sucrée, crème au citron et meringue.</p></li>
+<li class="item plain"><h4>Framboisier</h4><span class="price">7,90 €</span><p>Génoise nature, mousse bavaroise, framboises, amandes hachées torréfiées.</p></li>
+<li class="item plain"><h4>Forêt noire</h4><span class="price">7,90 €</span><p>Génoise au chocolat, chantilly maison, copeaux de chocolat au lait. Sans cerises, sans alcool.</p></li>
+<li class="item plain"><h4>Moelleux au chocolat</h4><span class="price">5,90 €</span><p>Gâteau au chocolat au cœur fondant, servi tiède.</p></li>
+<li class="item plain"><h4>Nougat glacé</h4><span class="price">5,90 €</span><p>Crème fraîche, abricots, raisins secs, noisettes, pistaches et amandes.</p></li>
+<li class="item plain"><h4>Tiramisu framboise</h4><span class="price">sur place uniquement</span></li>
+<li class="item plain"><h4>Tiramisu café</h4><span class="price">sur place uniquement</span></li>
+<li class="item plain"><h4>Mousse au chocolat</h4><span class="price">sur place uniquement</span></li>
+<li class="item plain"><h4>Citron, coco ou orange givrés</h4><span class="price">sur place uniquement</span></li>
+<li class="item plain"><h4>Glaces et sorbets</h4><span class="price">sur place uniquement</span></li>
+<li class="item plain"><h4>Plateau gourmand</h4><span class="price">sur place uniquement</span></li>
 </ul>
 </section>
 <section class="menu-sec" id="m-boissons"><h3>Boissons</h3>
 <ul class="list-items">
-<li class="item plain"><h4>Bières de la Brasserie des Sagnes</h4><p>Brasserie artisanale auvergnate : blonde, ambrée et cuvées plus typées.</p></li>
-<li class="item plain"><h4>Bières de la Brasserie Desprat</h4><p>Une maison historique de la bière en Auvergne.</p></li>
-<li class="item plain"><h4>Vins bio et vins d'Auvergne</h4><p>Au verre ou à la bouteille.</p></li>
-<li class="item plain"><h4>Apéritifs</h4><p>Rhum, vodka, whisky, tequila, pastis.</p></li>
-<li class="item plain"><h4>Softs</h4><p>Sodas, jus Pago, eaux minérales.</p></li>
+<li class="item plain"><h4>Softs</h4><span class="price">dès 3,00 €</span><p>Sodas, thé glacé, jus Pago, eau minérale.</p><ul><li>Coca-Cola (33 cl) : 3,00 €</li><li>Coca-Cola Zero (33 cl) : 3,00 €</li><li>Fuze Tea pêche intense (33 cl) : 3,00 €</li><li>Orangina (33 cl) : 3,00 €</li><li>Perrier (33 cl) : 3,00 €</li><li>Eau minérale (33 cl) : 3,00 €</li><li>Jus Pago (20 cl · parfum au choix, à préciser dans le mot pour la cuisine) : 3,30 €</li></ul></li>
+<li class="item plain"><h4>Bières de la Brasserie des Sagnes</h4><span class="price">6,90 €</span><p>Brasserie artisanale auvergnate. Bouteilles de 33 cl.</p><ul><li>Blonde des Sagnes (Blonde · maltée, douce amertume · 5 %) : 6,90 €</li><li>Ambrée des Sagnes (Ambrée · notes caramélisées, légère amertume · 6 %) : 6,90 €</li><li>White Pale Ale (Blanche pale ale · fruitée, amertume équilibrée · 5,5 %) : 6,90 €</li><li>Boom Shiva (IPA · fruitée, amertume désaltérante · 5 %) : 6,90 €</li><li>Owl Beer Pale Ale (Blonde pale ale · fruitée, amertume équilibrée · 5,5 %) : 6,90 €</li><li>Black Sands (Noire · veloutée, douce amertume · 5,9 %) : 6,90 €</li></ul></li>
+<li class="item plain"><h4>Bières de la Brasserie Desprat</h4><span class="price">6,90 €</span><p>Une maison historique de la bière en Auvergne. Bouteilles de 33 cl.</p><ul><li>Flagrant Désir (Blanche · myrtille et céréales d'Auvergne · 6 %) : 6,90 €</li><li>Antidote bio (Ambrée bio · châtaigne et gentiane · 6 %) : 6,90 €</li><li>Cloche Rouge (Blonde · céréales d'Auvergne, notes de sureau · 6 %) : 6,90 €</li><li>Noix de Dordogne (Ambrée aux noix · 6 %) : 6,90 €</li><li>Fée de l'Effet (Blonde · orge d'Auvergne, houblon d'Alsace, refermentée au miel d'Auvergne · 6 %) : 6,90 €</li><li>La Bière des Druides (Blanche · verveine, orge et blé d'Auvergne · 5 %) : 6,90 €</li><li>La Planèze (Blonde · aux lentilles de Saint-Flour · 5 %) : 6,90 €</li><li>Organic bio (Blonde bio · céréales d'Auvergne · 5 %) : 6,90 €</li><li>Bière de Lave (Noire · céréales d'Auvergne · 7 %) : 6,90 €</li></ul></li>
+<li class="item plain"><h4>Vins bio et vins d'Auvergne</h4><span class="price">dès 18,00 €</span><p>À emporter à la bouteille (75 cl) ; au verre, sur place.</p><ul><li>Boudes (Rouge fruité · Côtes d'Auvergne AOC) : 19,00 €</li><li>Belleruche (Rouge fruité · Côtes du Rhône AOC) : 19,00 €</li><li>Pic Saint-Loup (Rouge épicé · Château de Lascaux, Languedoc AOC) : 24,00 €</li><li>Corent (Rosé floral · Côtes d'Auvergne AOC) : 19,00 €</li><li>Charme des Demoiselles (Rosé frais · Château des Demoiselles, Côtes de Provence AOP) : 18,00 €</li><li>Domaine des Cailles (Blanc sec · Saint-Pourçain AOP) : 19,00 €</li><li>Villa Dria (Blanc moelleux · Côtes de Gascogne IGP) : 18,00 €</li></ul></li>
+<li class="item plain"><h4>Apéritifs</h4><span class="price">sur place uniquement</span><p>Rhum, vodka, whisky, tequila, pastis.</p></li>
 </ul>
 </section>
+<p class="fine">L'abus d'alcool est dangereux pour la santé, à consommer avec modération. Vente d'alcool interdite aux mineurs.</p>
 <!-- MENU:END -->
         </div>
         <p class="fine" data-i18n="carte.fine">Prix nets, service compris. Allergènes : demandez à l'équipe, elle vous renseigne plat par plat.</p>
@@ -320,6 +341,7 @@
             </fieldset>
             <div class="co-total"><span data-i18n="co.total">Total</span><b id="co-total">0,00 €</b></div>
             <button class="btn btn-main" id="co-pay" type="submit" data-sfx="none"><svg aria-hidden="true"><use href="#i-carte-bancaire"/></svg><span data-i18n="co.pay">Payer et commander</span></button>
+            <p class="fine co-alcool" id="co-alcool" data-i18n="co.alcool" hidden>Votre commande contient de l'alcool : vente interdite aux mineurs, une pièce d'identité peut être demandée au retrait. L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</p>
             <p class="fine" data-i18n="co.fine">Maquette : le paiement est simulé, aucune commande n'est transmise.</p>
           </form>
           <div class="ticket" id="ticket" hidden></div>
@@ -344,7 +366,7 @@
       <div class="view-scroll">
         <header class="view-head">
           <h2 id="resa-title" data-i18n="resa.title">Réserver une table</h2>
-          <p data-i18n="resa.lede">Dites-nous quand, on vous garde la table. Au-delà de 10 personnes, appelez-nous.</p>
+          <p data-i18n="resa.lede">Dites-nous quand, on vous garde la table. À partir de 10 personnes, appelez-nous.</p>
         </header>
         <form class="resa" id="resa-form" novalidate>
           <fieldset>
@@ -362,10 +384,12 @@
           <fieldset>
             <legend data-i18n="resa.guests">Combien de couverts ?</legend>
             <div class="stepper" id="resa-guests">
-              <button type="button" data-step="-1" aria-label="Moins" data-sfx="down"><svg aria-hidden="true"><use href="#i-moins"/></svg></button>
-              <output id="resa-count">2</output>
-              <button type="button" data-step="1" aria-label="Plus" data-sfx="up"><svg aria-hidden="true"><use href="#i-plus"/></svg></button>
+              <button type="button" data-step="-1" aria-label="Un couvert de moins" data-i18n-attr="aria-label:resa.less" data-sfx="down"><svg aria-hidden="true"><use href="#i-moins"/></svg></button>
+              <output id="resa-count" aria-live="polite">2</output>
+              <button type="button" data-step="1" aria-label="Un couvert de plus" data-i18n-attr="aria-label:resa.more" data-sfx="up"><svg aria-hidden="true"><use href="#i-plus"/></svg></button>
             </div>
+            <!-- à partir de 10 couverts : pas de demande en ligne, on appelle (bb-resa.js le remplit et l'annonce) -->
+            <div class="resa-groupe" id="resa-groupe" aria-live="polite"></div>
           </fieldset>
           <fieldset class="who">
             <legend data-i18n="resa.who">À quel nom ?</legend>
@@ -418,14 +442,14 @@
         <section class="avis reveal" id="nous-avis" aria-labelledby="avis-title">
           <h3 id="avis-title" data-i18n="avis.title">Ce que disent les clients</h3>
           <div class="avis-score">
-            <span class="avis-num">4,6<small>/5</small></span>
+            <span class="avis-num"><span data-nombre="4.6">4,6</span><small>/5</small></span>
             <span class="avis-meta"><span data-i18n="avis.count">2 039 avis Google</span><span data-i18n="avis.asof">au 27 septembre 2026</span></span>
           </div>
           <!-- La fenêtre sur les avis Google (bb-avis.js) ; le premier avis est écrit ici pour les robots -->
           <div class="avis-fenetre" role="region" aria-label="Avis Google" data-i18n-attr="aria-label:avis.window">
             <div class="avis-barre">
               <span class="avis-pastilles" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="avis-titre"><b data-i18n="avis.bar">Avis Google</b> · 4,6 <svg aria-hidden="true"><use href="#i-etoile"/></svg></span>
+              <span class="avis-titre"><b data-i18n="avis.bar">Avis Google</b> · <span data-nombre="4.6">4,6</span> <svg aria-hidden="true"><use href="#i-etoile"/></svg></span>
               <a class="avis-ext" href="https://www.google.com/maps/place/?q=place_id:ChIJ-SIFuukb90cRnD9t-Ioq67Y" target="_blank" rel="noopener" aria-label="Ouvrir les avis sur Google" data-i18n-attr="aria-label:avis.open"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5h10v10M19 5 6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
             </div>
             <div class="avis-piste" id="avis-piste">
@@ -487,11 +511,12 @@
       </div>
       <div class="p-foot">
         <div class="p-qty stepper" id="p-qty">
-          <button type="button" data-step="-1" aria-label="Moins" data-sfx="down"><svg aria-hidden="true"><use href="#i-moins"/></svg></button>
-          <output id="p-count">1</output>
-          <button type="button" data-step="1" aria-label="Plus" data-sfx="up"><svg aria-hidden="true"><use href="#i-plus"/></svg></button>
+          <button type="button" data-step="-1" aria-label="Un de moins" data-i18n-attr="aria-label:p.less" data-sfx="down"><svg aria-hidden="true"><use href="#i-moins"/></svg></button>
+          <output id="p-count" aria-live="polite">1</output>
+          <button type="button" data-step="1" aria-label="Un de plus" data-i18n-attr="aria-label:p.more" data-sfx="up"><svg aria-hidden="true"><use href="#i-plus"/></svg></button>
         </div>
         <button class="btn btn-main p-add" id="p-add" type="button" data-sfx="none"><span data-i18n="p.add">Ajouter</span><b id="p-price"></b></button>
+        <p class="p-surplace" id="p-surplace" hidden></p>
       </div>
     </div>
   </div>
@@ -599,22 +624,25 @@
 </svg>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
-<script src="js/bb-core.js?v=20260927222648"></script>
-<script src="js/bb-anim.js?v=20260927222648"></script>
-<script src="js/bb-data.js?v=20260927222648"></script>
-<script src="js/bb-i18n.js?v=20260927222648"></script>
-<script src="js/bb-logo.js?v=20260927222648"></script>
-<script src="js/bb-splash.js?v=20260927222648"></script>
-<script src="js/bb-hours.js?v=20260927222648"></script>
-<script src="js/bb-bake.js?v=20260927222648" onerror="void 0"></script>
-<script src="js/bb-burger.js?v=20260927222648" onerror="void 0"></script>
-<script src="js/film/bb-bougnat-dessin.js?v=20260927222648" onerror="void 0"></script>
-<script src="js/film/bb-histoire.js?v=20260927222648" onerror="void 0"></script>
-<script src="js/bb-film-sound.js?v=20260927222648"></script>
-<script src="js/bb-carte.js?v=20260927222648"></script>
-<script src="js/bb-shop.js?v=20260927222648"></script>
-<script src="js/bb-avis.js?v=20260927222648"></script>
-<script src="js/bb-resa.js?v=20260927222648"></script>
-<script src="js/bb-app.js?v=20260927222648"></script>
+<script src="js/bb-core.js?v=20260927234419"></script>
+<script src="js/bb-anim.js?v=20260927234419"></script>
+<script src="js/bb-data.js?v=20260927234419"></script>
+<script src="js/i18n/bb-lang-es.js?v=20260927234419"></script>
+<script src="js/i18n/bb-lang-zh.js?v=20260927234419"></script>
+<script src="js/bb-i18n.js?v=20260927234419"></script>
+<script src="js/bb-logo.js?v=20260927234419"></script>
+<script src="js/bb-splash.js?v=20260927234419"></script>
+<script src="js/bb-hours.js?v=20260927234419"></script>
+<script src="js/bb-bake.js?v=20260927234419" onerror="void 0"></script>
+<script src="js/bb-burger.js?v=20260927234419" onerror="void 0"></script>
+<script src="js/bb-plat.js?v=20260927234419" onerror="void 0"></script>
+<script src="js/film/bb-bougnat-dessin.js?v=20260927234419" onerror="void 0"></script>
+<script src="js/film/bb-histoire.js?v=20260927234419" onerror="void 0"></script>
+<script src="js/bb-film-sound.js?v=20260927234419"></script>
+<script src="js/bb-carte.js?v=20260927234419"></script>
+<script src="js/bb-shop.js?v=20260927234419"></script>
+<script src="js/bb-avis.js?v=20260927234419"></script>
+<script src="js/bb-resa.js?v=20260927234419"></script>
+<script src="js/bb-app.js?v=20260927234419"></script>
 </body>
 </html>

@@ -527,9 +527,53 @@
         noise(c, o, t + 0.34, { f: 2400, f2: 420, q: 0.7, a: 0.05, d: 0.35, v: 0.045 });
       },
       arrive(c, o, t) { strike(c, o, t, midi(88), 'bell', { d: 0.35, v: 0.02 }); },
+
+      // --- les plats qui s'assemblent (bb-burger.js, bb-plat.js : dans la fiche)
+      pain(c, o, t, { force = 1 }) { // un pain qui se pose : « pouf » mat, un peu de mie
+        noise(c, o, t, { f: 900, q: 0.7, a: 0.003, d: 0.07, v: 0.05 * force });
+        strike(c, o, t, 330, 'wood', { d: 0.07, v: 0.05 * force });
+      },
+      steak(c, o, t, { force = 1 }) { // le steak tombe : « flac », puis un grésillement bref
+        noise(c, o, t, { f: 760, f2: 420, q: 1.2, a: 0.002, d: 0.08, v: 0.08 * force });
+        tone(c, o, t, { f: 360, f2: 220, glide: 0.08, a: 0.003, d: 0.08, v: 0.05 * force });
+        noise(c, o, t + 0.05, { f: 5200, type: 'highpass', q: 0.7, a: 0.02, d: 0.35, v: 0.016 * force });
+        for (let k = 0; k < 10; k++) noise(c, o, t + 0.06 + Math.random() * 0.4, { f: rnd(3500, 7500), q: 3, a: 0.001, d: 0.012, v: rnd(0.005, 0.011) * force });
+      },
+      fromage(c, o, t, { force = 1 }) { // une tranche de fromage : un « plac » souple
+        noise(c, o, t, { f: 1400, f2: 700, q: 1.6, a: 0.002, d: 0.05, v: 0.05 * force });
+        tone(c, o, t, { f: 520, f2: 340, glide: 0.05, a: 0.003, d: 0.05, v: 0.028 * force });
+      },
+      fonte(c, o, t) { // le fromage fond : un grésillement doux qui s'éteint
+        noise(c, o, t, { f: 4200, type: 'highpass', q: 0.6, a: 0.12, d: 0.6, v: 0.014 });
+        for (let k = 0; k < 14; k++) noise(c, o, t + Math.random() * 0.8, { f: rnd(2500, 6000), q: 4, a: 0.001, d: 0.015, v: rnd(0.004, 0.009) });
+      },
+      feuille(c, o, t, { force = 1 }) { // la salade : un froissé croquant
+        for (let k = 0; k < 4; k++) noise(c, o, t + k * 0.018 + Math.random() * 0.01, { f: rnd(2600, 5200), q: 1.5, a: 0.002, d: 0.035, v: rnd(0.02, 0.034) * force });
+      },
+      tranche(c, o, t, { force = 1 }) { // tomate, oignon, jambon : un « plic » humide
+        noise(c, o, t, { f: 1100, f2: 1800, q: 2.2, a: 0.002, d: 0.045, v: 0.045 * force });
+        tone(c, o, t, { f: 700, f2: 460, glide: 0.04, a: 0.002, d: 0.04, v: 0.02 * force });
+      },
+      sauce(c, o, t) { // la sauce s'étale et coule : un « splotch » qui glisse
+        noise(c, o, t, { f: 1300, f2: 400, q: 3.2, a: 0.01, d: 0.3, v: 0.034 });
+        tone(c, o, t + 0.02, { f: 460, f2: 300, glide: 0.18, a: 0.01, d: 0.16, v: 0.018 });
+      },
+      eclate(c, o, t) { noise(c, o, t, { f: 500, f2: 2400, q: 0.7, a: 0.12, d: 0.18, v: 0.03 }); }, // l'éclaté : un souffle léger qui monte
+      rassemble(c, o, t) { // les couches se rejoignent : un souffle qui descend, un petit « toc »
+        noise(c, o, t, { f: 2200, f2: 520, q: 0.7, a: 0.05, d: 0.2, v: 0.024 });
+        strike(c, o, t + 0.22, 360, 'wood', { d: 0.06, v: 0.04 });
+      },
+      envole(c, o, t) { noise(c, o, t, { f: 420, f2: 2800, q: 0.7, a: 0.16, d: 0.22, v: 0.034 }); }, // tout repart vers le haut
+      etiquette(c, o, t, { i = 0 }) { strike(c, o, t, penta(i + 2, 79), 'marimba', { d: 0.12, v: 0.016 }); }, // une étiquette : la note monte
+      bol(c, o, t) { strike(c, o, t, 880, 'ceramic', { d: 0.25, v: 0.04 }); }, // un bol, une assiette qu'on pose
+      verre(c, o, t) { strike(c, o, t, 1560, 'bell', { d: 0.3, v: 0.028 }); strike(c, o, t, 2210, 'bell', { d: 0.2, v: 0.014 }); },
+      noix(c, o, t) { for (let k = 0; k < 4; k++) strike(c, o, t + k * 0.045 + Math.random() * 0.02, rnd(900, 1400), 'wood', { d: 0.04, v: 0.022 }); },
+      roule(c, o, t) { noise(c, o, t, { f: 1600, f2: 900, q: 0.9, a: 0.08, d: 0.3, v: 0.024 }); }, // le wrap qu'on roule
+      coupe(c, o, t) { noise(c, o, t, { f: 3200, f2: 1500, q: 1.2, a: 0.005, d: 0.08, v: 0.04 }); strike(c, o, t + 0.07, 700, 'wood', { d: 0.05, v: 0.03 }); }, // le couteau
+      verse(c, o, t, { dur = 0.8 }) { noise(c, o, t, { f: 900, f2: 1400, q: 1.8, a: 0.05, d: dur * 0.5, hold: dur * 0.4, v: 0.034 }); }, // ça se verse
     };
     // sons qui peuvent légitimement se répéter vite (sinon : 50 ms minimum entre deux identiques)
-    const GAP = { flap: 0, key: 0, crunch: 40, drops: 0, pan: 0, open: 150, close: 150, chew: 0, crumbs: 0 };
+    const GAP = { flap: 0, key: 0, crunch: 40, drops: 0, pan: 0, open: 150, close: 150, chew: 0, crumbs: 0, feuille: 20, tranche: 20, etiquette: 0, pain: 30, fromage: 30 };
 
     /* voix continue : le four qui ronronne, réglée par sa chaleur (0..1) */
     const VOICES = {

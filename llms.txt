@@ -52,29 +52,77 @@ Chaque burger existe en « Ti' » (un steak) ou en double, et peut se faire avec
 - Le Petiot : 13,90 €. Pain burger artisanal, steak haché VBF ou galette de pommes de terre, Cantal jeune AOP, tomates, salade et mesclun, sauce au Saint-Nectaire fermier. Avec un sirop et une boule de glace.
 
 ### Desserts
-- Framboisier
-- Tiramisu framboise
-- Tiramisu café
-- Forêt noire
-- Mousse au chocolat
-- Moelleux
-- Tarte au citron
-- Nougat glacé
-- Citron, coco ou orange givrés
-- Glaces et sorbets
-- Plateau gourmand
+- Tarte au citron meringuée : 7,90 €. Pâte sucrée, crème au citron et meringue.
+- Framboisier : 7,90 €. Génoise nature, mousse bavaroise, framboises, amandes hachées torréfiées.
+- Forêt noire : 7,90 €. Génoise au chocolat, chantilly maison, copeaux de chocolat au lait. Sans cerises, sans alcool.
+- Moelleux au chocolat : 5,90 €. Gâteau au chocolat au cœur fondant, servi tiède.
+- Nougat glacé : 5,90 €. Crème fraîche, abricots, raisins secs, noisettes, pistaches et amandes.
+- Tiramisu framboise (sur place uniquement)
+- Tiramisu café (sur place uniquement)
+- Mousse au chocolat (sur place uniquement)
+- Citron, coco ou orange givrés (sur place uniquement)
+- Glaces et sorbets (sur place uniquement)
+- Plateau gourmand (sur place uniquement)
 
 ### Boissons
-- Bières de la Brasserie des Sagnes. Brasserie artisanale auvergnate : blonde, ambrée et cuvées plus typées.
-- Bières de la Brasserie Desprat. Une maison historique de la bière en Auvergne.
-- Vins bio et vins d'Auvergne. Au verre ou à la bouteille.
-- Apéritifs. Rhum, vodka, whisky, tequila, pastis.
-- Softs. Sodas, jus Pago, eaux minérales.
+- Softs. Sodas, thé glacé, jus Pago, eau minérale.
+  - Coca-Cola (33 cl) : 3,00 €
+  - Coca-Cola Zero (33 cl) : 3,00 €
+  - Fuze Tea pêche intense (33 cl) : 3,00 €
+  - Orangina (33 cl) : 3,00 €
+  - Perrier (33 cl) : 3,00 €
+  - Eau minérale (33 cl) : 3,00 €
+  - Jus Pago (20 cl · parfum au choix, à préciser dans le mot pour la cuisine) : 3,30 €
+- Bières de la Brasserie des Sagnes. Brasserie artisanale auvergnate. Bouteilles de 33 cl.
+  - Blonde des Sagnes (Blonde · maltée, douce amertume · 5 %) : 6,90 €
+  - Ambrée des Sagnes (Ambrée · notes caramélisées, légère amertume · 6 %) : 6,90 €
+  - White Pale Ale (Blanche pale ale · fruitée, amertume équilibrée · 5,5 %) : 6,90 €
+  - Boom Shiva (IPA · fruitée, amertume désaltérante · 5 %) : 6,90 €
+  - Owl Beer Pale Ale (Blonde pale ale · fruitée, amertume équilibrée · 5,5 %) : 6,90 €
+  - Black Sands (Noire · veloutée, douce amertume · 5,9 %) : 6,90 €
+- Bières de la Brasserie Desprat. Une maison historique de la bière en Auvergne. Bouteilles de 33 cl.
+  - Flagrant Désir (Blanche · myrtille et céréales d'Auvergne · 6 %) : 6,90 €
+  - Antidote bio (Ambrée bio · châtaigne et gentiane · 6 %) : 6,90 €
+  - Cloche Rouge (Blonde · céréales d'Auvergne, notes de sureau · 6 %) : 6,90 €
+  - Noix de Dordogne (Ambrée aux noix · 6 %) : 6,90 €
+  - Fée de l'Effet (Blonde · orge d'Auvergne, houblon d'Alsace, refermentée au miel d'Auvergne · 6 %) : 6,90 €
+  - La Bière des Druides (Blanche · verveine, orge et blé d'Auvergne · 5 %) : 6,90 €
+  - La Planèze (Blonde · aux lentilles de Saint-Flour · 5 %) : 6,90 €
+  - Organic bio (Blonde bio · céréales d'Auvergne · 5 %) : 6,90 €
+  - Bière de Lave (Noire · céréales d'Auvergne · 7 %) : 6,90 €
+- Vins bio et vins d'Auvergne. À emporter à la bouteille (75 cl) ; au verre, sur place.
+  - Boudes (Rouge fruité · Côtes d'Auvergne AOC) : 19,00 €
+  - Belleruche (Rouge fruité · Côtes du Rhône AOC) : 19,00 €
+  - Pic Saint-Loup (Rouge épicé · Château de Lascaux, Languedoc AOC) : 24,00 €
+  - Corent (Rosé floral · Côtes d'Auvergne AOC) : 19,00 €
+  - Charme des Demoiselles (Rosé frais · Château des Demoiselles, Côtes de Provence AOP) : 18,00 €
+  - Domaine des Cailles (Blanc sec · Saint-Pourçain AOP) : 19,00 €
+  - Villa Dria (Blanc moelleux · Côtes de Gascogne IGP) : 18,00 €
+- Apéritifs (sur place uniquement). Rhum, vodka, whisky, tequila, pastis.
+
+## Commander à emporter
+Burgers, plats, desserts et boissons se commandent dans le site, onglet « Commander » : on choisit un créneau de retrait (midi ou soir, les jours d'ouverture), on laisse son prénom, son téléphone et un mot pour la cuisine (allergies). Les desserts et boissons à emporter sont ceux qui ont un prix ci-dessus ; les autres se dégustent sur place. Alcool : vente interdite aux mineurs, une pièce d'identité peut être demandée au retrait. L'abus d'alcool est dangereux pour la santé.
+Dans cette maquette, le paiement est simulé : pour commander pour de vrai aujourd'hui, appeler le 07 60 12 00 63 ou passer par les plateformes de livraison ci-dessous.
+
+## Réserver une table
+Onglet « Réserver » : jour, midi ou soir, heure, nombre de couverts, prénom et téléphone ; le restaurant confirme par SMS. À partir de 10 personnes, il faut appeler le restaurant (07 60 12 00 63) pour confirmer.
+
+## Allergènes
+La fiche de chaque plat indique les allergènes déduits de sa composition (gluten, lait, œufs, fruits à coque, poisson, sulfites) ; la liste complète est à confirmer auprès du restaurant.
 
 ## Livraison
 - Uber Eats : https://www.ubereats.com/fr/store/bougnat-burger-clermont/liGEKfrmXW-DfAmCzAOFBA
 - Deliveroo : https://deliveroo.fr/fr/menu/clermont-ferrand/centre-ville/bougnat-burger
 - Raboule : https://cyclome.coopcycle.org/fr/restaurant/15-bougnat-burger
 
+## Langues du site
+Français (par défaut), anglais, espagnol et chinois simplifié : https://maliciousmusic.github.io/bougnat-burger/?lang=en · https://maliciousmusic.github.io/bougnat-burger/?lang=es · https://maliciousmusic.github.io/bougnat-burger/?lang=zh
+
 ## English
-Bougnat Burger is a burger restaurant in Clermont-Ferrand (Auvergne, France), open since 2012, serving homemade burgers made with local PDO cheeses (Saint-Nectaire, Cantal, Salers, Bleu d'Auvergne), French beef or a potato rösti (veggie), homemade fries. Open Wednesday to Saturday, lunch and dinner. An English version of the site is available at https://maliciousmusic.github.io/bougnat-burger/?lang=en.
+Bougnat Burger is a burger restaurant in Clermont-Ferrand (Auvergne, France), open since 2012, serving homemade burgers made with local PDO cheeses (Saint-Nectaire, Cantal, Salers, Bleu d'Auvergne), French beef or a potato rösti, homemade fries and salad. Open Wednesday to Saturday, lunch and dinner. Takeaway orders (burgers, desserts, soft drinks, local craft beers and wines) and table bookings on the site; for 10 people or more, call 07 60 12 00 63. English version: https://maliciousmusic.github.io/bougnat-burger/?lang=en
+
+## Español
+Bougnat Burger es un restaurante de hamburguesas en Clermont-Ferrand (Auvernia, Francia), abierto desde 2012: hamburguesas caseras con quesos DOP de Auvernia (Saint-Nectaire, Cantal, Salers, Bleu d'Auvergne), ternera francesa o tortita de patata, patatas fritas caseras. Abre de miércoles a sábado, mediodía y noche. Pedidos para llevar y reservas en la web; a partir de 10 personas, llamar al 07 60 12 00 63. Versión en español: https://maliciousmusic.github.io/bougnat-burger/?lang=es
+
+## 中文
+Bougnat Burger 是位于法国克莱蒙费朗（奥弗涅大区）的汉堡餐厅，2012 年开业：手工汉堡，使用奥弗涅 AOP 原产地保护奶酪（Saint-Nectaire、Cantal、Salers、Bleu d'Auvergne）、法国牛肉或土豆饼，配自制薯条。每周三至周六营业，午餐和晚餐。网站可外带点餐和订座；10 人及以上请致电 07 60 12 00 63。中文版：https://maliciousmusic.github.io/bougnat-burger/?lang=zh

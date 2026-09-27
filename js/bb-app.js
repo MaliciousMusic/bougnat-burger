@@ -158,12 +158,24 @@
     sync();
   }
   function initLang() {
-    const b = $('#lang-btn');
-    if (!b) return;
-    b.addEventListener('click', () => {
-      BB.setLang(BB.lang === 'fr' ? 'en' : 'fr');
-      BB.sfx.play('flip');
+    const b = $('#lang-btn'), list = $('#lang-list');
+    if (!b || !list) return;
+    const ouvrir = (on) => {
+      list.hidden = !on;
+      b.setAttribute('aria-expanded', String(on));
+      if (on) { const cur = list.querySelector('[aria-current="true"]') || list.querySelector('a'); cur && cur.focus(); }
+    };
+    b.addEventListener('click', () => { ouvrir(list.hidden); BB.sfx.play(list.hidden ? 'close' : 'open'); });
+    list.addEventListener('click', (e) => {
+      const a = e.target.closest('[data-lang]');
+      if (!a) return;
+      e.preventDefault();
+      ouvrir(false);
+      b.focus();
+      if (a.dataset.lang !== BB.lang) { BB.setLang(a.dataset.lang); BB.sfx.play('flip'); }
     });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !list.hidden) { ouvrir(false); b.focus(); } });
+    document.addEventListener('pointerdown', (e) => { if (!list.hidden && !e.target.closest('.lang-choix')) ouvrir(false); });
   }
 
   /* ---------- QR pour ouvrir sur téléphone (ordinateur seulement) ---------- */

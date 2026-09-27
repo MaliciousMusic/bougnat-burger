@@ -246,7 +246,9 @@
        sa tranche), o.hr (hauteur exacte du bord, pour les pentes très raides),
        o.r/g/b (couleur), o.sp/o.sh (reflet), o.ss (translucidité), o.id (objet :
        les bords entre objets montrent leur tranche), o.k (matière de la tranche),
-       o.sr/sg/sb (couleur de la tranche), o.wt (galbe du rideau).
+       o.sr/sg/sb (couleur de la tranche), o.wt (galbe du rideau), o.op (opacité :
+       1 par défaut ; le verre laisse voir ce qui est derrière, sauf ses reflets),
+       o.wx/o.wy (normale horizontale de la tranche, donnée par la forme : objets ronds).
        ====================================================================== */
     const DEFS = {}, MADE = {};
     function def(id, meta, make) {
@@ -254,6 +256,8 @@
         id, ext: meta.ext, exy: meta.exy || meta.ext, cx: meta.cx || 0, cy: meta.cy || 0,
         hmax: meta.hmax, hbmin: meta.hbmin || 0, ky: meta.ky || KY, make, phi: meta.phi || 25,
         band: meta.band || null, shadow: meta.shadow || null,
+        strata: meta.strata || null, strataK: meta.strataK != null ? meta.strataK : -1,
+        points: meta.points || null, // (points d'ancrage d'étiquettes donnés par la recette : [x, y, z] du plat)
       };
     }
     const made = (id) => MADE[id] || (MADE[id] = DEFS[id].make());
@@ -2690,6 +2694,1148 @@
     });
 
     /* ======================================================================
+       Les desserts : l'assiette blanche ou l'ardoise (comme au restaurant),
+       la pièce posée, ses décors qui tombent dessus. Les tranches montrent
+       leurs couches (strates : génoise, crème, fruits pris dans la masse).
+       Vus un peu plus bas que les plats (32°) : les couches se montrent.
+       Rien en pointillés serrés : ni alvéoles, ni graines, ni pépites.
+       ====================================================================== */
+    const defD = (id, meta, make) => def(id, Object.assign({ phi: 32 }, meta), make);
+    const ARD_H = ARD_TOP + 0.002;
+    const ardAt = () => ARD_H;
+    const assietteD = assietteAt;
+    // l'assiette et l'ardoise des desserts : les mêmes, vues sous l'angle des desserts
+    defD('assiette-d', { ext: 1.03, hmax: 0.11 }, DEFS['assiette'].make);
+    defD('ardoise-d', { ext: 1.16, exy: 0.86, hmax: 0.06 }, DEFS['ardoise'].make);
+    // le bas d'une forme ronde (sphère, ellipsoïde de rayon R, demi-hauteur c, centre à cz) : chaque colonne
+    // de la tranche s'arrête là où finit la silhouette vue à 32° (le contour reste une ellipse, pas une jarre)
+    const SD = Math.sin((32 * Math.PI) / 180), CD = Math.cos((32 * Math.PI) / 180);
+    const hbRound = (dx, R, cz, c) => { const k = Math.sqrt(Math.max(0, 1 - (dx / R) * (dx / R))); return cz - (k * (Math.sqrt(R * R * SD * SD + c * c * CD * CD) - R * SD)) / CD; };
+    const mixc = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+    const setc = (o, c) => { o.r = c[0]; o.g = c[1]; o.b = c[2]; };
+
+    /* un pavé (part de gâteau, carré de tiramisu, tranche de nougat) posé sur base(x, y).
+       B : { x, y, rot, w, d, H, round, bevel, base, top(u, v, o, q, b0), strata(zr, u, v, S, face, g) }
+       (u, v : repère du pavé ; zr : hauteur au-dessus du support ; face : 1 = avant/arrière, 2 = côtés) */
+    function block(id, meta, B) {
+      const cs = Math.cos(B.rot), sn = Math.sin(B.rot);
+      const z0 = B.base(B.x, B.y);
+      const LOC = [0, 0];
+      const loc = (x, y) => { const dx = x - B.x, dy = y - B.y; LOC[0] = dx * cs + dy * sn; LOC[1] = -dx * sn + dy * cs; return LOC; };
+      const ext = Math.hypot(B.w, B.d) + 0.05;
+      defD(id, Object.assign({
+        cx: B.x, cy: B.y, ext, exy: ext, hmax: z0 + B.H + (B.extra || 0.08), shadow: OMBRE_F, strataK: 24,
+        strata(z, wx, wy, S, v, g) {
+          const [u, w] = loc(wx, wy);
+          const face = Math.abs(Math.abs(w) - B.d) < Math.abs(Math.abs(u) - B.w) ? 1 : 2;
+          B.strata(z - z0, u, w, S, face, g);
+        },
+      }, meta), () => {
+        const nE = noise2(hash(id) ^ 77);
+        return function (x, y, o) {
+          const [u, v] = loc(x, y);
+          const sd = sdRoundBox(u, v, B.w, B.d, B.round) + 0.0012 * nE(u * 5, v * 5);
+          const a = 0.5 - sd * RPX;
+          if (a <= 0) return;
+          o.a = a > 1 ? 1 : a;
+          const q = smooth(-B.bevel, 0, sd); // 0 dedans, 1 sur l'arête
+          const b0 = B.base(x, y);
+          // (un gâteau est rigide : son dessus reste plat même si l'assiette remonte sous un coin)
+          o.h = z0 + B.H - B.bevel * 0.7 * q * q;
+          o.hb = Math.min(b0, z0 + 0.01);
+          o.id = 1; o.k = 24;
+          o.sp = 0.2; o.sh = 20; o.cc = 0; o.ss = 0.1;
+          o.sr = 230; o.sg = 220; o.sb = 200;
+          B.top(u, v, o, q, b0);
+        };
+      });
+    }
+    // des morceaux pris dans la masse (fruits, fruits secs) : éclats cabossés, un peu allongés, en 3D (repère du pavé)
+    function lumps(seed, n, box, types, minD) {
+      const r = rng(seed), P = [];
+      for (let j = 0; P.length < n && j < 1200; j++) {
+        const t = types[Math.floor(r() * types.length)];
+        const a = r() * Math.PI;
+        const p = { x: r.range(-box[0], box[0]), y: r.range(-box[1], box[1]), z: r.range(box[2], box[3]), r: r.range(t.r[0], t.r[1]), t, o: r.range(0, 40), sq: r.range(0.7, 1.0), el: t.el || 1, ca: Math.cos(a), sa: Math.sin(a) };
+        if (P.some((q) => Math.hypot(q.x - p.x, q.y - p.y, (q.z - p.z) * 1.3) < (q.r + p.r) * (minD || 1.1))) continue;
+        P.push(p);
+      }
+      const nL = noise2(seed ^ 9);
+      // le morceau qui contient (u, v, z) : { p, d (0 au centre, 1 au bord) } ou null
+      const f = function (u, v, z) {
+        let best = null, bd = 1;
+        for (let k = 0; k < P.length; k++) {
+          const p = P[k];
+          let dx = u - p.x, dy = v - p.y;
+          if (Math.abs(dx) > p.r * p.el * 1.3 || Math.abs(dy) > p.r * p.el * 1.3) continue;
+          const a1 = (dx * p.ca + dy * p.sa) / p.el, a2 = -dx * p.sa + dy * p.ca;
+          const dz = (z - p.z) / p.sq;
+          const rr = p.r * (1 + (p.t.rough || 0.04) * nL(dx * 18 + p.o, dy * 18 + dz * 18));
+          const d = Math.sqrt(a1 * a1 + a2 * a2 + dz * dz) / rr;
+          if (d < bd) { bd = d; best = p; }
+        }
+        return best ? { p: best, d: bd } : null;
+      };
+      f.P = P;
+      return f;
+    }
+    // un point du pavé B (repère u, v ; hauteur zr au-dessus du support) → repère du plat [x, y, z]
+    const blockPt = (B, u, v, zr) => { const cs = Math.cos(B.rot), sn = Math.sin(B.rot); return [B.x + u * cs - v * sn, B.y + u * sn + v * cs, B.base(B.x, B.y) + zr]; };
+
+    /* ---------- Framboises (entières) : de gros grains ronds et luisants, un léger voile mat, pas de creux noirs ---------- */
+    function raspberryAt(dx, dy, R, lie, cs, sn, W, o) {
+      // lie : couchée, allongée selon (cs, sn) ; sinon debout, un cône arrondi (le creux de la queue en dessous)
+      let u = dx, v = dy;
+      if (lie) { const a = dx * cs + dy * sn, b = -dx * sn + dy * cs; u = a / 1.22; v = b; }
+      const rho = Math.sqrt(u * u + v * v) / R;
+      if (rho >= 1) return -1;
+      const hmax = lie ? R * 0.95 : R * 1.3;
+      let h = hmax * Math.pow(1 - Math.pow(rho, 2.2), 0.5);
+      // de gros lobes doux (trois ou quatre par diamètre), un velouté mat : pas de grains serrés
+      W.at((u / R) * 1.9 + 17, (v / R) * 1.9 - 5);
+      const c = Math.max(0, 1 - W.f1 * 1.15);
+      const lobe = c * c * (3 - 2 * c);
+      h += R * 0.09 * lobe * (1 - 0.3 * rho);
+      o.r = 178; o.g = 24; o.b = 58;
+      tint(o, [216, 66, 98], lobe * 0.55 * (0.75 + 0.25 * W.id));
+      tint(o, [140, 16, 46], (1 - lobe) * 0.22);
+      tint(o, [124, 12, 40], smooth(0.8, 1, rho) * 0.3);
+      tint(o, [222, 162, 178], 0.08); // le voile
+      o.sp = 0.18; o.sh = 20; o.cc = 0.12; o.ss = 0.6;
+      o.sr = 150; o.sg = 20; o.sb = 48;
+      return h;
+    }
+    function berries(id, meta, list, base) {
+      defD(id, Object.assign({ hmax: 0.72, shadow: OMBRE }, meta), () => {
+        const W = worley(hash(id) ^ 3);
+        const L = list.map((b) => Object.assign({ cs: Math.cos(b.rot || 0), sn: Math.sin(b.rot || 0) }, b));
+        const tmp = newOut();
+        return function (x, y, o) {
+          let best = -1, bi = -1, cov = 0;
+          for (let k = 0; k < L.length; k++) {
+            const b = L[k], dx = x - b.x, dy = y - b.y;
+            const ext = b.R * (b.lie ? 1.25 : 1.02);
+            if (dx * dx + dy * dy > ext * ext) continue;
+            const h = raspberryAt(dx, dy, b.R, b.lie, b.cs, b.sn, W, tmp);
+            if (h < 0) continue;
+            const top = (b.z != null ? b.z : base(b.x, b.y)) + h;
+            let u = dx, v = dy;
+            if (b.lie) { const a = dx * b.cs + dy * b.sn, c = -dx * b.sn + dy * b.cs; u = a / 1.22; v = c; }
+            const cv = (b.R - Math.sqrt(u * u + v * v)) * RPX + 0.5;
+            if (cv > cov) cov = cv;
+            if (top > best) { best = top; bi = k; o.r = tmp.r; o.g = tmp.g; o.b = tmp.b; o.sp = tmp.sp; o.sh = tmp.sh; o.cc = tmp.cc; o.ss = tmp.ss; o.sr = tmp.sr; o.sg = tmp.sg; o.sb = tmp.sb; }
+          }
+          if (bi < 0) return;
+          const b = L[bi];
+          o.a = cov > 1 ? 1 : cov;
+          o.h = best;
+          o.hb = b.z != null ? b.z : base(b.x, b.y);
+          o.id = 1 + bi; o.k = 5;
+        };
+      });
+    }
+
+    /* ---------- Le framboisier (sa carte : génoise nature, mousse bavaroise, framboises, amandes hachées
+       torréfiées) : la génoise dessous, la mousse où sont prises les framboises entières (la coupe les montre),
+       des framboises dessus, les amandes hachées torréfiées semées sur le dessus ---------- */
+    const FRB = { x: 0.0, y: -0.06, rot: -0.36, w: 0.56, d: 0.36, H: 0.5 };
+    const GENOISE = [238, 194, 114], BAVAROISE = [248, 232, 222];
+    const nFr = noise2(hash('framboisier'));
+    const WFr = worley(hash('framboisier') ^ 5);
+    function raspSection(s, zr, zc, S) {
+      // les framboises debout dans la mousse, coupées en deux : des arches rouges, serrées
+      const k = Math.round((s - 0.07) / 0.14), sc = 0.07 + k * 0.14 + 0.012 * nFr(k * 3.1, 7);
+      const rx = 0.058 + 0.006 * nFr(k * 1.7, 2), rz = 0.1;
+      const du = (s - sc) / rx, dz = (zr - zc - 0.008 * nFr(k, 5)) / rz;
+      const d = du * du + dz * dz * (dz < 0 ? 1.25 : 1);
+      if (d >= 1) return false;
+      const c = mixc([238, 110, 132], [184, 26, 58], smooth(0.05, 1, d));
+      WFr.at(s * 40 + k * 7, zr * 40);
+      const lob = Math.max(0, 1 - WFr.f1 * 1.3);
+      const cc = mixc(c, [216, 64, 92], (1 - lob) * 0.2 * smooth(0.2, 0.8, d));
+      S.r = cc[0]; S.g = cc[1]; S.b = cc[2];
+      S.sp = 0.4; S.sh = 44; S.cc = 0.6; S.ss = 0.5; S.tex = 0.2;
+      return true;
+    }
+    block('framboisier-part', { points: [blockPt(Object.assign({ base: assietteD }, FRB), 0.12, FRB.d, 0.065), blockPt(Object.assign({ base: assietteD }, FRB), -0.28, FRB.d, 0.45)] }, Object.assign({ base: assietteD, round: 0.03, bevel: 0.02,
+      top(u, v, o, q) {
+        // le dessus : la mousse bavaroise, lissée, satinée
+        const n1 = nFr(u * 3, v * 3);
+        setc(o, mixc(BAVAROISE, [244, 222, 212], 0.5 + 0.5 * n1));
+        o.sp = 0.22; o.sh = 26; o.cc = 0.2; o.ss = 0.45;
+        o.h += 0.003 * n1;
+      },
+      strata(zr, u, v, S, face) {
+        const s = face === 1 ? u : v;
+        const w1 = 0.006 * nFr(s * 9, 1);
+        let c;
+        S.sp = 0.12; S.sh = 16; S.cc = 0; S.ss = 0.12; S.tex = 0.3;
+        if (zr > 0.13 + w1) {
+          c = BAVAROISE;
+          S.sp = 0.2; S.sh = 24; S.cc = 0.1; S.ss = 0.35; S.tex = 0.3;
+          if (raspSection(s, zr, 0.3, S)) return;
+        } else c = mixc([206, 150, 78], GENOISE, smooth(0.0, 0.035, zr));
+        const n2 = nFr(s * 30, zr * 30);
+        S.r = c[0] * (1 + 0.035 * n2); S.g = c[1] * (1 + 0.035 * n2); S.b = c[2] * (1 + 0.035 * n2);
+      },
+    }, FRB));
+    // dessus, quatre framboises en diagonale ; deux posées sur l'assiette, devant à gauche
+    const FRB_TOP = assietteD(FRB.x, FRB.y) + FRB.H;
+    const frbAt = (u, v) => { const cs = Math.cos(FRB.rot), sn = Math.sin(FRB.rot); return [FRB.x + u * cs - v * sn, FRB.y + u * sn + v * cs]; };
+    (function () {
+      const L = [[-0.34, -0.12], [-0.1, 0.0], [0.14, -0.1], [0.36, 0.02]].map(([u, v], i) => { const p = frbAt(u, v); return { x: p[0], y: p[1], R: 0.086 + 0.006 * (i % 2), z: FRB_TOP }; });
+      L.push({ x: -0.62, y: 0.44, R: 0.09, lie: true, rot: 0.5 }, { x: -0.4, y: 0.6, R: 0.086, lie: true, rot: -0.4 });
+      berries('framboises-dessus', { cx: -0.1, cy: 0.12, ext: 0.72, exy: 0.64 }, L, assietteD);
+    })();
+    // les amandes hachées torréfiées : des éclats dorés, anguleux, semés en bordure du dessus (clairsemés : pas de semis de points)
+    defD('amandes-hachees', { cx: FRB.x, cy: FRB.y, ext: 0.7, exy: 0.7, hmax: FRB_TOP + 0.05, shadow: OMBRE }, () => {
+      const r = rng(hash('amandes hachées'));
+      const P = [];
+      for (let j = 0; P.length < 16 && j < 600; j++) {
+        // le long des bords du dessus, un peu vers l'intérieur
+        const side = Math.floor(r() * 4), t = r.range(-0.9, 0.9), inn = r.range(0.03, 0.1);
+        const u = side < 2 ? t * FRB.w : (side === 2 ? 1 : -1) * (FRB.w - inn), v = side < 2 ? (side === 0 ? 1 : -1) * (FRB.d - inn) : t * FRB.d * 0.9;
+        const [x, y] = frbAt(u, v);
+        if (P.some((p) => Math.hypot(p.x - x, p.y - y) < 0.09)) continue;
+        P.push({ x, y, rot: r() * TAU, a: r.range(0.03, 0.042), b: r.range(0.018, 0.026), tone: r(), o: r.range(0, 40) });
+      }
+      const n1 = noise2(hash('amandes'));
+      return function (x, y, o) {
+        for (let k = 0; k < P.length; k++) {
+          const p = P[k], dx = x - p.x, dy = y - p.y;
+          if (dx * dx + dy * dy > 0.0025) continue;
+          const u = dx * Math.cos(p.rot) + dy * Math.sin(p.rot), v = -dx * Math.sin(p.rot) + dy * Math.cos(p.rot);
+          // un éclat : un polygone irrégulier (distance « carrée » arrondie), bord net
+          const e = Math.max(Math.abs(u) / p.a, Math.abs(v) / p.b) * (1 + 0.12 * n1(u * 60 + p.o, v * 60));
+          if (e >= 1) continue;
+          const cv = (1 - e) * p.b * RPX + 0.5;
+          o.a = cv > 1 ? 1 : cv;
+          o.h = FRB_TOP + 0.012 * (1 - e * e) + 0.004;
+          o.hb = FRB_TOP;
+          setc(o, mixc([236, 200, 140], [196, 136, 70], p.tone * 0.6 + 0.3 * e));
+          o.sp = 0.3; o.sh = 30; o.cc = 0.2; o.ss = 0.2;
+          o.id = 1 + k; o.k = 11; o.sr = 190; o.sg = 140; o.sb = 80;
+          return;
+        }
+      };
+    });
+
+    /* ---------- Les tiramisus : biscuits imbibés et crème au mascarpone ; framboise ou café ---------- */
+    const TIR = { x: 0.0, y: -0.04, w: 0.5, d: 0.42, H: 0.37 };
+    const MASCA = [250, 243, 228];
+    const nTi = noise2(hash('tiramisu'));
+    function tiramisu(id, rot, soak, topFn, coulisBand) {
+      block(id, {}, Object.assign({ base: assietteD, round: 0.04, bevel: 0.03, rot,
+        top: topFn,
+        strata(zr, u, v, S, face) {
+          const s = face === 1 ? u : v;
+          const w1 = 0.008 * nTi(s * 7, 1), w2 = 0.008 * nTi(s * 7, 4);
+          S.sp = 0.1; S.sh = 14; S.cc = 0; S.ss = 0.2; S.tex = 0.6;
+          let c;
+          // biscuits imbibés : la couleur du sirop, plus foncée au cœur, une mie à peine marquée
+          const bisc = (z0, z1) => {
+            const t = Math.min(zr - z0, z1 - zr) / (z1 - z0);
+            const cc = mixc(soak[1], soak[0], smooth(0, 0.35, t));
+            const n = nTi(s * 26, zr * 26);
+            return [cc[0] * (1 + 0.05 * n), cc[1] * (1 + 0.05 * n), cc[2] * (1 + 0.05 * n)];
+          };
+          const cream = () => { c = MASCA; S.sp = 0.16; S.sh = 20; S.ss = 0.35; S.tex = 0.25; };
+          if (zr < 0.09 + w1) c = bisc(0, 0.09);
+          else if (zr < 0.18 + w2) cream();
+          else if (coulisBand && zr < 0.198 + w2) { c = [196, 34, 58]; S.sp = 0.45; S.sh = 50; S.cc = 0.7; S.tex = 0.1; }
+          else if (zr < 0.27 + w1) c = bisc(0.18, 0.27);
+          else { cream(); if (topFn.dust && zr > 0.355 + w2) c = [106, 64, 40]; }
+          S.r = c[0]; S.g = c[1]; S.b = c[2];
+        },
+      }, TIR));
+    }
+    // framboise : dessus crémeux ondulé, deux filets de coulis
+    const tirTopF = function (u, v, o, q) {
+      const n1 = nTi(u * 4, v * 4);
+      setc(o, MASCA);
+      o.h += 0.006 * n1 + 0.005 * Math.sin(u * 16 + 2 * n1) * (1 - q);
+      const l1 = Math.abs(v + 0.1 - 0.06 * Math.sin(u * 8 + 1)), l2 = Math.abs(v - 0.14 - 0.05 * Math.sin(u * 6 + 3));
+      const c = Math.max(1 - smooth(0.014, 0.026, l1), 1 - smooth(0.012, 0.022, l2)) * (1 - smooth(0.36, 0.46, Math.abs(u)));
+      tint(o, [194, 28, 56], c);
+      o.h += 0.005 * c;
+      o.sp = 0.16 + 0.34 * c; o.sh = 24 + 30 * c; o.cc = 0.7 * c; o.ss = 0.35;
+    };
+    tiramisu('tiramisu-framboise-part', 0.24, [[188, 94, 104], [214, 150, 140]], tirTopF, true);
+    // café : poudré de cacao, mat et velouté
+    const tirTopC = function (u, v, o, q) {
+      const n1 = nTi(u * 5 + 9, v * 5), n2 = nTi(u * 40, v * 40);
+      setc(o, mixc([114, 70, 44], [88, 52, 32], 0.5 + 0.5 * n1));
+      o.r *= 1 + 0.04 * n2; o.g *= 1 + 0.04 * n2; o.b *= 1 + 0.04 * n2;
+      tint(o, MASCA, q * q * 0.35); // l'arête, moins poudrée
+      o.h += 0.004 * n1;
+      o.sp = 0.04; o.sh = 8; o.cc = 0; o.ss = 0.05;
+    };
+    tirTopC.dust = true;
+    tiramisu('tiramisu-cafe-part', -0.2, [[112, 70, 42], [150, 104, 64]], tirTopC, false);
+    // les framboises du tiramisu ; les grains de café
+    (function () {
+      const cs = Math.cos(0.24), sn = Math.sin(0.24), top = assietteD(TIR.x, TIR.y) + TIR.H + 0.004;
+      const at = (u, v) => [TIR.x + u * cs - v * sn, TIR.y + u * sn + v * cs];
+      const L = [[-0.26, -0.2], [0.02, -0.24], [0.28, -0.16], [0.14, 0.06]].map(([u, v], i) => { const p = at(u, v); return { x: p[0], y: p[1], R: 0.085 + 0.005 * (i % 2), z: top }; });
+      berries('framboises-tiramisu', { cx: 0, cy: -0.08, ext: 0.5, exy: 0.44 }, L, assietteD);
+    })();
+    defD('grains-cafe', { cx: 0, cy: -0.08, ext: 0.36, exy: 0.3, hmax: 0.52, shadow: OMBRE }, () => {
+      const cs = Math.cos(-0.2), sn = Math.sin(-0.2), top = assietteD(TIR.x, TIR.y) + TIR.H + 0.004;
+      const B = [[-0.16, -0.16, 0.4], [0.06, -0.2, -0.5], [0.18, -0.02, 1.2]].map(([u, v, r]) => ({ x: TIR.x + u * cs - v * sn, y: TIR.y + u * sn + v * cs, rot: r }));
+      const A = 0.068, Bw = 0.048;
+      return function (x, y, o) {
+        for (let k = 0; k < B.length; k++) {
+          const b = B[k], dx = x - b.x, dy = y - b.y;
+          const a1 = dx * Math.cos(b.rot) + dy * Math.sin(b.rot), a2 = -dx * Math.sin(b.rot) + dy * Math.cos(b.rot);
+          const e = (a1 / A) * (a1 / A) + (a2 / Bw) * (a2 / Bw);
+          if (e >= 1) continue;
+          const cv = (1 - Math.sqrt(e)) * Bw * RPX + 0.5;
+          o.a = cv > 1 ? 1 : cv;
+          // le grain torréfié : bombé, brillant, la fente au milieu
+          const slit = 1 - smooth(0.004, 0.012, Math.abs(a2 + 0.005 * Math.sin(a1 * 50)));
+          o.h = top + 0.044 * Math.sqrt(1 - e) - 0.014 * slit * (1 - smooth(0.6, 1, Math.abs(a1) / A));
+          o.hb = top;
+          setc(o, mixc([96, 54, 30], [62, 34, 18], smooth(0.2, 1, e)));
+          tint(o, [40, 22, 12], slit * 0.8);
+          o.sp = 0.5; o.sh = 50; o.cc = 0.7; o.ss = 0.05;
+          o.id = 1 + k; o.k = 11; o.sr = 70; o.sg = 40; o.sb = 22;
+          return;
+        }
+      };
+    });
+
+    /* ---------- La forêt noire (sa carte : génoise au chocolat, chantilly maison, copeaux de chocolat au lait ;
+       sans cerises, sans alcool) : sur l'ardoise, comme au restaurant ; le côté droit habillé de copeaux ---------- */
+    const FNO = { x: -0.04, y: -0.02, rot: 0.3, w: 0.54, d: 0.34, H: 0.56 };
+    const CHOCO_G = [74, 42, 28], CHANTILLY = [250, 246, 238];
+    const nFo = noise2(hash('forêt noire'));
+    // copeaux plaqués : des éclats allongés, en tous sens (pas des pépites)
+    function flakes(s, zr, S) {
+      const a = nFo(s * 6, zr * 6) * 3;
+      const p = s * Math.cos(a) + zr * Math.sin(a), q = -s * Math.sin(a) + zr * Math.cos(a);
+      const f = 0.5 + 0.5 * nFo(p * 30, q * 8);
+      const c = mixc([104, 64, 38], [170, 116, 72], smooth(0.35, 0.85, f));
+      S.r = c[0]; S.g = c[1]; S.b = c[2];
+      S.sp = 0.3; S.sh = 30; S.cc = 0.25 * f; S.ss = 0.05; S.tex = 1.4;
+    }
+    block('foret-noire-part', { points: [blockPt(Object.assign({ base: ardAt }, FNO), 0.1, FNO.d, 0.06), blockPt(Object.assign({ base: ardAt }, FNO), -0.2, FNO.d, 0.46)] }, Object.assign({ base: ardAt, round: 0.02, bevel: 0.02, extra: 0.1,
+      top(u, v, o, q) {
+        const n1 = nFo(u * 5, v * 5);
+        setc(o, CHANTILLY);
+        o.h += 0.014 * (0.5 + 0.5 * Math.sin(u * 14 + 3 * n1)) * (1 - q) + 0.006 * n1;
+        o.sp = 0.25; o.sh = 26; o.cc = 0.2; o.ss = 0.45;
+      },
+      strata(zr, u, v, S, face) {
+        // le côté droit (u > 0) : habillé de copeaux ; la face avant : les couches
+        if (face === 2 && u > 0) { flakes(v, zr, S); return; }
+        const s = face === 1 ? u : v;
+        const w1 = 0.008 * nFo(s * 8, 2);
+        S.sp = 0.12; S.sh = 16; S.cc = 0; S.ss = 0.1; S.tex = 0.8;
+        let c;
+        const cream = () => { c = CHANTILLY; S.sp = 0.22; S.sh = 24; S.ss = 0.4; S.tex = 0.25; };
+        if (zr < 0.12 + w1) c = mixc([58, 32, 22], CHOCO_G, smooth(0, 0.035, zr));
+        else if (zr < 0.24 + w1) cream();
+        else if (zr < 0.35 + w1) c = CHOCO_G;
+        else cream();
+        const n2 = nFo(s * 30, zr * 30);
+        S.r = c[0] * (1 + 0.04 * n2); S.g = c[1] * (1 + 0.04 * n2); S.b = c[2] * (1 + 0.04 * n2);
+      },
+    }, FNO));
+    // les copeaux du dessus : des rouleaux de chocolat (et quelques-uns tombés sur l'ardoise)
+    function curls(id, meta, P, colA, colB) {
+      defD(id, Object.assign({ hmax: 0.8, shadow: OMBRE }, meta), () => {
+        const n1 = noise2(hash(id));
+        const Q = {};
+        return function (x, y, o) {
+          if (!topPiece(P, x, y, 0.16, (p, u, v, Q) => {
+            // un copeau roulé : un cylindre couché, à peine aplati, bouts effilés
+            const hl = p.L, hw = p.W;
+            if (Math.abs(u) > hl || Math.abs(v) > hw) return false;
+            const t = u / hl, c = v / hw;
+            const w = 1 - Math.pow(Math.abs(t), 6);
+            if (Math.abs(c) > w) return false;
+            Q.cv = Math.min((w - Math.abs(c)) * hw, (1 - Math.abs(t)) * hl) * RPX + 0.5;
+            Q.hh = p.z + hw * 1.1 * Math.sqrt(Math.max(0, 1 - (c / w) * (c / w))) * (0.8 + 0.2 * Math.cos(t * 3));
+            Q.ww = c;
+            return true;
+          }, Q)) return;
+          const p = P[Q.j];
+          o.a = Q.cov > 1 ? 1 : Q.cov;
+          o.h = Q.best; o.hb = p.z;
+          // enroulé : des bandes qui suivent le rouleau (les tours du copeau)
+          const band = 0.5 + 0.5 * Math.sin(Q.w * 7 + p.o);
+          setc(o, mixc(colA, colB, band * 0.6 + 0.2 * n1(x * 30, y * 30)));
+          o.sp = 0.45; o.sh = 44; o.cc = 0.45; o.ss = 0.05;
+          o.id = 1 + Q.j; o.k = 27; o.sr = colA[0]; o.sg = colA[1]; o.sb = colA[2];
+        };
+      });
+    }
+    (function () {
+      const cs = Math.cos(FNO.rot), sn = Math.sin(FNO.rot), top = ardAt() + FNO.H + 0.012;
+      const r = rng(hash('copeaux forêt'));
+      const P = [];
+      for (let i = 0; i < 16; i++) {
+        const u = r.range(-0.42, 0.42), v = r.range(-0.26, 0.24);
+        P.push({ x: FNO.x + u * cs - v * sn, y: FNO.y + u * sn + v * cs, rot: r() * TAU, L: r.range(0.09, 0.14), W: r.range(0.026, 0.036), z: top + r.range(0, 0.04), o: r.range(0, 9) });
+      }
+      [[-0.7, 0.44], [0.62, 0.5], [0.8, 0.32], [-0.84, 0.28]].forEach(([x, y]) => P.push({ x, y, rot: r() * TAU, L: r.range(0.1, 0.14), W: 0.034, z: ardAt(), o: r.range(0, 9) }));
+      curls('copeaux-foret', { cx: 0, cy: 0.08, ext: 0.98, exy: 0.64 }, P, [120, 76, 44], [182, 128, 82]);
+    })();
+
+    /* ---------- Le nougat glacé (sa carte : crème fraîche, abricots, raisins secs, noisettes, pistaches et amandes) :
+       tranche couchée, la crème glacée ivoire, les morceaux pris dedans, visibles sur la coupe ---------- */
+    const NOU = { x: 0.0, y: -0.02, rot: -0.26, w: 0.56, d: 0.36, H: 0.26 };
+    const nNo = noise2(hash('nougat'));
+    const NOUGAT_TYPES = [
+      { r: [0.046, 0.058], c: [240, 150, 56], c2: [250, 188, 104], rim: [214, 118, 38], el: 1.2, k: 'abricot' }, // abricots secs, en dés
+      { r: [0.03, 0.038], c: [92, 44, 40], c2: [128, 70, 60], rim: [66, 30, 28], el: 1.35, k: 'raisin' }, // raisins secs
+      { r: [0.04, 0.05], c: [196, 138, 84], c2: [232, 196, 146], rim: [140, 86, 48], el: 1.0, k: 'noisette' }, // noisettes (la peau brune au bord)
+      { r: [0.046, 0.058], c: [136, 172, 76], c2: [186, 206, 112], rim: [118, 100, 70], el: 1.5, k: 'pistache' }, // pistaches
+      { r: [0.04, 0.05], c: [238, 216, 176], c2: [248, 236, 210], rim: [200, 156, 104], el: 2.1, k: 'amande' }, // amandes effilées
+    ];
+    const NOUGAT_IN = lumps(hash('nougat glacé'), 90, [NOU.w - 0.02, NOU.d - 0.02, -0.03, NOU.H + 0.03], NOUGAT_TYPES, 1.02);
+    function nougatAt(u, v, zr, o, S) {
+      const hit = NOUGAT_IN(u, v, zr);
+      if (!hit) return false;
+      let c = mixc(hit.p.t.c2, hit.p.t.c, smooth(0, 0.75, hit.d));
+      c = mixc(c, hit.p.t.rim, smooth(0.82, 0.98, hit.d));
+      if (S) { S.r = c[0]; S.g = c[1]; S.b = c[2]; S.sp = 0.3; S.sh = 36; S.cc = 0.4; S.ss = 0.3; S.tex = 0.2; }
+      else { setc(o, c); o.sp = 0.3; o.sh = 36; o.cc = 0.4; o.ss = 0.3; }
+      return true;
+    }
+    const NOUGAT_PTS = (function () {
+      const B = Object.assign({ base: assietteD }, NOU);
+      const pts = [blockPt(B, -0.36, NOU.d, NOU.H * 0.5)];
+      NOUGAT_TYPES.forEach((t) => {
+        let best = null, bs = -9;
+        NOUGAT_IN.P.forEach((p) => {
+          if (p.t !== t) return;
+          const onTop = p.z > NOU.H - p.r * 0.7 && p.z < NOU.H + 0.02;
+          const sc = (onTop ? 1 : 0) + p.y / NOU.d * 0.5 - Math.abs(p.x) / NOU.w * 0.3;
+          if (onTop && sc > bs) { bs = sc; best = p; }
+        });
+        pts.push(best ? blockPt(B, best.x, best.y, NOU.H) : blockPt(B, 0, 0, NOU.H));
+      });
+      return pts;
+    })();
+    block('nougat-part', { points: NOUGAT_PTS }, Object.assign({ base: assietteD, round: 0.03, bevel: 0.018,
+      top(u, v, o, q) {
+        const n1 = nNo(u * 6, v * 6);
+        setc(o, [250, 244, 226]);
+        o.r *= 1 + 0.02 * n1; o.g *= 1 + 0.02 * n1; o.b *= 1 + 0.03 * n1;
+        o.sp = 0.3; o.sh = 34; o.cc = 0.35; o.ss = 0.4;
+        // des veines de miel caramélisé, en traînées
+        tint(o, [228, 186, 112], smooth(0.5, 0.9, nNo(u * 2.5 + v * 7, v * 2.5)) * 0.35);
+        if (nougatAt(u, v, NOU.H - 0.006, o, null)) o.h += 0.004;
+      },
+      strata(zr, u, v, S) {
+        const n2 = nNo(u * 20 + v * 20, zr * 20);
+        S.r = 248 * (1 + 0.02 * n2); S.g = 240 * (1 + 0.02 * n2); S.b = 222 * (1 + 0.02 * n2);
+        const hv = smooth(0.5, 0.9, nNo((u + v) * 6, zr * 9)) * 0.3;
+        S.r += (228 - S.r) * hv; S.g += (186 - S.g) * hv; S.b += (112 - S.b) * hv;
+        S.sp = 0.28; S.sh = 30; S.cc = 0.2; S.ss = 0.4; S.tex = 0.15;
+        nougatAt(u, v, zr, null, S);
+      },
+    }, NOU));
+
+    /* ---------- Les pièces rondes : un contour polaire, un profil de hauteur, une tranche en strates ---------- */
+    // la tarte au citron meringuée (comme celle du restaurant : tartelette individuelle, meringue en spirale dorée au chalumeau)
+    function tartShell(cx, cy, R, H, base) {
+      const n1 = noise2(hash('pâte sablée') ^ Math.round(R * 100)), n2 = noise2(hash('crème citron'));
+      const rim = R * 0.1;
+      return function (x, y, o) {
+        const dx = x - cx, dy = y - cy, rr = Math.sqrt(dx * dx + dy * dy);
+        const Re = R * (1 + 0.005 * n1((dx * 9) / R, (dy * 9) / R));
+        const a = 0.5 + (Re - rr) * RPX;
+        if (a <= 0) return false;
+        o.a = a > 1 ? 1 : a;
+        const b0 = base(x, y);
+        const t = rr / Re;
+        o.hb = b0;
+        if (rr > 1e-4) { o.wx = dx / rr; o.wy = dy / rr; }
+        if (rr > Re - rim) {
+          // le bord de pâte : arrondi, doré, plus brun sur l'arête
+          const q = (rr - (Re - rim)) / rim;
+          o.h = b0 + H * (0.92 + 0.08 * Math.sqrt(Math.max(0, 1 - (2 * q - 1) * (2 * q - 1))));
+          setc(o, mixc([236, 186, 104], [202, 134, 62], smooth(0.1, 0.9, q) * 0.75));
+          const g = n1((dx * 40) / R, (dy * 40) / R);
+          o.r *= 1 + 0.05 * g; o.g *= 1 + 0.05 * g; o.b *= 1 + 0.05 * g;
+          o.sp = 0.12; o.sh = 18; o.cc = 0; o.ss = 0.1;
+          o.id = 1;
+        } else {
+          // la crème au citron : jaune vif, lisse, luisante
+          o.h = b0 + H * 0.88 + 0.003 * n2(dx * 5, dy * 5);
+          setc(o, mixc([252, 216, 48], [240, 188, 26], smooth(0, 1, t) * 0.5));
+          o.sp = 0.45; o.sh = 60; o.cc = 0.85; o.ss = 0.6;
+          o.id = 2;
+        }
+        o.k = 25; o.sr = 214; o.sg = 158; o.sb = 84;
+        return true;
+      };
+    }
+    function meringue(cx, cy, R, z, Hm, seed) {
+      const n1 = noise2(seed), n2 = noise2(seed ^ 3);
+      return function (x, y, o) {
+        const dx = x - cx, dy = y - cy, rr = Math.sqrt(dx * dx + dy * dy);
+        const th = Math.atan2(dy, dx);
+        const Re = R * (1 + 0.03 * Math.sin(th * 3 + 1) + 0.02 * n1((dx * 6) / R, (dy * 6) / R));
+        const a = 0.5 + (Re - rr) * RPX;
+        if (a <= 0) return false;
+        o.a = a > 1 ? 1 : a;
+        const t = Math.min(1, rr / Re);
+        // la spirale pochée : un gros bourrelet qui tourne vers le centre (trois tours)
+        const turns = 2.9;
+        const ph = (t * turns - th / TAU) % 1;
+        const f = ph < 0 ? ph + 1 : ph;
+        const ridge = Math.pow(Math.sin(Math.PI * f), 1.3);
+        const dome = Math.pow(1 - t * t, 0.5);
+        const hh = Hm * (0.3 + 0.7 * dome) * (0.62 + 0.38 * ridge) + 0.01 * n2(dx * 8, dy * 8);
+        o.h = z + hh;
+        o.hb = z - 0.004;
+        // blanc crémeux ; les crêtes dorées au chalumeau, les creux restés blancs
+        const brown = smooth(0.45, 0.95, ridge) * (0.5 + 0.5 * dome) * (0.8 + 0.4 * n2(dx * 5, dy * 5));
+        setc(o, [252, 248, 238]);
+        tint(o, [232, 178, 104], smooth(0.08, 0.45, brown));
+        tint(o, [182, 110, 52], smooth(0.45, 0.95, brown));
+        o.sp = 0.2; o.sh = 24; o.cc = 0.15; o.ss = 0.55;
+        o.id = 1; o.k = 26; o.sr = 246; o.sg = 238; o.sb = 222;
+        return true;
+      };
+    }
+    const TCI = { x: 0.0, y: -0.02, R: 0.62, H: 0.19 };
+    // (étiquettes : la pâte, sur le flanc devant ; la crème au citron, dans l'anneau visible sous la meringue)
+    const TCI_PTS = [[TCI.x + TCI.R * Math.cos(1.31), TCI.y + TCI.R * Math.sin(1.31), ARD_H + TCI.H * 0.5],
+      [TCI.x + TCI.R * 0.87 * Math.cos(1.92), TCI.y + TCI.R * 0.87 * Math.sin(1.92), ARD_H + TCI.H * 0.88]];
+    defD('tarte-fond', { points: TCI_PTS, cx: TCI.x, cy: TCI.y, ext: 0.66, exy: 0.66, hmax: 0.28, shadow: OMBRE_F, strataK: 25,
+      strata(z, wx, wy, S) {
+        const zr = z - ARD_H;
+        // la tranche de pâte : dorée, un peu sablée ; la base plus cuite
+        const c = mixc([192, 122, 56], [234, 182, 102], smooth(0.0, 0.07, zr));
+        S.r = c[0]; S.g = c[1]; S.b = c[2]; S.sp = 0.1; S.sh = 16; S.cc = 0; S.tex = 1.3;
+      },
+    }, () => tartShell(TCI.x, TCI.y, TCI.R, TCI.H, ardAt));
+    defD('meringue', { cx: TCI.x, cy: TCI.y, ext: 0.6, exy: 0.6, hmax: 0.56, shadow: OMBRE_F, strataK: 26,
+      strata(z, wx, wy, S) {
+        S.r = 250; S.g = 244; S.b = 232; S.sp = 0.18; S.sh = 20; S.cc = 0.1; S.ss = 0.5; S.tex = 0.4;
+      },
+    }, () => meringue(TCI.x, TCI.y, TCI.R * 0.84, ARD_H + TCI.H * 0.88, 0.3, hash('meringue')));
+
+    /* ---------- Le moelleux au chocolat (sa carte : gâteau au chocolat au cœur fondant, servi tiède) : croûte craquelée ;
+       entamé à la cuillère, le cœur coule ---------- */
+    const MOE = { x: 0.06, y: -0.12, R: 0.44, H: 0.3 };
+    const nMo = noise2(hash('moelleux')), WMo = worley(hash('moelleux') ^ 2);
+    const moeCut = (dx, dy) => {
+      // l'entaille : un coin devant, un peu à gauche
+      const th = Math.atan2(dy, dx), d = angDiff(th, 1.75);
+      return Math.abs(d) < 0.46 && Math.sqrt(dx * dx + dy * dy) > MOE.R * 0.28;
+    };
+    defD('moelleux', { cx: MOE.x, cy: MOE.y, ext: 0.5, exy: 0.5, hmax: 0.42, shadow: OMBRE_F, strataK: 27,
+      strata(z, wx, wy, S) {
+        const dx = wx - MOE.x, dy = wy - MOE.y, rr = Math.sqrt(dx * dx + dy * dy), zr = z - assietteD(MOE.x, MOE.y);
+        const inner = rr < MOE.R * 0.9;
+        let c;
+        if (!inner) {
+          // le flanc : cuit, mat, un peu plus clair en haut
+          c = mixc([60, 34, 24], [88, 54, 38], smooth(0.05, 0.26, zr));
+          S.sp = 0.12; S.sh = 16; S.cc = 0; S.ss = 0.05; S.tex = 1;
+        } else {
+          // la coupe : une mie fondante, et le cœur coulant, luisant
+          const core = 1 - smooth(MOE.R * 0.35, MOE.R * 0.75, rr);
+          c = mixc([72, 40, 26], [46, 20, 12], core);
+          S.sp = 0.2 + 0.4 * core; S.sh = 30 + 50 * core; S.cc = 0.9 * core; S.ss = 0.2; S.tex = 0.4 * (1 - core);
+        }
+        S.r = c[0]; S.g = c[1]; S.b = c[2];
+      },
+    }, () => function (x, y, o) {
+      const dx = x - MOE.x, dy = y - MOE.y, rr = Math.sqrt(dx * dx + dy * dy);
+      const Re = MOE.R * (1 + 0.012 * nMo(dx * 7, dy * 7));
+      const a = 0.5 + (Re - rr) * RPX;
+      if (a <= 0) return;
+      if (moeCut(dx, dy)) return;
+      o.a = a > 1 ? 1 : a;
+      const b0 = assietteD(x, y), t = rr / Re;
+      if (t > 0.94) { o.wx = dx / rr; o.wy = dy / rr; }
+      // le dessus bombé, craquelé : des plaques de croûte, des fentes plus sombres (des traits, pas des trous)
+      WMo.at(dx * 9 + 3, dy * 9);
+      const crack = 1 - smooth(0.02, 0.09, WMo.f2 - WMo.f1);
+      o.h = b0 + MOE.H * (0.9 + 0.1 * Math.sqrt(Math.max(0, 1 - t * t))) - 0.012 * crack * (1 - t) + 0.006 * WMo.id;
+      o.hb = b0;
+      setc(o, mixc([94, 58, 38], [72, 42, 28], WMo.id));
+      tint(o, [42, 22, 12], crack * 0.75);
+      o.sp = 0.14; o.sh = 18; o.cc = 0.05; o.ss = 0.05;
+      o.id = 1; o.k = 27; o.sr = 70; o.sg = 42; o.sb = 28;
+    });
+    // le chocolat qui coule de l'entaille, en flaque luisante sur l'assiette
+    defD('coulant', { cx: MOE.x - 0.06, cy: MOE.y + 0.38, ext: 0.36, exy: 0.3, hmax: 0.12, strataK: 27,
+      strata(z, wx, wy, S) { S.r = 52; S.g = 24; S.b = 14; S.sp = 0.5; S.sh = 70; S.cc = 1; S.ss = 0.2; S.tex = 0.1; },
+    }, () => {
+      const R0 = polar(hash('coulant'), 1, [[2, 0.12], [3, 0.08], [5, 0.05]], 0.05, 2);
+      const cx = MOE.x - 0.06, cy = MOE.y + 0.37;
+      return function (x, y, o) {
+        const dx = (x - cx) / 0.27, dy = (y - cy) / 0.17, rr = Math.sqrt(dx * dx + dy * dy);
+        // (la flaque rejoint l'entaille : une langue vers le gâteau)
+        const tongue = Math.max(0, 1 - Math.abs(dx - 0.1) * 3) * smooth(0.2, -0.9, dy);
+        const R = R0(Math.atan2(dy, dx)) + tongue * 0.6;
+        if (rr >= R) return;
+        const cv = (R - rr) * 0.17 * RPX + 0.5;
+        o.a = cv > 1 ? 1 : cv;
+        const b0 = assietteD(x, y), t = rr / R;
+        o.h = b0 + 0.018 * Math.pow(1 - t * t, 0.4) + 0.014 * tongue;
+        o.hb = b0;
+        setc(o, mixc([58, 26, 14], [40, 18, 10], t));
+        o.sp = 0.55; o.sh = 80; o.cc = 1.0; o.ss = 0.2;
+        o.id = 1; o.k = 27; o.sr = 50; o.sg = 22; o.sb = 12;
+      };
+    });
+
+    /* ---------- La mousse au chocolat, dans un ramequin blanc cannelé ---------- */
+    function ramekinMousse(cx, cy, R, H, seed, base) {
+      const n1 = noise2(seed), n2 = noise2(seed ^ 5);
+      const tw = R * 0.08;
+      return function (x, y, o) {
+        const dx = x - cx, dy = y - cy, rr = Math.sqrt(dx * dx + dy * dy), th = Math.atan2(dy, dx);
+        const Re = R * (1 + 0.022 * Math.cos(th * 22)); // les cannelures
+        const a = 0.5 + (Re - rr) * RPX;
+        if (a <= 0) return false;
+        o.a = a > 1 ? 1 : a;
+        const b0 = base(x, y);
+        o.hb = b0;
+        if (rr > R - tw) {
+          // le bord du ramequin, émail blanc
+          const q = (rr - (R - tw)) / tw;
+          o.h = b0 + H * (0.985 + 0.015 * Math.sqrt(Math.max(0, 1 - (2 * q - 1) * (2 * q - 1))));
+          setc(o, [246, 244, 238]);
+          o.sp = 0.4; o.sh = 50; o.cc = 0.8; o.ss = 0.05;
+          o.id = 1; o.k = 31; o.sr = 238; o.sg = 236; o.sb = 230;
+        } else {
+          // la mousse : satinée, un tourbillon poché au milieu
+          const t = rr / (R - tw);
+          const swirl = Math.sin(th + t * 9 + 2 * n1(dx * 4, dy * 4));
+          o.h = b0 + H * 0.92 + 0.09 * Math.pow(Math.max(0, 1 - t * 1.2), 1.1) * (0.75 + 0.25 * swirl) + 0.006 * n2(dx * 10, dy * 10);
+          setc(o, mixc([98, 60, 40], [70, 40, 26], 0.5 + 0.5 * n1(dx * 6, dy * 6)));
+          tint(o, [120, 78, 52], smooth(0.4, 1, swirl) * 0.2 * (1 - t));
+          o.sp = 0.3; o.sh = 28; o.cc = 0.28; o.ss = 0.12;
+          o.id = 2; o.k = 27; o.sr = 70; o.sg = 40; o.sb = 26;
+        }
+        return true;
+      };
+    }
+    const MOU = { x: 0.0, y: -0.06, R: 0.52, H: 0.34 };
+    defD('ramequin-mousse', { cx: MOU.x, cy: MOU.y, ext: 0.56, exy: 0.56, hmax: 0.52, shadow: OMBRE_F, strataK: 31,
+      strata(z, wx, wy, S) { S.r = 246; S.g = 244; S.b = 238; S.sp = 0.4; S.sh = 50; S.cc = 0.85; S.ss = 0.05; S.tex = 0.2; },
+    }, () => ramekinMousse(MOU.x, MOU.y, MOU.R, MOU.H, hash('mousse'), assietteD));
+    (function () {
+      const r = rng(hash('copeaux mousse')), top = assietteD(0, 0) + MOU.H * 0.92 + 0.07;
+      const P = [];
+      for (let i = 0; i < 7; i++) {
+        const a = r() * TAU, d = r.range(0.02, 0.24);
+        P.push({ x: MOU.x + Math.cos(a) * d, y: MOU.y + Math.sin(a) * d * 0.9, rot: r() * TAU, L: r.range(0.07, 0.11), W: r.range(0.02, 0.028), z: top + r.range(0, 0.02) - d * 0.25, o: r.range(0, 9) });
+      }
+      curls('copeaux-mousse', { cx: MOU.x, cy: MOU.y, ext: 0.4, exy: 0.4 }, P, [58, 30, 18], [128, 80, 50]);
+    })();
+
+    /* ---------- Les givrés : citron et orange (le chapeau reposé sur le sorbet), demi-noix de coco ---------- */
+    // un agrume givré, debout : le fruit entier, voilé de givre ; coupé vers le haut, le chapeau reposé un peu
+    // de travers : un croissant de sorbet se montre d'un côté
+    function frosted(id, meta, F) {
+      const cz = F.Hz / 2, zc = F.cut * F.Hz, rCut = F.R * Math.sqrt(Math.max(0, 1 - Math.pow((zc - cz) / cz, 2)));
+      defD(id, Object.assign({ hmax: F.Hz + 0.1, shadow: OMBRE_F, strataK: 29,
+        strata(z, wx, wy, S) {
+          const zr = z - ARD_H;
+          const c = mixc(F.peel, [242, 244, 240], 0.2 + 0.18 * smooth(zc, 0, zr));
+          S.r = c[0]; S.g = c[1]; S.b = c[2]; S.sp = 0.22; S.sh = 22; S.cc = 0.1; S.ss = 0.2; S.tex = 0.25;
+          if (Math.abs(zr - zc) < 0.006) { S.r *= 0.72; S.g *= 0.72; S.b *= 0.72; } // la coupe
+        },
+      }, meta), () => {
+        const n1 = noise2(hash(id)), n2 = noise2(hash(id) ^ 7);
+        const lift = 0.014;
+        // la surface du fruit (ellipsoïde un peu pointu aux pôles) au-dessus du point (ρ)
+        // (près du bord, la pente s'adoucit : la tranche prend le relais, sans dents de scie)
+        const top = (rho) => {
+          const t = Math.min(1, rho / F.R), e = 0.5 + F.pt;
+          if (t < 0.8) return cz + cz * Math.pow(1 - t * t, e);
+          const h8 = Math.pow(0.36, e);
+          return cz + cz * (h8 + (0.25 * h8 - h8) * (t - 0.8) / 0.2);
+        };
+        return function (x, y, o) {
+          const dx = x - F.x, dy = y - F.y, rr = Math.sqrt(dx * dx + dy * dy);
+          const Re = F.R * (1 + 0.002 * n1(dx * 4, dy * 4));
+          const a = 0.5 + (Re - rr) * RPX;
+          if (a <= 0) return;
+          o.a = a > 1 ? 1 : a;
+          o.hb = Math.max(ARD_H, ARD_H + hbRound(dx, F.R, cz, cz));
+          const skin = () => {
+            const k = 0.2 + 0.16 * (0.5 + 0.5 * n2(dx * 5, dy * 5));
+            setc(o, mixc(F.peel, [242, 244, 240], k));
+            o.sp = 0.24; o.sh = 24; o.cc = 0.12; o.ss = 0.25;
+            o.k = 29; o.sr = F.peel[0]; o.sg = F.peel[1]; o.sb = F.peel[2];
+          };
+          // le chapeau, décalé et un peu soulevé
+          const hx = dx - F.hat[0], hy = dy - F.hat[1], hr = Math.sqrt(hx * hx + hy * hy);
+          const capH = hr < rCut ? top(hr) + lift : -1;
+          const shellH = Math.min(top(rr), zc);
+          if (capH > zc + lift - 1e-4 && capH >= shellH) {
+            o.h = ARD_H + capH + (F.nip ? F.nip * Math.max(0, 1 - hr / 0.04) : 0);
+            skin();
+            if (F.nip && hr < 0.035) tint(o, [150, 150, 70], 0.3);
+            o.id = 3; o.hb = ARD_H + zc + lift * 0.5; // (la tranche du chapeau s'arrête à la coupe)
+            return;
+          }
+          if (rr < rCut - 0.012) {
+            // le croissant de sorbet, sous le bord du chapeau
+            o.h = ARD_H + zc + 0.01; o.hb = ARD_H + zc - 0.01;
+            setc(o, F.sorbet); o.sp = 0.3; o.sh = 26; o.cc = 0.3; o.ss = 0.6;
+            o.id = 2; o.k = 28; o.sr = F.sorbet[0]; o.sg = F.sorbet[1]; o.sb = F.sorbet[2];
+            return;
+          }
+          o.h = ARD_H + shellH;
+          if (rr > 1e-4) { o.wx = dx / rr; o.wy = dy / rr; }
+          skin();
+          if (rr < rCut) tint(o, F.pith, 0.5); // la tranche de la coque : le blanc de la peau
+          o.id = 1;
+        };
+      });
+    }
+    const GIV = { citron: { x: -0.58, y: -0.1 }, orange: { x: 0.58, y: -0.12 }, coco: { x: 0.0, y: 0.3 } };
+    frosted('citron-givre', { cx: GIV.citron.x, cy: GIV.citron.y, ext: 0.28, exy: 0.28 },
+      { x: GIV.citron.x, y: GIV.citron.y, R: 0.22, Hz: 0.58, cut: 0.74, pt: 0.35, peel: [242, 208, 46], pith: [248, 242, 216], sorbet: [250, 242, 196], hat: [0.035, -0.028], nip: 0.03 });
+    frosted('orange-givree', { cx: GIV.orange.x, cy: GIV.orange.y, ext: 0.3, exy: 0.3 },
+      { x: GIV.orange.x, y: GIV.orange.y, R: 0.26, Hz: 0.5, cut: 0.74, pt: 0, peel: [238, 128, 32], pith: [250, 228, 192], sorbet: [252, 180, 88], hat: [-0.035, -0.03], nip: 0.01 });
+    // la noix de coco : une demi-coque brune, fibreuse, au fond arrondi ; le sorbet blanc en dôme
+    const COCO = { R: 0.3, Hs: 0.22 };
+    defD('coco-givre', { cx: GIV.coco.x, cy: GIV.coco.y, ext: 0.34, exy: 0.34, hmax: 0.46, shadow: OMBRE_F, strataK: 30,
+      strata(z, wx, wy, S) {
+        const zr = z - ARD_H;
+        // la coque : fibres brunes presque verticales ; le liseré de chair blanche au bord
+        const th = Math.atan2(wy - GIV.coco.y, wx - GIV.coco.x);
+        const f = 0.5 + 0.5 * Math.sin(th * 70 + 5 * Math.sin(zr * 26 + th * 3));
+        const c = zr > COCO.Hs - 0.016 ? [246, 240, 228] : mixc([96, 60, 38], [146, 102, 66], f * 0.6);
+        S.r = c[0]; S.g = c[1]; S.b = c[2]; S.sp = 0.08; S.sh = 12; S.cc = 0; S.ss = 0.05; S.tex = 1.2;
+      },
+    }, () => {
+      const n1 = noise2(hash('coco')), R = COCO.R, Hs = COCO.Hs;
+      return function (x, y, o) {
+        const dx = x - GIV.coco.x, dy = y - GIV.coco.y, rr = Math.sqrt(dx * dx + dy * dy);
+        const Re = R * (1 + 0.02 * n1(dx * 6, dy * 6));
+        const a = 0.5 + (Re - rr) * RPX;
+        if (a <= 0) return;
+        o.a = a > 1 ? 1 : a;
+        if (rr > 1e-4) { o.wx = dx / rr; o.wy = dy / rr; }
+        // le fond arrondi : chaque colonne s'arrête sur le galbe de la coque
+        o.hb = Math.max(ARD_H, ARD_H + hbRound(dx, R, Hs, R * 0.8));
+        const t = rr / Re;
+        if (t > 0.9) {
+          o.h = ARD_H + Hs + 0.004; setc(o, [246, 240, 228]); o.sp = 0.2; o.sh = 20; o.cc = 0.1; o.ss = 0.3;
+          o.id = 1; o.k = 30; o.sr = 110; o.sg = 72; o.sb = 44;
+          return;
+        }
+        const u = t / 0.9;
+        o.h = ARD_H + Hs + 0.13 * Math.pow(1 - u * u, 0.6) + 0.005 * Math.sin(dx * 40 - dy * 30 + 3 * n1(dx * 4, dy * 4));
+        setc(o, [250, 248, 240]);
+        tint(o, [236, 232, 220], 0.4 * (0.5 + 0.5 * n1(dx * 10, dy * 10)));
+        o.sp = 0.22; o.sh = 24; o.cc = 0.2; o.ss = 0.65;
+        o.id = 2; o.k = 28; o.sr = 246; o.sg = 244; o.sb = 236;
+      };
+    });
+
+    /* ---------- Glaces et sorbets : une coupe blanche, deux boules de glace, une de sorbet ---------- */
+    const CPE = { x: 0.0, y: 0.02, R: 0.64, H: 0.22 };
+    // la coupe : son fond arrondi (le bas de chaque colonne suit le galbe), l'intérieur blanc
+    defD('coupe-glace', { cx: CPE.x, cy: CPE.y, ext: 0.68, exy: 0.68, hmax: 0.32, shadow: OMBRE_F, strataK: 31,
+      strata(z, wx, wy, S) { S.r = 246; S.g = 244; S.b = 238; S.sp = 0.4; S.sh = 50; S.cc = 0.85; S.ss = 0.05; S.tex = 0.2; },
+    }, () => function (x, y, o) {
+      const dx = x - CPE.x, dy = y - CPE.y, rr = Math.sqrt(dx * dx + dy * dy);
+      const a = 0.5 + (CPE.R - rr) * RPX;
+      if (a <= 0) return;
+      o.a = a > 1 ? 1 : a;
+      const b0 = assietteD(x, y);
+      const t = rr / CPE.R;
+      if (rr > 1e-4) { o.wx = dx / rr; o.wy = dy / rr; }
+      o.hb = Math.max(b0, b0 + hbRound(dx, CPE.R, CPE.H, CPE.H * 1.05));
+      if (t > 0.93) o.h = b0 + CPE.H + 0.006 * Math.sqrt(Math.max(0, 1 - Math.pow((t - 0.965) / 0.035, 2)));
+      else o.h = b0 + CPE.H * (0.35 + 0.65 * Math.pow(t / 0.93, 2.2)); // l'intérieur, en cuvette
+      setc(o, [246, 244, 238]);
+      o.sp = 0.4; o.sh = 50; o.cc = 0.85; o.ss = 0.05;
+      o.id = 1; o.k = 31; o.sr = 240; o.sg = 238; o.sb = 232;
+    });
+    /* une boule : sphère un peu tassée, surface « arrachée » par la cuillère (de larges stries courbes),
+       une collerette plus irrégulière à la base */
+    function scoops(id, meta, list) {
+      defD(id, Object.assign({ hmax: 0.8, shadow: OMBRE, strataK: 28,
+        strata(z, wx, wy, S) {
+          let best = list[0], bd = 9;
+          list.forEach((b) => { const d = Math.hypot(wx - b.x, wy - b.y); if (d < bd) { bd = d; best = b; } });
+          const c = best.col2;
+          S.r = c[0]; S.g = c[1]; S.b = c[2]; S.sp = best.sorbet ? 0.35 : 0.2; S.sh = 26; S.cc = best.sorbet ? 0.35 : 0.12; S.ss = 0.5; S.tex = 0.8;
+        },
+      }, meta), () => {
+        const n1 = noise2(hash(id)), n2 = noise2(hash(id) ^ 2), n3 = noise2(hash(id) ^ 4);
+        return function (x, y, o) {
+          let best = -1, bi = -1, cov = 0, bt = 0, bs = 0;
+          for (let k = 0; k < list.length; k++) {
+            const b = list[k], dx = x - b.x, dy = y - b.y, rr = Math.sqrt(dx * dx + dy * dy), th = Math.atan2(dy, dx);
+            const Re = b.R * (1 + 0.04 * n1(Math.cos(th) * 2.5 + k * 7, Math.sin(th) * 2.5) + 0.025 * Math.sin(th * 7 + b.o));
+            if (rr >= Re) continue;
+            const t = rr / Re;
+            const cv = (Re - rr) * RPX + 0.5;
+            if (cv > cov) cov = cv;
+            // les stries de la cuillère : des arcs larges qui s'enroulent autour de la boule
+            const u = dx * Math.cos(b.rot) + dy * Math.sin(b.rot), v = -dx * Math.sin(b.rot) + dy * Math.cos(b.rot);
+            const s = Math.sin((u + 0.9 * v * v / b.R) * (22 / b.R) * 0.25 + 2.2 * n2(dx * 5, dy * 5) + b.o);
+            const rough = n3(dx * 26, dy * 26);
+            const h = b.z + b.R * 0.95 * Math.pow(1 - t * t, 0.5) + b.R * (0.04 * s + 0.022 * rough) * (1 - 0.5 * t);
+            if (h > best) { best = h; bi = k; bt = t; bs = s; }
+          }
+          if (bi < 0) return;
+          const b = list[bi];
+          o.a = cov > 1 ? 1 : cov;
+          o.h = best; o.hb = b.z - 0.02;
+          { const ex = x - b.x, ey = y - b.y, el = Math.sqrt(ex * ex + ey * ey); if (el > 1e-4) { o.wx = ex / el; o.wy = ey / el; } }
+          setc(o, b.col);
+          const n = n2(x * 14, y * 14);
+          o.r *= 1 + 0.04 * n + 0.03 * bs; o.g *= 1 + 0.04 * n + 0.03 * bs; o.b *= 1 + 0.04 * n + 0.03 * bs;
+          tint(o, b.col2, smooth(0.7, 1, bt) * 0.45);
+          o.sp = b.sorbet ? 0.34 : 0.2; o.sh = 26; o.cc = b.sorbet ? 0.4 : 0.14; o.ss = 0.55;
+          o.id = 1 + bi; o.k = 28; o.sr = b.col2[0]; o.sg = b.col2[1]; o.sb = b.col2[2];
+        };
+      });
+    }
+    const zScoop = assietteD(0, 0) + CPE.H * 0.6;
+    scoops('boules-glace', { cx: 0, cy: -0.06, ext: 0.6, exy: 0.44 }, [
+      { x: -0.22, y: -0.12, R: 0.28, z: zScoop, col: [248, 238, 208], col2: [230, 214, 176], rot: 0.4, o: 1 }, // vanille
+      { x: 0.22, y: -0.14, R: 0.27, z: zScoop, col: [114, 72, 48], col2: [90, 54, 34], rot: -0.6, o: 3 }, // chocolat
+    ]);
+    scoops('boule-sorbet', { cx: 0.0, cy: 0.16, ext: 0.34, exy: 0.34 }, [
+      { x: 0.0, y: 0.16, R: 0.26, z: zScoop - 0.02, col: [224, 92, 112], col2: [196, 62, 84], rot: 1.1, o: 5, sorbet: true }, // framboise
+    ]);
+
+    /* ---------- Le plateau gourmand (ardoise) : tartelette au citron, carré de forêt noire, mousse, sorbet, framboises ---------- */
+    const PLG = { tarte: { x: -0.66, y: -0.04, R: 0.27 }, foret: { x: -0.1, y: -0.24 }, mousse: { x: 0.56, y: -0.2, R: 0.25 }, sorbet: { x: 0.28, y: 0.34 } };
+    defD('plateau-tarte', { cx: PLG.tarte.x, cy: PLG.tarte.y, ext: 0.3, exy: 0.3, hmax: 0.3, shadow: OMBRE_F, strataK: 25,
+      strata(z, wx, wy, S) { const c = mixc([192, 122, 56], [234, 182, 102], smooth(0, 0.05, z - ARD_H)); S.r = c[0]; S.g = c[1]; S.b = c[2]; S.sp = 0.1; S.sh = 16; S.cc = 0; S.tex = 1.3; },
+    }, () => {
+      const shell = tartShell(PLG.tarte.x, PLG.tarte.y, PLG.tarte.R, 0.12, ardAt);
+      const mer = meringue(PLG.tarte.x, PLG.tarte.y, PLG.tarte.R * 0.82, ARD_H + 0.105, 0.14, hash('mini meringue'));
+      const o2 = newOut();
+      return function (x, y, o) {
+        if (!shell(x, y, o)) return;
+        o2.a = 0;
+        if (mer(x, y, o2) && o2.h > o.h) { const a = o.a; Object.assign(o, o2); o.a = Math.max(a, o2.a); o.hb = ARD_H; o.id = 3; o.k = 26; }
+      };
+    });
+    block('plateau-foret', {}, { x: PLG.foret.x, y: PLG.foret.y, rot: 0.12, w: 0.21, d: 0.18, H: 0.32, round: 0.015, bevel: 0.012, base: ardAt, extra: 0.12,
+      top(u, v, o) {
+        setc(o, CHANTILLY); o.sp = 0.25; o.sh = 26; o.cc = 0.2; o.ss = 0.45;
+        // des copeaux à plat sur le dessus (éclats allongés)
+        const f = 0.5 + 0.5 * nFo(u * 30 + v * 8, v * 30 - u * 8);
+        tint(o, [150, 100, 60], smooth(0.62, 0.8, f));
+        o.h += 0.012 * smooth(0.62, 0.8, f);
+      },
+      strata(zr, u, v, S, face) {
+        const w1 = 0.005 * nFo(u * 9, 3);
+        let c;
+        S.sp = 0.12; S.sh = 16; S.cc = 0; S.ss = 0.1; S.tex = 0.8;
+        if (zr < 0.07 + w1 || (zr > 0.15 + w1 && zr < 0.22 + w1)) c = CHOCO_G;
+        else { c = CHANTILLY; S.sp = 0.22; S.ss = 0.4; S.tex = 0.25; }
+        S.r = c[0]; S.g = c[1]; S.b = c[2];
+      },
+    });
+    defD('plateau-mousse', { cx: PLG.mousse.x, cy: PLG.mousse.y, ext: 0.28, exy: 0.28, hmax: 0.34, shadow: OMBRE_F, strataK: 31,
+      strata(z, wx, wy, S) { S.r = 246; S.g = 244; S.b = 238; S.sp = 0.4; S.sh = 50; S.cc = 0.85; S.ss = 0.05; S.tex = 0.2; },
+    }, () => ramekinMousse(PLG.mousse.x, PLG.mousse.y, PLG.mousse.R, 0.2, hash('mini mousse'), ardAt));
+    scoops('plateau-sorbet', { cx: PLG.sorbet.x, cy: PLG.sorbet.y, ext: 0.26, exy: 0.26 }, [
+      { x: PLG.sorbet.x, y: PLG.sorbet.y, R: 0.2, z: ARD_H - 0.03, col: [250, 232, 150], col2: [236, 208, 110], rot: 0.7, o: 2, sorbet: true }, // citron
+    ]);
+    berries('plateau-framboises', { cx: -0.24, cy: 0.32, ext: 0.34, exy: 0.24 }, [
+      { x: -0.36, y: 0.32, R: 0.085, lie: true, rot: 0.6 }, { x: -0.16, y: 0.4, R: 0.08, lie: true, rot: -0.3 }, { x: -0.24, y: 0.2, R: 0.08 },
+    ], ardAt);
+
+    /* ======================================================================
+       Les boissons : verres et bouteilles sur l'ardoise, vus comme les burgers
+       (25°). Le verre est transparent : on voit la boisson au travers, ses
+       reflets restent ; les bouteilles sont en verre teinté ; les étiquettes
+       restent neutres (papier kraft ou crème, un filet, aucune marque, aucun mot).
+       Chaque verre existe vide (il se pose) et plein (on le remplit).
+       ====================================================================== */
+    // l'ardoise des boissons : plus petite que celle des plats (les verres et bouteilles la remplissent)
+    const ARB = { x: 0.96, y: 0.62 };
+    def('ardoise-b', { ext: ARB.x + 0.04, exy: ARB.y + 0.04, hmax: 0.06 }, () => {
+      const s0 = hash('ardoise bar'), n1 = noise2(s0 ^ 1), n2 = noise2(s0 ^ 2), n3 = noise2(s0 ^ 3), n4 = noise2(s0 ^ 4);
+      return function (x, y, o) {
+        const e = 0.012 * n1(x * 4, y * 4) + 0.005 * n2(x * 15, y * 15);
+        const sd = sdRoundBox(x, y, ARB.x, ARB.y, 0.05) + e;
+        const a = 0.5 - sd * RPX;
+        if (a <= 0) return;
+        o.a = a > 1 ? 1 : a;
+        const strata = n3(x * 0.9 + 3, y * 5.5);
+        const chip = smooth(-0.05, 0, sd);
+        o.h = ARD_TOP + 0.0025 * strata + 0.001 * n4(x * 22, y * 22) - 0.006 * chip * (0.5 + 0.5 * n2(x * 9, y * 9));
+        o.hb = 0;
+        const t = 0.5 + 0.5 * strata;
+        o.r = 38 + 10 * t; o.g = 39 + 10 * t; o.b = 42 + 10 * t;
+        tint(o, [74, 74, 76], smooth(0.55, 0.8, n2(x * 1.3, y * 7)) * 0.3);
+        o.sp = 0.1 + 0.05 * t; o.sh = 14; o.cc = 0.05; o.ss = 0;
+        o.id = 1; o.k = 15;
+        o.sr = 70; o.sg = 70; o.sb = 72;
+      };
+    });
+    const S25 = Math.sin((25 * Math.PI) / 180), C25 = Math.cos((25 * Math.PI) / 180);
+    const hbRound25 = (dx, R, cz, c) => { const k = Math.sqrt(Math.max(0, 1 - (dx / R) * (dx / R))); return cz - (k * (Math.sqrt(R * R * S25 * S25 + c * c * C25 * C25) - R * S25)) / C25; };
+    const GLASS = { col: [214, 226, 222], op: 0.1, sp: 0.55, sh: 90, cc: 1.0 };
+    // (φ : direction de la normale vue de dessus ; 90° = vers nous)
+    const gauss = (d, w) => Math.exp(-(d * d) / (2 * w * w));
+    function stripes(dx, dy, k) {
+      const phi = (Math.atan2(dy, dx) * 180) / Math.PI;
+      const g = Math.abs(Math.abs(phi) - 90) / 90; // 0 face à nous, 1 de profil
+      return k * (0.62 * gauss(phi - 128, 7) + 0.34 * gauss(phi - 52, 3.5) + 0.22 * Math.pow(g, 6));
+    }
+    const BAR = ARD_H;
+
+    /* un verre droit (ou un verre à pied : bowl) ; V : { x, y, R, H, t (paroi), fond (épaisseur du fond),
+       liq: { z, col, col2, op, sp, cc, ss }, foam: { h, col, col2 }, bowl: { zb } (fond arrondi, sur un pied) } */
+    function glassAt(V, full, o) {
+      return function (x, y, o) {
+        const dx = x - V.x, dy = y - V.y, rr = Math.sqrt(dx * dx + dy * dy);
+        const a = 0.5 + (V.R - rr) * RPX;
+        if (a <= 0) return;
+        o.a = a > 1 ? 1 : a;
+        if (rr > 1e-4) { o.wx = dx / rr; o.wy = dy / rr; }
+        const zb = V.bowl ? V.bowl.zb : 0;
+        // le bas de chaque colonne : le sol, ou le galbe du verre à pied
+        const hb0 = V.bowl ? Math.max(zb, hbRound25(dx, V.R, zb + V.R * 0.95, V.R * 0.95)) : 0;
+        o.hb = BAR + hb0;
+        const Rin = V.R - V.t;
+        const L = full && V.liq ? V.liq : null;
+        if (rr >= Rin || !L) {
+          // le verre : le bord (un peu arrondi), ou le fond vu par l'ouverture
+          if (rr >= Rin) {
+            const q = (rr - Rin) / V.t;
+            o.h = BAR + V.H - 0.004 * (2 * q - 1) * (2 * q - 1);
+          } else if (V.bowl) {
+            // le fond du verre à pied, vide : le creux arrondi de la coupe
+            const rb = V.R * 0.95, cz = zb + rb;
+            o.h = BAR + (rr < rb ? cz - Math.sqrt(rb * rb - rr * rr) : cz) + V.fond;
+            o.hb = o.h - 0.01; o.id = 3;
+          } else { o.h = BAR + zb + V.fond; o.hb = BAR + zb + V.fond * 0.5; o.id = 3; }
+          setc(o, GLASS.col); o.op = GLASS.op * 1.5;
+          o.sp = GLASS.sp; o.sh = GLASS.sh; o.cc = GLASS.cc; o.ss = 0;
+          if (o.id !== 3) o.id = 1;
+          o.k = 21; o.sr = GLASS.col[0]; o.sg = GLASS.col[1]; o.sb = GLASS.col[2];
+          return;
+        }
+        // la boisson : sa surface (ou la mousse, en dôme léger) ; sa tranche vue au travers du verre
+        const u = rr / Rin;
+        o.hb = BAR + (V.bowl ? Math.max(zb + V.fond, hbRound25(dx, Rin, zb + V.R * 0.95, V.R * 0.9)) : V.fond);
+        if (V.foam) {
+          const n = Math.sin(dx * 40 + 2 * Math.sin(dy * 30)) * 0.5 + Math.sin(dy * 36 - dx * 12) * 0.5;
+          o.h = BAR + L.z + V.foam.h + V.foam.dome * (1 - u * u) + 0.004 * n * (1 - u);
+          setc(o, mixc(V.foam.col, V.foam.col2, 0.5 + 0.25 * n));
+          o.sp = 0.12; o.sh = 16; o.cc = 0.05; o.ss = 0.6; o.op = 1;
+        } else {
+          o.h = BAR + L.z - 0.004 * u * u;
+          setc(o, L.top || L.col);
+          o.sp = L.sp; o.sh = 70; o.cc = L.cc; o.ss = L.ss; o.op = L.op;
+          // le ménisque : un liseré plus clair contre le verre
+          tint(o, [250, 248, 240], smooth(0.88, 1, u) * 0.3);
+        }
+        o.id = 2; o.k = 22; o.sr = L.col[0]; o.sg = L.col[1]; o.sb = L.col[2];
+      };
+    }
+    function glassStrata(V, full) {
+      return function (z, wx, wy, S, v, g, oid) {
+        const zr = z - BAR, dx = wx - V.x, dy = wy - V.y;
+        const zb = V.bowl ? V.bowl.zb : 0;
+        const L = full && V.liq ? V.liq : null;
+        if (oid !== 2) {
+          // la paroi : transparente ; plus épaisse au fond ; le bord accroche la lumière
+          S.r = GLASS.col[0]; S.g = GLASS.col[1]; S.b = GLASS.col[2];
+          S.op = GLASS.op; S.sp = GLASS.sp; S.sh = GLASS.sh; S.cc = GLASS.cc; S.ss = 0; S.tex = 0;
+          if (zr < zb + V.fond) { S.op = 0.32; S.r = 196; S.g = 214; S.b = 206; }
+          if (zr > V.H - 0.012) S.op = 0.4;
+          S.em = stripes(dx, dy, 0.8) * smooth(zb + V.fond * 0.5, zb + V.fond + 0.05, zr) * (1 - smooth(V.H - 0.03, V.H, zr) * 0.5);
+          return;
+        }
+        if (!L) return;
+        if (V.foam && zr > L.z - 0.004) {
+          const c = mixc(V.foam.col2, V.foam.col, smooth(L.z, L.z + V.foam.h, zr));
+          S.r = c[0]; S.g = c[1]; S.b = c[2]; S.op = 1; S.sp = 0.1; S.sh = 16; S.cc = 0; S.ss = 0.6; S.tex = 0.5;
+          return;
+        }
+        // la boisson vue au travers : plus sombre en bas, plus lumineuse vers le haut (la lumière la traverse)
+        const t = smooth(zb + V.fond, L.z, zr);
+        const c = mixc(L.col2, L.col, t);
+        S.r = c[0]; S.g = c[1]; S.b = c[2]; S.op = L.op; S.sp = L.sp; S.sh = 60; S.cc = L.cc; S.ss = L.ss; S.tex = 0;
+        // (la bande de reflet du verre de devant tombe aussi sur la boisson)
+        S.em = stripes(dx, dy, 0.45);
+      };
+    }
+    // définit le verre plein (id) et le verre vide (id + '-vide')
+    function glass(id, V) {
+      const meta = { cx: V.x, cy: V.y, ext: V.R + 0.03, exy: V.R + 0.03, hmax: V.H + (V.foam ? V.foam.h + V.foam.dome : 0) + 0.04, hbmin: V.bowl ? -0.02 : 0, shadow: OMBRE, strataK: -1 };
+      [true, false].forEach((full) => {
+        const st = glassStrata(V, full);
+        def(full ? id : id + '-vide', Object.assign({}, meta, {
+          strataK: 21,
+          strata: st,
+        }), () => {
+          const f = glassAt(V, full);
+          // (la tranche de la boisson a sa propre matière : même fonction de strates)
+          return function (x, y, o) { f(x, y, o); if (o.k === 22) o.k = 21; };
+        });
+      });
+    }
+    // un pied de verre à vin : le disque du pied, la jambe fine
+    function stem(id, V) {
+      def(id, { cx: V.x, cy: V.y, ext: 0.24, exy: 0.24, hmax: V.bowl.zb + 0.04, shadow: OMBRE, strataK: 21,
+        strata(z, wx, wy, S) { S.r = GLASS.col[0]; S.g = GLASS.col[1]; S.b = GLASS.col[2]; S.op = 0.22; S.sp = GLASS.sp; S.sh = GLASS.sh; S.cc = GLASS.cc; S.ss = 0; S.tex = 0; },
+      }, () => function (x, y, o) {
+        const dx = x - V.x, dy = y - V.y, rr = Math.sqrt(dx * dx + dy * dy), Rf = 0.2, Rs = 0.02;
+        const a = 0.5 + (Rf - rr) * RPX;
+        if (a <= 0) return;
+        o.a = a > 1 ? 1 : a;
+        if (rr > 1e-4) { o.wx = dx / rr; o.wy = dy / rr; }
+        o.hb = BAR;
+        if (rr < Rs) { o.h = BAR + V.bowl.zb + 0.02; o.hb = BAR + 0.02; o.id = 2; }
+        else { o.h = BAR + 0.012 + 0.02 * Math.pow(1 - smooth(Rs, Rf, rr), 3); o.id = 1; }
+        setc(o, GLASS.col); o.op = 0.2; o.sp = GLASS.sp; o.sh = GLASS.sh; o.cc = GLASS.cc; o.ss = 0;
+        o.k = 21; o.sr = GLASS.col[0]; o.sg = GLASS.col[1]; o.sb = GLASS.col[2];
+      });
+    }
+
+    /* une bouteille (corps, épaule, col, capsule) ; B : { x, y, R, zb (haut du corps), Rn (col), zs (bas du col), zn (haut du col),
+       cap: { h, col, ridges } | foil: { z, col }, glass: [col], liq (couleur vue au travers, sinon le verre), op, label: { z0, z1, col, band, line } } */
+    function bottle(id, B) {
+      const zTop = B.zn + (B.cap ? B.cap.h : 0);
+      def(id, { cx: B.x, cy: B.y, ext: B.R + 0.03, exy: B.R + 0.03, hmax: zTop + 0.04, shadow: OMBRE_F, strataK: 23,
+        strata(z, wx, wy, S) {
+          const zr = z - BAR, th = Math.atan2(wy - B.y, wx - B.x);
+          const gl = B.liq && zr < B.liqZ ? B.liq : B.glass;
+          S.r = gl[0]; S.g = gl[1]; S.b = gl[2]; S.op = B.op || 1; S.sp = 0.6; S.sh = 80; S.cc = 1.0; S.ss = 0.15; S.tex = 0;
+          S.em = stripes(wx - B.x, wy - B.y, 0.7);
+          if (B.op && B.op < 1 && B.liq && zr < B.liqZ) S.op = 0.92;
+          const Lb = B.label;
+          if (Lb && zr > Lb.z0 && zr < Lb.z1) {
+            // l'étiquette : papier mat, un bandeau plus foncé, deux filets ; pas un mot
+            let c = Lb.col;
+            const m = (zr - Lb.z0) / (Lb.z1 - Lb.z0);
+            if (Lb.band && m > Lb.band[0] && m < Lb.band[1]) c = Lb.band[2];
+            if (Lb.line && (Math.abs(m - 0.08) < 0.018 || Math.abs(m - 0.92) < 0.018)) c = Lb.line;
+            S.r = c[0]; S.g = c[1]; S.b = c[2]; S.op = 1; S.sp = 0.06; S.sh = 10; S.cc = 0; S.ss = 0.05; S.tex = 0.6;
+          }
+          if (B.neckLabel && zr > B.neckLabel.z0 && zr < B.neckLabel.z1) { const c = B.neckLabel.col; S.r = c[0]; S.g = c[1]; S.b = c[2]; S.op = 1; S.sp = 0.06; S.cc = 0; S.tex = 0.6; }
+          if (B.cap && zr > B.zn - 0.004) {
+            // la capsule couronne : métal, crantée
+            const rid = B.cap.ridges ? 0.5 + 0.5 * Math.cos(th * B.cap.ridges) : 0.5;
+            const c = mixc(B.cap.col, B.cap.col2 || B.cap.col, rid);
+            S.r = c[0]; S.g = c[1]; S.b = c[2]; S.op = 1; S.sp = 0.8; S.sh = 40; S.cc = 0.5; S.ss = 0; S.tex = 0.2;
+          }
+          if (B.foil && zr > B.foil.z) { const c = B.foil.col; S.r = c[0]; S.g = c[1]; S.b = c[2]; S.op = 1; S.sp = 0.5; S.sh = 30; S.cc = 0.3; S.ss = 0; S.tex = 0.3; }
+        },
+      }, () => function (x, y, o) {
+        const dx = x - B.x, dy = y - B.y, rr = Math.sqrt(dx * dx + dy * dy);
+        const a = 0.5 + (B.R - rr) * RPX;
+        if (a <= 0) return;
+        o.a = a > 1 ? 1 : a;
+        if (rr > 1e-4) { o.wx = dx / rr; o.wy = dy / rr; }
+        o.hb = BAR;
+        const gl = B.glass;
+        setc(o, gl); o.sp = 0.6; o.sh = 80; o.cc = 1.0; o.ss = 0.1; o.op = B.op || 1;
+        o.k = 23; o.sr = gl[0]; o.sg = gl[1]; o.sb = gl[2];
+        if (rr <= B.Rn) {
+          // le col (et sa capsule) : un cylindre ; sa tranche descend jusqu'à l'épaule
+          o.h = BAR + zTop - (B.cap ? 0.004 * (rr / B.Rn) * (rr / B.Rn) : 0);
+          o.hb = BAR + B.zs;
+          o.id = 2;
+          if (B.cap) { const c = B.cap.top || B.cap.col; setc(o, c); o.sp = 0.8; o.sh = 44; o.cc = 0.6; o.ss = 0; o.op = 1; }
+          if (B.foil) { setc(o, B.foil.col); o.sp = 0.5; o.sh = 30; o.cc = 0.3; o.op = 1; }
+          return;
+        }
+        // l'épaule : de la base du col au haut du corps, bombée
+        const s = Math.min(1, (rr - B.Rn) / (B.R - B.Rn));
+        o.h = BAR + B.zb + (B.zs - B.zb) * Math.pow(Math.cos((s * Math.PI) / 2), B.sh || 1.2);
+        o.id = 1;
+        if (B.liq && B.op && B.op < 1) { setc(o, gl); }
+      });
+    }
+
+    /* ---------- Les couleurs des boissons (les variantes : une clé par couleur) ---------- */
+    const BEER = {
+      blonde: { col: [242, 176, 44], col2: [206, 122, 20], foam: [252, 248, 236], foam2: [238, 226, 196] },
+      ambree: { col: [210, 110, 34], col2: [150, 60, 14], foam: [250, 240, 220], foam2: [232, 214, 180] },
+      blanche: { col: [246, 214, 128], col2: [226, 176, 80], foam: [253, 251, 244], foam2: [240, 234, 214] },
+      ipa: { col: [240, 150, 40], col2: [196, 98, 18], foam: [252, 246, 230], foam2: [236, 222, 190] },
+      noire: { col: [70, 34, 16], col2: [34, 16, 8], foam: [236, 214, 176], foam2: [212, 182, 136] },
+    };
+    const WINE = {
+      rouge: { col: [132, 16, 38], col2: [72, 6, 20], glass: [26, 42, 30] },
+      rose: { col: [242, 150, 150], col2: [220, 104, 112], glass: [216, 226, 212] },
+      blanc: { col: [240, 222, 140], col2: [220, 190, 96], glass: [168, 184, 120] },
+    };
+    const SOFT = {
+      cola: { col: [74, 34, 16], col2: [38, 16, 8], op: 1, foam: [214, 176, 132] },
+      the: { col: [214, 126, 44], col2: [170, 80, 20], op: 0.85 },
+      jus: { col: [250, 176, 40], col2: [234, 140, 24], op: 1 },
+      orange: { col: [250, 184, 70], col2: [240, 150, 40], op: 1 },
+      eau: { col: [232, 240, 244], col2: [214, 228, 234], op: 0.14 },
+    };
+    const beerGlass = (x, y, R, H, lvl, k, foamH) => ({ x, y, R, H, t: 0.012, fond: 0.06,
+      liq: { z: lvl, col: BEER[k].col, col2: BEER[k].col2, op: 1, sp: 0.5, cc: 0.9, ss: 0.6 },
+      foam: { h: foamH, dome: 0.025, col: BEER[k].foam, col2: BEER[k].foam2 } });
+
+    /* ---------- Brasserie des Sagnes : la bouteille derrière ; une blonde (le verre de la variante), une ambrée, une noire ---------- */
+    const KRAFT = [196, 158, 106], KRAFT_D = [132, 90, 52];
+    const BTL_BIERE = (x, y) => ({ x, y, R: 0.19, zb: 0.8, Rn: 0.072, zs: 1.02, zn: 1.36, sh: 1.1, glass: [74, 38, 14],
+      cap: { h: 0.05, col: [206, 172, 96], col2: [150, 118, 56], top: [214, 182, 110], ridges: 21 },
+      label: { z0: 0.22, z1: 0.6, col: KRAFT, band: [0.34, 0.66, KRAFT_D], line: [120, 80, 44] }, neckLabel: { z0: 1.12, z1: 1.2, col: KRAFT } });
+    bottle('bouteille-sagnes', BTL_BIERE(-0.52, -0.3));
+    Object.keys(BEER).forEach((k) => glass('verre-sagnes-v-' + k, beerGlass(-0.2, 0.26, 0.2, 0.84, 0.62, k, 0.2)));
+    glass('verre-sagnes-ambree', beerGlass(0.26, 0.2, 0.22, 0.7, 0.5, 'ambree', 0.18));
+    glass('verre-sagnes-noire', beerGlass(0.66, -0.12, 0.18, 0.76, 0.56, 'noire', 0.18));
+
+    /* ---------- Brasserie Desprat : la bouteille, un grand verre (variantes : la couleur de la bière) ---------- */
+    bottle('bouteille-desprat', Object.assign(BTL_BIERE(-0.3, -0.2), { label: { z0: 0.2, z1: 0.62, col: [228, 214, 186], band: [0.4, 0.6, [150, 40, 36]], line: [120, 90, 60] }, neckLabel: { z0: 1.12, z1: 1.2, col: [150, 40, 36] } }));
+    Object.keys(BEER).forEach((k) => glass('verre-desprat-' + k, beerGlass(0.26, 0.12, 0.27, 0.98, 0.74, k, 0.2)));
+
+    /* ---------- Vins bio et vins d'Auvergne : la bouteille, un verre à pied (variantes : rouge, rosé, blanc) ---------- */
+    const WG = (k) => ({ x: 0.3, y: 0.16, R: 0.25, H: 1.02, t: 0.01, fond: 0.02, bowl: { zb: 0.44 },
+      liq: { z: 0.66, col: WINE[k].col, col2: WINE[k].col2, op: k === 'rouge' ? 0.96 : 0.8, sp: 0.5, cc: 0.9, ss: 0.5, top: k === 'rouge' ? mixc(WINE[k].col2, WINE[k].col, 0.45) : mixc(WINE[k].col, [255, 255, 255], 0.08) } });
+    Object.keys(WINE).forEach((k) => {
+      glass('verre-vin-' + k, WG(k));
+      bottle('bouteille-vin-' + k, { x: -0.36, y: -0.2, R: 0.21, zb: 0.94, Rn: 0.078, zs: 1.14, zn: 1.64, sh: 0.9, glass: WINE[k].glass, op: k === 'rouge' ? 1 : 0.9,
+        liq: k === 'rouge' ? null : WINE[k].col2, liqZ: 1.1,
+        foil: { z: 1.44, col: k === 'rouge' ? [110, 20, 34] : k === 'rose' ? [226, 200, 170] : [210, 196, 150] },
+        label: { z0: 0.26, z1: 0.7, col: [244, 236, 214], band: [0.44, 0.56, [178, 152, 104]], line: [150, 120, 80] } });
+    });
+    stem('verre-vin-pied', WG('rouge'));
+
+    /* ---------- Apéritifs : rhum, vodka, whisky, tequila, pastis ---------- */
+    const APE = {
+      rhum: { x: -0.64, y: -0.16, R: 0.18, H: 0.34, t: 0.012, fond: 0.07, liq: { z: 0.2, col: [170, 84, 28], col2: [112, 44, 12], op: 0.9, sp: 0.5, cc: 0.9, ss: 0.5 } },
+      vodka: { x: -0.24, y: 0.2, R: 0.11, H: 0.32, t: 0.01, fond: 0.1, liq: { z: 0.26, col: [236, 242, 246], col2: [220, 230, 236], op: 0.14, sp: 0.5, cc: 0.9, ss: 0.2 } },
+      whisky: { x: 0.12, y: -0.18, R: 0.21, H: 0.4, t: 0.014, fond: 0.08, liq: { z: 0.22, col: [214, 136, 44], col2: [170, 90, 22], op: 0.82, sp: 0.5, cc: 0.9, ss: 0.5 } },
+      tequila: { x: 0.44, y: 0.22, R: 0.11, H: 0.32, t: 0.01, fond: 0.1, liq: { z: 0.26, col: [238, 206, 122], col2: [222, 180, 90], op: 0.55, sp: 0.5, cc: 0.9, ss: 0.4 } },
+      pastis: { x: 0.74, y: -0.2, R: 0.16, H: 0.72, t: 0.01, fond: 0.05, liq: { z: 0.5, col: [242, 228, 160], col2: [226, 206, 128], op: 0.94, sp: 0.4, cc: 0.8, ss: 0.8 } },
+    };
+    Object.keys(APE).forEach((k) => glass('verre-' + k, APE[k]));
+
+    /* ---------- Softs (sa carte : sodas, thé glacé, jus Pago, eau minérale) : le grand verre de soda (la variante),
+       un thé glacé, un petit jus en bouteille, une eau minérale ---------- */
+    const SG = (k, x, y) => {
+      const c = SOFT[k];
+      const V = { x: x != null ? x : -0.5, y: y != null ? y : 0.18, R: 0.2, H: 0.86, t: 0.012, fond: 0.06, liq: { z: 0.7, col: c.col, col2: c.col2, op: c.op, sp: 0.5, cc: 0.9, ss: 0.5 } };
+      if (c.foam) V.foam = { h: 0.03, dome: 0.006, col: c.foam, col2: mixc(c.foam, c.col, 0.3) };
+      return V;
+    };
+    Object.keys(SOFT).forEach((k) => glass('verre-soft-' + k, SG(k)));
+    glass('verre-the-glace', Object.assign(SG('the', -0.04, 0.3), { R: 0.17, H: 0.7, liq: { z: 0.56, col: SOFT.the.col, col2: SOFT.the.col2, op: 0.85, sp: 0.5, cc: 0.9, ss: 0.5 } }));
+    bottle('bouteille-jus', { x: 0.34, y: -0.12, R: 0.13, zb: 0.44, Rn: 0.07, zs: 0.58, zn: 0.7, sh: 1.3, glass: [210, 222, 214], op: 0.3, liq: [246, 160, 36], liqZ: 0.56,
+      cap: { h: 0.05, col: [70, 130, 76], col2: [52, 100, 58], top: [84, 146, 90], ridges: 30 },
+      label: { z0: 0.12, z1: 0.36, col: [248, 244, 232], band: [0.4, 0.6, [236, 150, 40]], line: [70, 130, 76] } });
+    bottle('bouteille-eau', { x: 0.72, y: -0.32, R: 0.18, zb: 0.86, Rn: 0.07, zs: 1.1, zn: 1.34, sh: 1.0, glass: [150, 196, 170], op: 0.36,
+      cap: { h: 0.05, col: [60, 110, 170], col2: [44, 84, 136], top: [72, 124, 184], ridges: 0 },
+      label: { z0: 0.3, z1: 0.56, col: [246, 248, 250], band: [0.38, 0.62, [70, 130, 190]], line: [60, 110, 170] } });
+
+    /* ======================================================================
        Le calcul : champs → lumière → projection → PNG
        ====================================================================== */
     function frame(id) {
@@ -2722,6 +3868,7 @@
     const SKY = [0.31, 0.31, 0.32], GND = [0.1, 0.075, 0.06];
     const L1h = Math.hypot(L1[0], L1[1]);
     const LO = [0, 0, 0];
+    let LSP = 0, LNV = 1; // (dernier appel : intensité des reflets ; cosinus vue-normale)
     // la lumière reçue par un point : albédo (0..1), brillance sp/sh, vernis cc, translucidité ss, occlusion ao, ombre shd
     function lit(nx, ny, nz, ar, ag, ab, sp, shn, cc, ss, ao, shd) {
       let kd = nx * L1[0] + ny * L1[1] + nz * L1[2];
@@ -2732,6 +3879,7 @@
       let fd = nx * L2[0] + ny * L2[1] + nz * L2[2];
       if (fd < 0) fd = 0;
       let nv = nx * V[0] + ny * V[1] + nz * V[2];
+      LNV = nv < 0 ? -nv : nv; LSP = 0;
       if (nv < 0) nv = 0;
       const gr = 1 - nv, fr2 = gr * gr;
       let rd = nx * L4[0] + ny * L4[1] + nz * L4[2];
@@ -2763,10 +3911,12 @@
           if (d4 > 0.88) s4 += cc * 0.9 * Math.pow(d4, 70) * (0.35 + 0.65 * fs);
         }
         s1 *= ao; s4 *= ao;
+        LSP = s1 + 0.7 * s4;
         r += s1 * KEY[0] + s4 * RIM[0]; g += s1 * KEY[1] + s4 * RIM[1]; b += s1 * KEY[2] + s4 * RIM[2];
       }
       LO[0] = r; LO[1] = g; LO[2] = b;
     }
+    const glassOp = (op0) => { const g = 1 - LNV; const v = op0 + 1.5 * LSP + 0.45 * g * g * g; return v > 1 ? 1 : v; };
     // courbe des tons : saturation un peu relevée, épaule douce (les reflets ne brûlent pas), noirs profonds
     const shoulder = (v) => (v <= 0 ? 0 : v < 0.8 ? v : 0.8 + 0.2 * (1 - Math.exp(-(v - 0.8) / 0.2)));
     function toneOut(r, g, b, out, o) {
@@ -2798,6 +3948,17 @@
       [0.3, 0.04, 2, 2, 0.3, 1.0], // 18 galette de blé (roulée : la tranche file dessous)
       [0.34, 0.14, 3, 3, 0.4, 0.2], // 19 pain grillé, croûtons
       [0.2, 0.05, 2, 2, 0.5, 0.2], // 20 coupe du wrap
+      [0.0, 0.0, 1, 1, 1.0, 0], // 21 verre (transparent : sa teinte, ses reflets)
+      [0.1, 0.0, 1, 1, 0.9, 0], // 22 liquide dans le verre
+      [0.08, 0.01, 1, 1, 1.0, 0.05], // 23 bouteille (verre teinté), étiquette en strates
+      [0.1, 0.1, 3, 3, 0.2, 0.04], // 24 gâteau en couches (strates)
+      [0.18, 0.14, 3, 2, 0.2, 0.45], // 25 pâte sablée
+      [0.08, 0.05, 2, 2, 0.3, 0.35], // 26 meringue
+      [0.22, 0.1, 2, 3, 0.4, 0.25], // 27 chocolat
+      [0.14, 0.06, 2, 2, 0.4, 0.7], // 28 glace, sorbet (boule)
+      [0.18, 0.04, 2, 2, 0.5, 0.75], // 29 peau d'agrume givrée
+      [0.28, 0.3, 6, 1, 0.1, 0.55], // 30 coque de noix de coco (fibres)
+      [0.08, 0.02, 1, 1, 0.8, 0.12], // 31 céramique émaillée
     ];
 
     // grain des tranches : bruit tuilable 256 × 256
@@ -2872,7 +4033,7 @@
       }
     }
 
-    function newOut() { return { a: 0, h: 0, hb: 0, hr: -9, r: 0, g: 0, b: 0, sp: 0, sh: 16, cc: 0, ss: 0, id: 0, k: 0, sr: -1, sg: 0, sb: 0, wt: 0 }; }
+    function newOut() { return { a: 0, h: 0, hb: 0, hr: -9, r: 0, g: 0, b: 0, sp: 0, sh: 16, cc: 0, ss: 0, id: 0, k: 0, sr: -1, sg: 0, sb: 0, wt: 0, op: 1, wx: 0, wy: 0 }; }
 
     /* 1. les champs vus de dessus */
     async function fields(id, rpx) {
@@ -2881,7 +4042,7 @@
       const R = W / (2 * E); // pixels par unité, exacts
       const n = W * NY;
       const F = {
-        W, NY, E, EXY, CX, CY, rpx: R, ky: NY / (2 * EXY * R), band: D.band,
+        W, NY, E, EXY, CX, CY, rpx: R, ky: NY / (2 * EXY * R), band: D.band, strata: D.strata, strataK: D.strataK, op: null,
         a: new Float32Array(n), h: new Float32Array(n), hb: new Float32Array(n), hr: new Float32Array(n),
         r: new Float32Array(n), g: new Float32Array(n), b: new Float32Array(n),
         sr: new Float32Array(n), sg: new Float32Array(n), sb: new Float32Array(n),
@@ -2894,10 +4055,13 @@
         RPX = R;
         const y = CY - EXY + (py + 0.5) * dy;
         for (let ix = 0; ix < W; ix++) {
-          o.a = 0; o.h = 0; o.hb = 0; o.hr = -9; o.sp = 0; o.sh = 16; o.cc = 0; o.ss = 0; o.id = 0; o.k = 0; o.sr = -1; o.wt = 0;
+          o.a = 0; o.h = 0; o.hb = 0; o.hr = -9; o.sp = 0; o.sh = 16; o.cc = 0; o.ss = 0; o.id = 0; o.k = 0; o.sr = -1; o.wt = 0; o.op = 1; o.wx = 0; o.wy = 0;
           px(CX - E + (ix + 0.5) * dx, y, o);
           if (!(o.a > 0)) continue;
           const i = py * W + ix;
+          if (o.op < 1) { if (!F.op) F.op = new Float32Array(n).fill(1); F.op[i] = o.op > 0.02 ? o.op : 0.02; }
+          // (objets ronds : la normale de la tranche donnée par la forme, plus lisse que celle tirée du contour)
+          if (o.wx || o.wy) { if (!F.WX) { F.WX = new Float32Array(n); F.WY = new Float32Array(n); } F.WX[i] = o.wx; F.WY[i] = o.wy; }
           F.a[i] = o.a > 1 ? 1 : o.a; F.h[i] = o.h; F.hb[i] = o.hb; F.hr[i] = o.hr > -5 && o.hr < o.h ? o.hr : o.h;
           F.r[i] = o.r; F.g[i] = o.g; F.b[i] = o.b;
           if (o.sr < 0) { F.sr[i] = o.r * 0.8; F.sg[i] = o.g * 0.8; F.sb[i] = o.b * 0.8; } else { F.sr[i] = o.sr; F.sg[i] = o.sg; F.sb[i] = o.sb; }
@@ -2918,6 +4082,7 @@
       const AE = blurXY(A, W, NY, 5, 3);
       const LR = new Float32Array(n), LG = new Float32Array(n), LB = new Float32Array(n);
       const EX = new Float32Array(n), EY = new Float32Array(n);
+      const OPA = F.op, OPT = OPA ? (F.OPT = new Float32Array(n).fill(1)) : null;
       const ox = Math.round((-L1[0] / L1h) * 0.045 * sx), oy = Math.round((-L1[1] / L1h) * 0.045 * sy);
       const TMP = [0, 0, 0];
       await slice(NY, (py) => {
@@ -2942,12 +4107,14 @@
           lit(nx, ny, nz, F.r[i] / 255, F.g[i] / 255, F.b[i] / 255, F.sp[i], F.sh[i], F.cc[i], F.ss[i], ao, 1 - 0.62 * ds);
           toneOut(LO[0], LO[1], LO[2], TMP, 0);
           LR[i] = TMP[0]; LG[i] = TMP[1]; LB[i] = TMP[2];
+          if (OPT && OPA[i] < 1) OPT[i] = glassOp(OPA[i]);
           // normale horizontale de la tranche : vers l'extérieur du contour, sinon du haut vers le bas d'une marche
           const xl = px > 0 ? i - 1 : i, xr = px < W - 1 ? i + 1 : i, yu = py > 0 ? i - W : i, yd = py < NY - 1 ? i + W : i;
           let ex = -(AE[xr] - AE[xl]) * sx, ey = -(AE[yd] - AE[yu]) * sy;
           let el = Math.sqrt(ex * ex + ey * ey);
           if (el < 0.05 * sx) { ex = -(HE[xr] - HE[xl]) * sx; ey = -(HE[yd] - HE[yu]) * sy; el = Math.sqrt(ex * ex + ey * ey); }
           if (el > 1e-6) { EX[i] = ex / el; EY[i] = ey / el; } else { EX[i] = 0; EY[i] = 1; }
+          if (F.WX && (F.WX[i] || F.WY[i])) { EX[i] = F.WX[i]; EY[i] = F.WY[i]; }
         }
       });
       F.LR = LR; F.LG = LG; F.LB = LB; F.EX = EX; F.EY = EY;
@@ -2959,32 +4126,34 @@
       const W = F.W, NY = F.NY, R = F.rpx;
       const K = R * 2, W2 = W * 2, H2 = H * 2;
       const OC = new Float32Array(W2 * H2 * 3);
-      const M = new Uint8Array(W2 * H2);
+      // transmittance : 1 = rien de peint ; 0 = couvert. Le verre n'en prend qu'une part, le reste passe derrière
+      const T = new Float32Array(W2 * H2).fill(1);
       const dyw = (2 * F.EXY) / NY;
       const rowPx = dyw * VS * K;
       const topPx = Math.max(1.3, rowPx * 1.2);
       const NT = noiseTable();
       const y0 = fr.y0;
-      const LR = F.LR, LG = F.LG, LB = F.LB, A = F.a, Hm = F.h, ID = F.id;
+      const LR = F.LR, LG = F.LG, LB = F.LB, A = F.a, Hm = F.h, ID = F.id, OPT = F.OPT, OPA = F.op;
 
-      function put(cx, ya, yb, r1, g1, b1, r2, g2, b2, yc) {
+      function put(cx, ya, yb, r1, g1, b1, r2, g2, b2, yc, op) {
         let r0 = Math.ceil(ya - 0.5);
         if (r0 < 0) r0 = 0;
         let r9 = Math.ceil(yb - 0.5);
         if (r9 > H2) r9 = H2;
         const span = yc - ya;
         for (let row = r0; row < r9; row++) {
-          const m = row * W2 + cx;
-          if (M[m]) continue;
-          M[m] = 1;
+          const m = row * W2 + cx, tm = T[m];
+          if (tm < 0.004) continue;
           const t = span > 0.01 ? clamp01((row + 0.5 - ya) / span) : 0;
-          const o = m * 3;
-          OC[o] = r1 + (r2 - r1) * t; OC[o + 1] = g1 + (g2 - g1) * t; OC[o + 2] = b1 + (b2 - b1) * t;
+          const o = m * 3, w = tm * op;
+          OC[o] += w * (r1 + (r2 - r1) * t); OC[o + 1] += w * (g1 + (g2 - g1) * t); OC[o + 2] += w * (b1 + (b2 - b1) * t);
+          T[m] = tm - w;
         }
       }
 
       const TW = [0, 0, 0];
-      function wall(cx, ya, yb, yTop, d, tr, tg, tb) {
+      const SC = { r: 0, g: 0, b: 0, sp: 0, sh: 0, cc: 0, ss: 0, op: 1 };
+      function wall(cx, ya, yb, yTop, d, tr, tg, tb, yw) {
         let r0 = Math.ceil(ya - 0.5);
         if (r0 < 0) r0 = 0;
         let r9 = Math.ceil(yb - 0.5);
@@ -3005,10 +4174,13 @@
         const sr = F.sr[d] / 255, sg = F.sg[d] / 255, sb = F.sb[d] / 255;
         const BD = F.band && F.band.k === F.k[d] ? F.band : null;
         const span = Math.max(1, yb - yTop), round = Math.min(span, 10), blend = Math.max(2.5, rowPx * 1.5);
+        const op0 = OPA ? OPA[d] : 1;
+        // les strates : la couleur et la matière de la tranche selon la hauteur (gâteaux, étiquettes, liquide dans le verre)
+        const ST = F.strata && F.k[d] === F.strataK ? F.strata : null;
+        const wx = ST ? F.CX - F.E + ((d % W) + 0.5) / R : 0;
         for (let row = r0; row < r9; row++) {
-          const m = row * W2 + cx;
-          if (M[m]) continue;
-          M[m] = 1;
+          const m = row * W2 + cx, tm = T[m];
+          if (tm < 0.004) continue;
           const y = row + 0.5 - yTop;
           const v = clamp01(y / span);
           // la tranche s'arrondit en haut : sa normale s'y redresse
@@ -3019,15 +4191,29 @@
           let occ = 1 - dark * Math.pow(v, 1.3);
           if (F.k[d] === 2) occ *= 0.7 + 0.3 * smooth(0, 0.22, v) * (1 - smooth(0.78, 1, v)); // steak : faces saisies
           const tex = 1 + namp * NT[((row * nfy) & 255) * 256 + ((cx * nfx) & 255)];
-          let ar = sr, ag = sg, ab = sb;
+          let ar = sr, ag = sg, ab = sb, psp = wsp, psh = wsh, pcc = wcc, pss = wss, op = op0, ptex = tex;
           if (BD) {
             const bp = smooth(BD.p[0], BD.p[1], v) * (1 - smooth(BD.p[2], BD.p[3], v)) * (0.85 + 0.15 * tex);
             ar += (BD.c[0] / 255 - ar) * bp; ag += (BD.c[1] / 255 - ag) * bp; ab += (BD.c[2] / 255 - ab) * bp;
           }
-          lit(nx, ny, nz, ar * tex, ag * tex, ab * tex, wsp, wsh, wcc, wss, occ, 0.55 + 0.45 * occ);
+          if (ST) {
+            SC.r = ar * 255; SC.g = ag * 255; SC.b = ab * 255; SC.sp = psp; SC.sh = psh; SC.cc = pcc; SC.ss = pss; SC.op = op0; SC.tex = 1; SC.em = 0;
+            ST((yw * VS - y0 - (row + 0.5) / K) / VC, wx, yw, SC, v, (tex - 1) / (namp || 1), ID[d]);
+            ar = SC.r / 255; ag = SC.g / 255; ab = SC.b / 255; psp = SC.sp; psh = SC.sh; pcc = SC.cc; pss = SC.ss; op = SC.op;
+            ptex = 1 + (tex - 1) * SC.tex;
+          }
+          lit(nx, ny, nz, ar * ptex, ag * ptex, ab * ptex, psp, psh, pcc, pss, occ, 0.55 + 0.45 * occ);
           toneOut(LO[0], LO[1], LO[2], TW, 0);
-          const o = m * 3, bt = clamp01((row + 0.5 - ya) / blend);
-          OC[o] = tr + (TW[0] - tr) * bt; OC[o + 1] = tg + (TW[1] - tg) * bt; OC[o + 2] = tb + (TW[2] - tb) * bt;
+          if (op < 1) op = glassOp(op);
+          if (ST && SC.em > 0) {
+            // un reflet de studio (bande lumineuse) : il éclaire, et rend le verre visible
+            const e = SC.em > 1 ? 1 : SC.em;
+            TW[0] += (255 - TW[0]) * e; TW[1] += (252 - TW[1]) * e; TW[2] += (246 - TW[2]) * e;
+            if (op < 1) op = Math.min(1, op + e);
+          }
+          const o = m * 3, bt = clamp01((row + 0.5 - ya) / blend), w = tm * op;
+          OC[o] += w * (tr + (TW[0] - tr) * bt); OC[o + 1] += w * (tg + (TW[1] - tg) * bt); OC[o + 2] += w * (tb + (TW[2] - tb) * bt);
+          T[m] = tm - w;
         }
       }
 
@@ -3044,41 +4230,42 @@
           const inP = ap >= 0.5, inQ = aq >= 0.5;
           const d = fx < 0.5 ? (inP ? p : q) : (inQ ? q : p);
           const id = ID[d];
-          let h, cr, cg, cb;
+          let h, cr, cg, cb, cop = 1;
           if (inP && inQ && ID[p] === ID[q]) {
             h = Hm[p] + (Hm[q] - Hm[p]) * fx;
             cr = LR[p] + (LR[q] - LR[p]) * fx; cg = LG[p] + (LG[q] - LG[p]) * fx; cb = LB[p] + (LB[q] - LB[p]) * fx;
-          } else { h = Hm[d]; cr = LR[d]; cg = LG[d]; cb = LB[d]; }
+            if (OPT) cop = OPT[p] + (OPT[q] - OPT[p]) * fx;
+          } else { h = Hm[d]; cr = LR[d]; cg = LG[d]; cb = LB[d]; if (OPT) cop = OPT[d]; }
           const yw = F.CY - F.EXY + (iy + 0.5) * dyw;
           const yT = (yw * VS - h * VC - y0) * K;
           if (prevIn && id === prevId) {
             // même surface : on la prolonge jusqu'au point de devant, en fondu
-            if (pT > yT + topPx) put(cx, yT, pT, cr, cg, cb, pR, pG, pB, pT);
-            else put(cx, yT, yT + topPx, cr, cg, cb, cr, cg, cb, yT + topPx);
+            if (pT > yT + topPx || (cop < 0.999 && pT > yT)) put(cx, yT, pT, cr, cg, cb, pR, pG, pB, pT, cop);
+            else if (cop >= 0.999) put(cx, yT, yT + topPx, cr, cg, cb, cr, cg, cb, yT + topPx, cop);
           } else {
             // bord : un liseré du dessus, puis la tranche jusqu'au bas de l'objet
             const yB = (yw * VS - F.hb[d] * VC - y0) * K;
             const yR = (yw * VS - F.hr[d] * VC - y0) * K; // le vrai bord, sous le dernier point (pentes très raides)
             const yS = Math.max(yT + topPx, yR);
-            put(cx, yT, yS, cr, cg, cb, cr, cg, cb, yS);
-            if (yB > yS) wall(cx, yS, yB, Math.max(yT, yR - topPx), d, cr, cg, cb);
+            put(cx, yT, yS, cr, cg, cb, cr, cg, cb, yS, cop);
+            if (yB > yS) wall(cx, yS, yB, Math.max(yT, yR - topPx), d, cr, cg, cb, yw);
           }
           prevIn = true; prevId = id; pT = yT; pR = cr; pG = cg; pB = cb;
         }
       });
 
-      // réduction 2 × 2 (la couverture devient l'alpha)
+      // réduction 2 × 2 (la couverture devient l'alpha ; les couleurs sont prémultipliées)
       const out = new Uint8ClampedArray(W * H * 4);
       for (let y = 0; y < H; y++) {
         for (let x = 0; x < W; x++) {
           let c = 0, r = 0, g = 0, b = 0;
           for (let dy = 0; dy < 2; dy++) {
             for (let dx = 0; dx < 2; dx++) {
-              const m = (2 * y + dy) * W2 + 2 * x + dx;
-              if (M[m]) { c++; r += OC[m * 3]; g += OC[m * 3 + 1]; b += OC[m * 3 + 2]; }
+              const m = (2 * y + dy) * W2 + 2 * x + dx, a = 1 - T[m];
+              if (a > 0) { c += a; r += OC[m * 3]; g += OC[m * 3 + 1]; b += OC[m * 3 + 2]; }
             }
           }
-          if (c) {
+          if (c > 1e-4) {
             const j = (y * W + x) * 4;
             out[j] = r / c; out[j + 1] = g / c; out[j + 2] = b / c; out[j + 3] = c * 63.75;
           }
@@ -3157,7 +4344,8 @@
       });
     }
 
-    return { ids: Object.keys(DEFS), frame, render, anchors, S, C, PHI, PHI_PLAT: 40, budget };
+    const points = (id) => (DEFS[id] && DEFS[id].points) || null;
+    return { ids: Object.keys(DEFS), frame, render, anchors, points, S, C, PHI, PHI_PLAT: 40, budget };
   }
 
   /* ======================================================================
@@ -3422,6 +4610,8 @@
     // points d'ancrage des étiquettes [droite, gauche] : [x, y, h] dans le repère de l'ingrédient
     // (calculés avec la texture, dans le worker ; null tant qu'elle n'est pas prête)
     anchors(id) { return ANCH[id] || null; },
+    // points d'ancrage donnés par la recette (plusieurs éléments sur une même pièce) : [[x, y, z], …] du plat
+    points: LIB.points,
     get,
     peek,
     onReady(fn) { listeners.add(fn); return () => listeners.delete(fn); },

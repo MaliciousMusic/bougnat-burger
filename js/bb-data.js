@@ -44,7 +44,8 @@
     },
     /* Créneaux de réservation proposés par leur module actuel (VikRestaurants) */
     tableSlots: { midi: ['11:30', '12:00', '12:30', '13:00', '13:30'], soir: ['18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30'] },
-    maxGuests: 10,
+    maxGuests: 40,        // le compteur de couverts va jusque-là
+    groupFrom: 10,        // à partir de 10 : on appelle pour confirmer
   };
 
   /* ---------- Libellés partagés ---------- */
@@ -146,29 +147,73 @@
     // Enfant
     { id: 'petiot', cat: 'enfant', name: { fr: 'Le Petiot', en: 'Le Petiot' }, price: 13.9, burger: true, sides: true, raw: 'stn',
       desc: { fr: 'Pain burger artisanal, steak haché VBF ou galette de pommes de terre, Cantal jeune AOP, tomates, salade et mesclun, sauce au Saint-Nectaire fermier. Avec un sirop et une boule de glace.', en: 'Artisan bun, French beef patty or potato rösti, young Cantal PDO, tomatoes, salad and mesclun, farmhouse Saint-Nectaire sauce. With a cordial and one scoop of ice cream.' } },
-    // Desserts (⚠ pas de prix publiés : à compléter)
-    { id: 'framboisier', cat: 'desserts', name: { fr: 'Framboisier', en: 'Raspberry cake' }, price: null, homemade: true },
-    { id: 'tiramisu-framboise', cat: 'desserts', name: { fr: 'Tiramisu framboise', en: 'Raspberry tiramisu' }, price: null, homemade: true },
-    { id: 'tiramisu-cafe', cat: 'desserts', name: { fr: 'Tiramisu café', en: 'Coffee tiramisu' }, price: null, homemade: true },
-    { id: 'foret-noire', cat: 'desserts', name: { fr: 'Forêt noire', en: 'Black Forest cake' }, price: null, homemade: true },
-    { id: 'mousse-chocolat', cat: 'desserts', name: { fr: 'Mousse au chocolat', en: 'Chocolate mousse' }, price: null, homemade: true },
-    { id: 'moelleux', cat: 'desserts', name: { fr: 'Moelleux', en: 'Molten cake' }, price: null },
-    { id: 'tarte-citron', cat: 'desserts', name: { fr: 'Tarte au citron', en: 'Lemon tart' }, price: null },
-    { id: 'nougat-glace', cat: 'desserts', name: { fr: 'Nougat glacé', en: 'Iced nougat' }, price: null },
-    { id: 'givres', cat: 'desserts', name: { fr: 'Citron, coco ou orange givrés', en: 'Frosted lemon, coconut or orange' }, price: null },
-    { id: 'glaces', cat: 'desserts', name: { fr: 'Glaces et sorbets', en: 'Ice creams and sorbets' }, price: null },
-    { id: 'plateau', cat: 'desserts', name: { fr: 'Plateau gourmand', en: 'Dessert platter' }, price: null },
-    // Boissons (⚠ pas de prix publiés)
-    { id: 'sagnes', cat: 'boissons', name: { fr: 'Bières de la Brasserie des Sagnes', en: 'Brasserie des Sagnes craft beers' }, price: null, local: true,
-      desc: { fr: 'Brasserie artisanale auvergnate : blonde, ambrée et cuvées plus typées.', en: 'Auvergne craft brewery: blonde, amber and bolder brews.' } },
-    { id: 'desprat', cat: 'boissons', name: { fr: 'Bières de la Brasserie Desprat', en: 'Brasserie Desprat beers' }, price: null, local: true,
-      desc: { fr: 'Une maison historique de la bière en Auvergne.', en: 'A historic Auvergne brewing house.' } },
-    { id: 'vins', cat: 'boissons', name: { fr: 'Vins bio et vins d\'Auvergne', en: 'Organic and Auvergne wines' }, price: null, local: true,
-      desc: { fr: 'Au verre ou à la bouteille.', en: 'By the glass or the bottle.' } },
-    { id: 'aperitifs', cat: 'boissons', name: { fr: 'Apéritifs', en: 'Aperitifs' }, price: null,
+    // Desserts : ceux de leur carte à emporter (page Raboule/CoopCycle, relevée le 27/09/2026), avec ses prix ;
+    // les autres ne sont servis que sur place (surPlace). PROD : prix à confirmer par le restaurant.
+    { id: 'tarte-citron', cat: 'desserts', name: { fr: 'Tarte au citron meringuée', en: 'Lemon meringue tart' }, price: 7.9, allergens: ['gluten', 'oeufs', 'lait'],
+      desc: { fr: 'Pâte sucrée, crème au citron et meringue.', en: 'Sweet shortcrust pastry, lemon cream and meringue.' } },
+    { id: 'framboisier', cat: 'desserts', name: { fr: 'Framboisier', en: 'Raspberry cake' }, price: 7.9, homemade: true, allergens: ['gluten', 'oeufs', 'lait', 'fruitsACoque'],
+      desc: { fr: 'Génoise nature, mousse bavaroise, framboises, amandes hachées torréfiées.', en: 'Plain sponge, Bavarian cream, raspberries, toasted chopped almonds.' } },
+    { id: 'foret-noire', cat: 'desserts', name: { fr: 'Forêt noire', en: 'Black Forest cake' }, price: 7.9, homemade: true, allergens: ['gluten', 'oeufs', 'lait'],
+      desc: { fr: 'Génoise au chocolat, chantilly maison, copeaux de chocolat au lait. Sans cerises, sans alcool.', en: 'Chocolate sponge, homemade whipped cream, milk chocolate shavings. No cherries, no alcohol.' } },
+    { id: 'moelleux', cat: 'desserts', name: { fr: 'Moelleux au chocolat', en: 'Chocolate molten cake' }, price: 5.9, allergens: ['gluten', 'oeufs', 'lait'],
+      desc: { fr: 'Gâteau au chocolat au cœur fondant, servi tiède.', en: 'Chocolate cake with a molten centre, served warm.' } },
+    { id: 'nougat-glace', cat: 'desserts', name: { fr: 'Nougat glacé', en: 'Iced nougat' }, price: 5.9, allergens: ['lait', 'fruitsACoque'],
+      desc: { fr: 'Crème fraîche, abricots, raisins secs, noisettes, pistaches et amandes.', en: 'Fresh cream, apricots, raisins, hazelnuts, pistachios and almonds.' } },
+    { id: 'tiramisu-framboise', cat: 'desserts', name: { fr: 'Tiramisu framboise', en: 'Raspberry tiramisu' }, price: null, surPlace: true, homemade: true },
+    { id: 'tiramisu-cafe', cat: 'desserts', name: { fr: 'Tiramisu café', en: 'Coffee tiramisu' }, price: null, surPlace: true, homemade: true },
+    { id: 'mousse-chocolat', cat: 'desserts', name: { fr: 'Mousse au chocolat', en: 'Chocolate mousse' }, price: null, surPlace: true, homemade: true },
+    { id: 'givres', cat: 'desserts', name: { fr: 'Citron, coco ou orange givrés', en: 'Frosted lemon, coconut or orange' }, price: null, surPlace: true },
+    { id: 'glaces', cat: 'desserts', name: { fr: 'Glaces et sorbets', en: 'Ice creams and sorbets' }, price: null, surPlace: true },
+    { id: 'plateau', cat: 'desserts', name: { fr: 'Plateau gourmand', en: 'Dessert platter' }, price: null, surPlace: true },
+    // Boissons : une vignette par famille, le choix dans la fiche (variants) ; mêmes sources et prix que les desserts.
+    // teinte : pour le dessin (couleur de la bière, du vin, du soda).
+    { id: 'softs', cat: 'boissons', name: { fr: 'Softs', en: 'Soft drinks' },
+      desc: { fr: 'Sodas, thé glacé, jus Pago, eau minérale.', en: 'Sodas, iced tea, Pago juice, mineral water.' },
+      variants: [
+        { id: 'coca', teinte: 'cola', name: { fr: 'Coca-Cola', en: 'Coca-Cola' }, desc: { fr: '33 cl', en: '33 cl' }, price: 3 },
+        { id: 'coca-zero', teinte: 'cola', name: { fr: 'Coca-Cola Zero', en: 'Coca-Cola Zero' }, desc: { fr: '33 cl', en: '33 cl' }, price: 3 },
+        { id: 'fuze-tea', teinte: 'the', name: { fr: 'Fuze Tea pêche intense', en: 'Fuze Tea intense peach' }, desc: { fr: '33 cl', en: '33 cl' }, price: 3 },
+        { id: 'orangina', teinte: 'orange', name: { fr: 'Orangina', en: 'Orangina' }, desc: { fr: '33 cl', en: '33 cl' }, price: 3 },
+        { id: 'perrier', teinte: 'eau', name: { fr: 'Perrier', en: 'Perrier' }, desc: { fr: '33 cl', en: '33 cl' }, price: 3 },
+        { id: 'eau', teinte: 'eau', name: { fr: 'Eau minérale', en: 'Mineral water' }, desc: { fr: '33 cl', en: '33 cl' }, price: 3 },
+        { id: 'pago', teinte: 'jus', name: { fr: 'Jus Pago', en: 'Pago juice' }, desc: { fr: '20 cl · parfum au choix, à préciser dans le mot pour la cuisine', en: '20 cl · flavour of your choice, to write in the note for the kitchen' }, price: 3.3 },
+      ] },
+    { id: 'sagnes', cat: 'boissons', name: { fr: 'Bières de la Brasserie des Sagnes', en: 'Brasserie des Sagnes craft beers' }, local: true, alcool: true, allergens: ['gluten'],
+      desc: { fr: 'Brasserie artisanale auvergnate. Bouteilles de 33 cl.', en: 'Auvergne craft brewery. 33 cl bottles.' },
+      variants: [
+        { id: 'blonde', teinte: 'blonde', name: { fr: 'Blonde des Sagnes', en: 'Blonde des Sagnes' }, desc: { fr: 'Blonde · maltée, douce amertume · 5 %', en: 'Blonde · malty, gentle bitterness · 5%' }, price: 6.9 },
+        { id: 'ambree', teinte: 'ambree', name: { fr: 'Ambrée des Sagnes', en: 'Ambrée des Sagnes' }, desc: { fr: 'Ambrée · notes caramélisées, légère amertume · 6 %', en: 'Amber · caramel notes, light bitterness · 6%' }, price: 6.9 },
+        { id: 'white-pale-ale', teinte: 'blanche', name: { fr: 'White Pale Ale', en: 'White Pale Ale' }, desc: { fr: 'Blanche pale ale · fruitée, amertume équilibrée · 5,5 %', en: 'White pale ale · fruity, balanced bitterness · 5.5%' }, price: 6.9 },
+        { id: 'boom-shiva', teinte: 'ipa', name: { fr: 'Boom Shiva', en: 'Boom Shiva' }, desc: { fr: 'IPA · fruitée, amertume désaltérante · 5 %', en: 'IPA · fruity, refreshing bitterness · 5%' }, price: 6.9 },
+        { id: 'owl-beer', teinte: 'blonde', name: { fr: 'Owl Beer Pale Ale', en: 'Owl Beer Pale Ale' }, desc: { fr: 'Blonde pale ale · fruitée, amertume équilibrée · 5,5 %', en: 'Blonde pale ale · fruity, balanced bitterness · 5.5%' }, price: 6.9 },
+        { id: 'black-sands', teinte: 'noire', name: { fr: 'Black Sands', en: 'Black Sands' }, desc: { fr: 'Noire · veloutée, douce amertume · 5,9 %', en: 'Dark · velvety, gentle bitterness · 5.9%' }, price: 6.9 },
+      ] },
+    { id: 'desprat', cat: 'boissons', name: { fr: 'Bières de la Brasserie Desprat', en: 'Brasserie Desprat beers' }, local: true, alcool: true, allergens: ['gluten'],
+      desc: { fr: 'Une maison historique de la bière en Auvergne. Bouteilles de 33 cl.', en: 'A historic Auvergne brewing house. 33 cl bottles.' },
+      variants: [
+        { id: 'flagrant-desir', teinte: 'blanche', name: { fr: 'Flagrant Désir', en: 'Flagrant Désir' }, desc: { fr: 'Blanche · myrtille et céréales d\'Auvergne · 6 %', en: 'White beer · blueberry and Auvergne grain · 6%' }, price: 6.9 },
+        { id: 'antidote', teinte: 'ambree', name: { fr: 'Antidote bio', en: 'Antidote (organic)' }, desc: { fr: 'Ambrée bio · châtaigne et gentiane · 6 %', en: 'Organic amber · chestnut and gentian · 6%' }, price: 6.9 },
+        { id: 'cloche-rouge', teinte: 'blonde', name: { fr: 'Cloche Rouge', en: 'Cloche Rouge' }, desc: { fr: 'Blonde · céréales d\'Auvergne, notes de sureau · 6 %', en: 'Blonde · Auvergne grain, elderflower notes · 6%' }, price: 6.9 },
+        { id: 'noix-dordogne', teinte: 'ambree', allergens: ['fruitsACoque'], name: { fr: 'Noix de Dordogne', en: 'Noix de Dordogne' }, desc: { fr: 'Ambrée aux noix · 6 %', en: 'Amber with walnuts · 6%' }, price: 6.9 },
+        { id: 'fee-effet', teinte: 'blonde', name: { fr: 'Fée de l\'Effet', en: 'Fée de l\'Effet' }, desc: { fr: 'Blonde · orge d\'Auvergne, houblon d\'Alsace, refermentée au miel d\'Auvergne · 6 %', en: 'Blonde · Auvergne barley, Alsace hops, bottle-conditioned with Auvergne honey · 6%' }, price: 6.9 },
+        { id: 'druides', teinte: 'blanche', name: { fr: 'La Bière des Druides', en: 'La Bière des Druides' }, desc: { fr: 'Blanche · verveine, orge et blé d\'Auvergne · 5 %', en: 'White beer · verbena, Auvergne barley and wheat · 5%' }, price: 6.9 },
+        { id: 'planeze', teinte: 'blonde', name: { fr: 'La Planèze', en: 'La Planèze' }, desc: { fr: 'Blonde · aux lentilles de Saint-Flour · 5 %', en: 'Blonde · with Saint-Flour lentils · 5%' }, price: 6.9 },
+        { id: 'organic', teinte: 'blonde', name: { fr: 'Organic bio', en: 'Organic' }, desc: { fr: 'Blonde bio · céréales d\'Auvergne · 5 %', en: 'Organic blonde · Auvergne grain · 5%' }, price: 6.9 },
+        { id: 'lave', teinte: 'noire', name: { fr: 'Bière de Lave', en: 'Bière de Lave' }, desc: { fr: 'Noire · céréales d\'Auvergne · 7 %', en: 'Dark · Auvergne grain · 7%' }, price: 6.9 },
+      ] },
+    { id: 'vins', cat: 'boissons', name: { fr: 'Vins bio et vins d\'Auvergne', en: 'Organic and Auvergne wines' }, local: true, alcool: true, allergens: ['sulfites'],
+      desc: { fr: 'À emporter à la bouteille (75 cl) ; au verre, sur place.', en: 'To take away by the bottle (75 cl); by the glass in the restaurant.' },
+      variants: [
+        { id: 'boudes', teinte: 'rouge', name: { fr: 'Boudes', en: 'Boudes' }, desc: { fr: 'Rouge fruité · Côtes d\'Auvergne AOC', en: 'Fruity red · Côtes d\'Auvergne AOC' }, price: 19 },
+        { id: 'belleruche', teinte: 'rouge', name: { fr: 'Belleruche', en: 'Belleruche' }, desc: { fr: 'Rouge fruité · Côtes du Rhône AOC', en: 'Fruity red · Côtes du Rhône AOC' }, price: 19 },
+        { id: 'pic-saint-loup', teinte: 'rouge', name: { fr: 'Pic Saint-Loup', en: 'Pic Saint-Loup' }, desc: { fr: 'Rouge épicé · Château de Lascaux, Languedoc AOC', en: 'Spicy red · Château de Lascaux, Languedoc AOC' }, price: 24 },
+        { id: 'corent', teinte: 'rose', name: { fr: 'Corent', en: 'Corent' }, desc: { fr: 'Rosé floral · Côtes d\'Auvergne AOC', en: 'Floral rosé · Côtes d\'Auvergne AOC' }, price: 19 },
+        { id: 'charme-demoiselles', teinte: 'rose', name: { fr: 'Charme des Demoiselles', en: 'Charme des Demoiselles' }, desc: { fr: 'Rosé frais · Château des Demoiselles, Côtes de Provence AOP', en: 'Fresh rosé · Château des Demoiselles, Côtes de Provence PDO' }, price: 18 },
+        { id: 'domaine-cailles', teinte: 'blanc', name: { fr: 'Domaine des Cailles', en: 'Domaine des Cailles' }, desc: { fr: 'Blanc sec · Saint-Pourçain AOP', en: 'Dry white · Saint-Pourçain PDO' }, price: 19 },
+        { id: 'villa-dria', teinte: 'blanc', name: { fr: 'Villa Dria', en: 'Villa Dria' }, desc: { fr: 'Blanc moelleux · Côtes de Gascogne IGP', en: 'Sweet white · Côtes de Gascogne PGI' }, price: 18 },
+      ] },
+    { id: 'aperitifs', cat: 'boissons', name: { fr: 'Apéritifs', en: 'Aperitifs' }, price: null, surPlace: true, alcool: true,
       desc: { fr: 'Rhum, vodka, whisky, tequila, pastis.', en: 'Rum, vodka, whisky, tequila, pastis.' } },
-    { id: 'softs', cat: 'boissons', name: { fr: 'Softs', en: 'Soft drinks' }, price: null,
-      desc: { fr: 'Sodas, jus Pago, eaux minérales.', en: 'Sodas, Pago juices, mineral water.' } },
   ];
 
   BB.CATS = [
@@ -182,15 +227,18 @@
   ];
 
   /* Description d'un burger dans une langue, à partir de ses ingrédients (jamais ressaisie) */
+  // traduction d'un objet { fr, en } : bb-i18n.js (dictionnaires es, zh) quand il est là ; sinon (outils) la langue ou le français
+  const trL = (o, l) => (BB.trLang ? BB.trLang(o, l) : o[l] || o.fr);
   BB.burgerDesc = function (b, lang, double) {
     const parts = b.ings.map((k) => {
-      if (k === 'steak' && double) return lang === 'en' ? 'double butcher-style French beef patty (VBF)' : 'double steak haché façon bouchère VBF';
-      if (k === 'galette' && double) return lang === 'en' ? 'double potato rösti' : 'double galette de pommes de terre';
-      return I[k][lang];
+      if (k === 'steak' && double) return trL({ fr: 'double steak haché façon bouchère VBF', en: 'double butcher-style French beef patty (VBF)' }, lang);
+      if (k === 'galette' && double) return trL({ fr: 'double galette de pommes de terre', en: 'double potato rösti' }, lang);
+      return trL(I[k], lang);
     });
-    // « steak, ou galette » : la virgule avant « ou » se retire
-    let s = parts.join(', ').replace(/, (ou |or a )/g, ' $1');
-    s = s.charAt(0).toUpperCase() + s.slice(1) + '.';
+    // « steak, ou galette » : la virgule avant « ou » (or a, o, 或) se retire ; le chinois énumère avec « 、 » et finit par « 。 »
+    const zh = lang === 'zh';
+    let s = parts.join(zh ? '、' : ', ').replace(/(?:, |、)(ou |or a |o |或)/g, (m, w) => (w === '或' ? w : ' ' + w));
+    s = s.charAt(0).toUpperCase() + s.slice(1) + (zh ? '。' : '.');
     return s;
   };
   BB.SIDES = SIDES;
@@ -208,6 +256,7 @@
     if (/noix/i.test(d)) a.add('fruitsACoque'); // (les pignons ne font pas partie des 14 allergènes réglementaires)
     if (/croûtons|toasts|Galette de blé/i.test(d)) a.add('gluten');
     if (/saumon/i.test(d)) a.add('poisson');
+    (item.allergens || []).forEach((k) => a.add(k)); // desserts, bières, vins : donnés tels quels
     return [...a];
   };
   BB.ALLERGEN_LABELS = {
@@ -215,6 +264,8 @@
     lait: { fr: 'lait', en: 'milk' },
     fruitsACoque: { fr: 'fruits à coque', en: 'tree nuts' },
     poisson: { fr: 'poisson', en: 'fish' },
+    oeufs: { fr: 'œufs', en: 'eggs' },
+    sulfites: { fr: 'sulfites', en: 'sulphites' },
   };
 
   /* ---------- Une sélection d'avis Google réels (fiche du restaurant, relevés le 27 septembre 2026) ----------

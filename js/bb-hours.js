@@ -30,7 +30,7 @@
     for (let k = 1; k <= 7; k++) {
       const nd = (d + k) % 7;
       if ((H[nd] || []).length) {
-        const dayLabel = k === 1 ? BB.t('tomorrow') : BB.t('days')[nd];
+        const dayLabel = k === 1 ? BB.t('tomorrow') : (BB.t('daysOn') || BB.t('days'))[nd]; // daysOn : « el miércoles » (es)
         return { open: false, text: BB.t('closedOpens', { d: dayLabel, t: BB.fmtTime(H[nd][0][0]) }), day: d, next: nd };
       }
     }

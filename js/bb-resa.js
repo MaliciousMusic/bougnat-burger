@@ -69,9 +69,22 @@
     });
   }
 
+  /* à partir de 10 couverts (BB.INFO.groupFrom), la demande en ligne laisse place à un bouton d'appel */
+  let enGroupe = false;
+  function groupe(force) {
+    const g = st.guests >= (BB.INFO.groupFrom || 10);
+    if (g === enGroupe && !force) return;
+    enGroupe = g;
+    $('#resa-form').classList.toggle('groupe', g);
+    const box = $('#resa-groupe');
+    box.innerHTML = g ? `<p>${esc(BB.t('groupe', { n: BB.INFO.groupFrom || 10 }))}</p>
+      <a class="btn btn-main" href="tel:${esc(BB.INFO.phone)}" data-sfx="tap"><svg aria-hidden="true"><use href="#i-tel"/></svg><span>${esc(BB.t('groupeCall'))}</span><small>${esc(BB.t('telAffiche'))}</small></a>` : '';
+    if (g && !force) BB.sfx && BB.sfx.play('ding');
+  }
   function guestsLabel(n) { return n === 1 ? BB.t('guest1') : BB.t('guests', { n }); }
 
   function submit(e) {
+    if (enGroupe) { e && e.preventDefault(); return; }
     e.preventDefault();
     const name = $('#resa-name'), phone = $('#resa-phone');
     [name, phone].forEach((f) => f.setAttribute('aria-invalid', 'false'));
@@ -81,7 +94,7 @@
     if (!name.value.trim()) { name.setAttribute('aria-invalid', 'true'); bad = BB.t('needName'); }
     if (bad) { BB.sfx.play('nope'); BB.toast(bad); return; }
     const d = st.day;
-    const dayTxt = isToday(d) ? BB.t('today') : `${BB.t('days')[d.getDay()]} ${d.getDate()} ${BB.t('months')[d.getMonth()]}`;
+    const dayTxt = isToday(d) ? BB.t('today') : BB.fmtJour(d, true);
     const done = $('#resa-done');
     done.innerHTML = `<div class="ticket"><svg class="ticket-stamp" aria-hidden="true"><use href="#tampon"/></svg>
         <h3>${esc(BB.t('resaSent'))}</h3>
@@ -120,9 +133,10 @@
         if (!b) return;
         st.guests = BB.clamp(st.guests + Number(b.dataset.step), 1, BB.INFO.maxGuests);
         $('#resa-count').textContent = String(st.guests);
+        groupe();
       });
       $('#resa-form').addEventListener('submit', submit);
-      BB.on('lang', () => { renderDays(); renderTimes(); });
+      BB.on('lang', () => { renderDays(); renderTimes(); groupe(true); });
       setInterval(() => { renderDays(); renderTimes(); }, 60000);
     },
   };

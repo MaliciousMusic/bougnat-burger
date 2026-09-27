@@ -1,8 +1,11 @@
 /* ==========================================================================
-   Bougnat Burger — deux langues, une seule page.
+   Bougnat Burger — quatre langues, une seule page.
    · Le français est écrit dans le HTML (lisible par Google et les IA, même sans JS).
-   · L'anglais est ici, clé par clé ; les plats, eux, portent leurs deux langues dans bb-data.js.
-   · Choix de la langue : ?lang=… > choix mémorisé > langue du téléphone (navigator.languages).
+   · L'anglais est ici, clé par clé ; les plats portent leur français et leur anglais dans bb-data.js.
+   · L'espagnol et le chinois (simplifié) sont dans js/i18n/bb-lang-es.js et bb-lang-zh.js (BB.addLang) :
+     les textes de l'interface par clé, et un dictionnaire « texte français → traduction » pour les données.
+   · Repli : la langue demandée, sinon l'anglais, sinon le français.
+   · Choix de la langue : ?lang=… > choix mémorisé > langues du téléphone (navigator.languages), sinon l'anglais.
      Jamais d'après l'adresse IP (touriste sur le wifi d'un hôtel, VPN, robot de Google…).
    ========================================================================== */
 (function () {
@@ -45,11 +48,14 @@
     'co.total': 'Total',
     'co.pay': 'Pay and order',
     'co.fine': 'Demo: payment is simulated, no order is sent.',
+    'resa.less': 'One guest fewer',
+    'resa.more': 'One more guest',
+    'co.alcool': 'Your order contains alcohol: no sale to under-18s, ID may be requested at pick-up. Please drink responsibly.',
     'del.lede': 'For now, delivery goes through these apps:',
     'del.soon.title': 'Soon, right here',
     'del.soon.text': 'Order in the Bougnat Burger app and a courier brings it to you. Same prices as in the restaurant, no platform commission.',
     'resa.title': 'Book a table',
-    'resa.lede': 'Tell us when and we\'ll keep a table for you. For more than 10 people, give us a call.',
+    'resa.lede': 'Tell us when and we\'ll keep a table for you. For 10 people or more, give us a call.',
     'resa.day': 'Which day?',
     'resa.service': 'Lunch or dinner?',
     'resa.lunch': 'Lunch',
@@ -61,7 +67,6 @@
     'resa.fine': 'Demo: the request is not sent. For real, the restaurant confirms by text message.',
     'nous.kicker': 'Since 2 February 2012',
     'nous.title': 'A bougnat is someone from Auvergne who loves to feed you.',
-    'nous.photo.alt': 'A painting of the Bougnat Burger dining room: green booths, a laid table, a porthole window onto the terrace',
     'nous.story1': 'In the 19th and 20th centuries, the “bougnats” were people from Auvergne who moved to Paris and ran wine-and-coal cafés: wine, firewood, coal, and a table for everyone.',
     'nous.story2': 'At Bougnat Burger we keep the spirit and change the menu: homemade burgers with the best of Auvergne. Everything else follows the same idea, from fries cut here to homemade desserts.',
     'terroir.title': 'What goes in the bun',
@@ -76,7 +81,6 @@
     'avis.title': 'What guests say',
     'avis.count': '2,039 Google reviews',
     'avis.asof': 'as of 27 September 2026',
-    'avis.src': 'Google review, 2025',
     'avis.fine': 'A selection of Google reviews, reproduced as written with their date, and not verified by the restaurant. All reviews, good and less good, can be read on Google. In production, they appear here live.',
     'avis.window': 'Google reviews',
     'nous.photos': 'Photos: Bougnat Burger',
@@ -94,10 +98,14 @@
     'tab.book': 'Book',
     'tab.us': 'About',
     'p.add': 'Add',
-    'lang.switch': 'Version française',
+    'p.less': 'One fewer',
+    'p.more': 'One more',
     'sound': 'Sound',
     'bag': 'My bag',
     'close': 'Close',
+    'skip': 'Skip to content',
+    'meta.title': 'Bougnat Burger · The Auvergne burger in Clermont-Ferrand since 2012',
+    'meta.desc': 'Bougnat Burger, 10 bd Léon-Malfreyt in Clermont-Ferrand: burgers with Saint-Nectaire, Cantal and Bleu d\'Auvergne PDO cheeses, butcher-style French beef, homemade fries. Wednesday to Saturday, lunch and dinner. Book a table, take away, delivery.',
   };
 
   /* Textes produits par le JS (les deux langues ici) */
@@ -118,6 +126,11 @@
       withFries: 'frites maison', ti: 'Ti\'', double: 'Double', simpleLong: 'Ti\' · un steak', doubleLong: 'Double · deux steaks',
       steak: 'Steak VBF', galette: 'Galette de pommes de terre', steakShort: 'Steak VBF', galetteShort: 'Galette végé',
       priceOnSite: 'prix sur place',
+      langue: 'Langue', etoiles: '{n} étoiles sur 5', avisN: 'Avis {n}', tamponHaut: 'FRITES', tamponBas: 'MAISON',
+      surPlace: 'sur place uniquement',
+      surPlaceLong: 'Servi sur place uniquement : à déguster au restaurant.',
+      choix: 'Votre choix',
+      alcool: 'L\'abus d\'alcool est dangereux pour la santé, à consommer avec modération. Vente d\'alcool interdite aux mineurs : une pièce d\'identité peut être demandée au retrait.',
       homemade: 'fait maison', local: 'du coin',
       veggie: 'végé possible', spicy: 'relevé', raw: 'lait cru',
       allergens: 'Allergènes d\'après la composition (liste complète à confirmer au restaurant) : {a}.',
@@ -139,6 +152,8 @@
       simulated: 'Maquette : paiement simulé, rien n\'est débité ni transmis.',
       newOrder: 'Nouvelle commande',
       guests: '{n} couverts', guest1: '1 couvert',
+      groupe: 'À partir de {n} personnes, on organise votre table ensemble : appelez-nous pour confirmer la réservation.',
+      groupeCall: 'Appeler pour confirmer', telAffiche: '07 60 12 00 63',
       resaSent: 'Demande envoyée',
       resaText: '{g}, {d} à {t}. Le restaurant vous confirme par SMS au {p}.',
       resaAgain: 'Faire une autre demande',
@@ -165,6 +180,11 @@
       withFries: 'homemade fries', ti: 'Ti\'', double: 'Double', simpleLong: 'Ti\' · one patty', doubleLong: 'Double · two patties',
       steak: 'French beef patty', galette: 'Potato rösti', steakShort: 'Beef patty', galetteShort: 'Veggie rösti',
       priceOnSite: 'price on site',
+      langue: 'Language', etoiles: '{n} stars out of 5', avisN: 'Review {n}', tamponHaut: 'HOMEMADE', tamponBas: 'FRIES',
+      surPlace: 'eat in only',
+      surPlaceLong: 'Served in the restaurant only.',
+      choix: 'Your choice',
+      alcool: 'Please drink responsibly. No sale of alcohol to under-18s: ID may be requested at pick-up.',
       homemade: 'homemade', local: 'local',
       veggie: 'veggie option', spicy: 'spicy', raw: 'raw milk',
       allergens: 'Allergens from the recipe (full list to be confirmed at the restaurant): {a}.',
@@ -186,6 +206,8 @@
       simulated: 'Demo: simulated payment, nothing is charged or sent.',
       newOrder: 'New order',
       guests: '{n} people', guest1: '1 person',
+      groupe: 'For {n} people or more, we set up your table together: please call us to confirm the booking.',
+      groupeCall: 'Call to confirm', telAffiche: '+33 7 60 12 00 63',
       resaSent: 'Request sent',
       resaText: '{g}, {d} at {t}. The restaurant will confirm by text message to {p}.',
       resaAgain: 'Make another request',
@@ -198,31 +220,65 @@
     },
   };
 
+  /* Les langues du site (codes courts) ; le contenu de es et zh arrive par BB.addLang (js/i18n/) */
+  const CODES = ['fr', 'en', 'es', 'zh'];
+  const LANGS = {
+    fr: { nom: 'Français', court: 'FR', html: 'fr', locale: 'fr-FR' },
+    en: { nom: 'English', court: 'EN', html: 'en', locale: 'en-GB' },
+    es: { nom: 'Español', court: 'ES', html: 'es', locale: 'es-ES' },
+    zh: { nom: '中文', court: '中文', html: 'zh-Hans', locale: 'zh-CN' },
+  };
+  const UI = { en: EN };  // textes du HTML (data-i18n) par langue ; le français reste celui du HTML
+  const DATA = {};        // données : texte français → traduction
+  BB.LANGS = LANGS;
+  BB.LANG_CODES = CODES;
+  BB.addLang = function (id, pack) {
+    if (!CODES.includes(id) || !pack) return;
+    Object.assign(LANGS[id], pack.meta || {});
+    UI[id] = pack.ui || {};
+    DYN[id] = pack.dyn || {};
+    DATA[id] = pack.data || {};
+  };
+  BB.I18N = { EN, DYN, UI, DATA }; // pour les outils (tools/i18n/)
+  // les paquets déjà chargés (js/i18n/bb-lang-*.js passent avant ce fichier : la langue est connue dès le premier rendu)
+  (BB.langPacks || []).forEach(([id, pack]) => BB.addLang(id, pack));
+  BB.langPacks = { push: ([id, pack]) => BB.addLang(id, pack) };
+
   function detect() {
     try {
-      const q = new URLSearchParams(location.search).get('lang');
-      if (q === 'fr' || q === 'en') return q;
+      const q = (new URLSearchParams(location.search).get('lang') || '').toLowerCase().slice(0, 2);
+      if (CODES.includes(q)) return q;
     } catch (e) { /* file:// sans recherche */ }
     const saved = BB.store && BB.store.get('lang');
-    if (saved === 'fr' || saved === 'en') return saved;
+    if (CODES.includes(saved)) return saved;
     const langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'fr']).map((l) => String(l).toLowerCase());
-    // Un téléphone réglé en français → français ; sinon, l'anglais sert de langue commune aux visiteurs
-    return langs[0].startsWith('fr') ? 'fr' : 'en';
+    // la première langue du téléphone que le site parle ; sinon l'anglais, langue commune des visiteurs
+    for (const l of langs) { const c = l.slice(0, 2); if (CODES.includes(c)) return c; }
+    return 'en';
   }
 
   BB.lang = detect();
 
   /* BB.t('clé', { t: '22h' }) → texte dynamique dans la langue courante */
   BB.t = function (key, vars) {
-    const table = DYN[BB.lang] || DYN.fr;
-    let s = table[key];
+    let s = DYN[BB.lang] && DYN[BB.lang][key];
+    if (s == null && BB.lang !== 'fr') s = DYN.en[key];
     if (s == null) s = DYN.fr[key];
     if (typeof s !== 'string') return s;
     if (vars) s = s.replace(/\{(\w+)\}/g, (m, k) => (vars[k] != null ? vars[k] : m));
     return s;
   };
-  /* Texte d'un objet { fr, en } */
-  BB.tr = (o) => (o == null ? '' : typeof o === 'string' ? o : o[BB.lang] || o.fr);
+  /* Texte d'un objet { fr, en } dans une langue : la sienne, sinon le dictionnaire de la langue (clé : le français),
+     sinon l'anglais, sinon le français */
+  BB.trLang = function (o, lang) {
+    if (o == null) return '';
+    if (typeof o === 'string') return o;
+    if (o[lang] != null) return o[lang];
+    const d = DATA[lang];
+    if (d && o.fr != null && d[o.fr] != null) return d[o.fr];
+    return (lang !== 'fr' && o.en) || o.fr || '';
+  };
+  BB.tr = (o) => BB.trLang(o, BB.lang);
 
   /* 22h, 22h15 (fr) / 10 pm, 10:15 pm (en) */
   BB.fmtTime = function (hhmm) {
@@ -231,32 +287,63 @@
       const hh = ((h + 11) % 12) + 1;
       return hh + (m ? ':' + String(m).padStart(2, '0') : '') + (h < 12 ? ' am' : ' pm');
     }
-    return h + 'h' + (m ? String(m).padStart(2, '0') : '');
+    if (BB.lang === 'fr') return h + 'h' + (m ? String(m).padStart(2, '0') : '');
+    return h + ':' + String(m).padStart(2, '0'); // es, zh : 22:00
   };
-  BB.fmtPriceL = (n) => (n == null ? BB.t('priceOnSite') : new Intl.NumberFormat(BB.lang === 'en' ? 'en-GB' : 'fr-FR', { style: 'currency', currency: 'EUR' }).format(n));
+  /* un jour : « mercredi 30 », « jeudi 1 oct. » ; en chinois « 9月30日（星期三） » */
+  BB.fmtJour = function (d, mois) {
+    const j = BB.t('days')[d.getDay()];
+    if (BB.lang === 'zh') return (d.getMonth() + 1) + '月' + d.getDate() + '日（' + j + '）';
+    return j + ' ' + d.getDate() + (mois ? ' ' + BB.t('months')[d.getMonth()] : '');
+  };
+  /* une énumération : « a, b, c » ; en chinois « a、b、c » */
+  BB.liste = (arr) => arr.join(BB.lang === 'zh' ? '、' : ', ');
+  /* un nombre à la façon de la langue (4,6 · 4.6) */
+  BB.fmtNum = (n, dec = 1) => new Intl.NumberFormat((LANGS[BB.lang] || LANGS.fr).locale, { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(n);
+  const NF = {};
+  BB.fmtPriceL = (n) => {
+    if (n == null) return BB.t('priceOnSite');
+    const loc = (LANGS[BB.lang] || LANGS.fr).locale;
+    return (NF[loc] || (NF[loc] = new Intl.NumberFormat(loc, { style: 'currency', currency: 'EUR' }))).format(n);
+  };
 
   /* Applique la langue aux textes marqués data-i18n (le français d'origine est gardé la première fois) */
+  const texte = (k) => (BB.lang === 'fr' ? null : UI[BB.lang] && UI[BB.lang][k] != null ? UI[BB.lang][k] : EN[k]);
   function apply() {
-    document.documentElement.lang = BB.lang;
+    document.documentElement.lang = (LANGS[BB.lang] || LANGS.fr).html;
     document.querySelectorAll('[data-i18n]').forEach((el) => {
       const k = el.dataset.i18n;
       if (el.dataset.fr == null) el.dataset.fr = el.innerHTML;
-      el.innerHTML = BB.lang === 'en' && EN[k] != null ? EN[k] : el.dataset.fr;
+      const v = texte(k);
+      el.innerHTML = v != null ? v : el.dataset.fr;
     });
     document.querySelectorAll('[data-i18n-attr]').forEach((el) => {
       el.dataset.i18nAttr.split(';').forEach((pair) => {
         const [attr, k] = pair.split(':');
         const keep = 'fr' + attr.replace(/[^a-z]/gi, '');
         if (el.dataset[keep] == null) el.dataset[keep] = el.getAttribute(attr) || '';
-        el.setAttribute(attr, BB.lang === 'en' && EN[k] != null ? EN[k] : el.dataset[keep]);
+        const v = texte(k);
+        el.setAttribute(attr, v != null ? v : el.dataset[keep]);
       });
     });
-    const on = document.getElementById('lang-on'), off = document.getElementById('lang-off');
-    if (on && off) { on.textContent = BB.lang.toUpperCase(); off.textContent = BB.lang === 'en' ? 'FR' : 'EN'; }
+    // les nombres écrits dans la page (la note Google) : virgule ou point selon la langue
+    document.querySelectorAll('[data-nombre]').forEach((el) => { el.textContent = BB.fmtNum(Number(el.dataset.nombre)); });
+    // le titre et la description de la page (le français d'origine est gardé la première fois)
+    const md = document.querySelector('meta[name="description"]');
+    if (apply.titreFr == null) { apply.titreFr = document.title; apply.descFr = md ? md.content : ''; }
+    document.title = texte('meta.title') || apply.titreFr;
+    if (md) md.content = texte('meta.desc') || apply.descFr;
+    // le sélecteur : la langue courante sur le bouton, cochée dans la liste
+    const cur = document.getElementById('lang-cur'), btn = document.getElementById('lang-btn');
+    if (cur) cur.textContent = (LANGS[BB.lang] || LANGS.fr).court;
+    if (btn) btn.setAttribute('aria-label', BB.t('langue') + ' : ' + (LANGS[BB.lang] || LANGS.fr).nom);
+    document.querySelectorAll('#lang-list [data-lang]').forEach((b) => {
+      if (b.dataset.lang === BB.lang) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+    });
   }
 
   BB.setLang = function (l) {
-    if (l !== 'fr' && l !== 'en') return;
+    if (!CODES.includes(l)) return;
     BB.lang = l;
     BB.store.set('lang', l);
     apply();

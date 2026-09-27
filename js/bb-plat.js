@@ -1,23 +1,49 @@
 /* ==========================================================================
-   Bougnat Burger — les autres plats en 3D : viandes, salades, wraps
-   Même cuisine que les burgers (bb-bake.js : chaque ingrédient cuit pixel par
-   pixel, lumière de studio, vue plongeante ~25°) et même moteur (bb-burger.js :
-   horloge commune, observateurs, étiquettes, image figée des cartes).
+   Bougnat Burger — les autres plats en 3D : viandes, salades, wraps, desserts, boissons
+   Même cuisine que les burgers (bb-bake.js : chaque élément cuit pixel par
+   pixel, lumière de studio) et même moteur (bb-burger.js : horloge commune,
+   observateurs, étiquettes, image figée des cartes).
    Présentation calquée sur celle du restaurant :
      · viandes : assiette blanche, la viande grillée (bavette tranchée au bout,
        steak haché épais au cœur saignant), frites maison et salade maison ;
      · salades : le tas de salade et mesclun dans l'assiette (l'Auvergnate sur
        l'ardoise), les garnitures qui tombent une à une, les toasts dorés dessus ;
      · wraps : la galette ouverte sur l'ardoise, la garniture posée en bande,
-       roulée, coupée en biais : deux moitiés montrent les couches enroulées.
-   Les ingrédients sont ceux du texte de la carte (bb-data.js, desc), rien de
-   plus ; les frites et la salade des viandes viennent de BB.SIDES.
+       roulée, coupée en biais : deux moitiés montrent les couches enroulées ;
+     · desserts (vus à 32°) : la part sur l'assiette ou l'ardoise, ses décors
+       qui tombent dessus ; les tranches montrent leurs couches ;
+     · boissons (vues à 25°, comme les burgers) : bouteille et verres sur
+       l'ardoise ; chaque verre se pose vide, puis se remplit (mousse, bulles).
+   Les éléments sont ceux du texte de la carte (bb-data.js, desc), rien de plus ;
+   les frites et la salade des viandes viennent de BB.SIDES. Sans description,
+   quelques mots du nom seulement (les parfums des givrés, glaces et sorbets…).
 
    const p = new BB.Plat(host, 'allier', {
-     size: 'card' | 'hero', autoplay: 'once' | true | false, labels, lang: 'fr' | 'en', interactive });
+     size: 'card' | 'hero', autoplay: 'once' | true | false, labels, lang (toute langue), interactive,
+     variant: 'ambree' | 'rose' | 'cola' | … (boissons : la teinte de bb-data.js, ou l'id / le nom d'une variante),
+     onEvent: (type, info) => … });
    p.explode = 0..1 (0 : servi ; 1 : détaillé et étiqueté — éclaté, ou galette ouverte pour un wrap)
-   p.play() ; p.stop() ; p.compose() ; p.setLang('en') ; p.destroy()
+   p.play() ; p.stop() ; p.compose() ; p.setLang('es') ; p.setVariant(v, nom) ; p.destroy()
    BB.PLATS : les scènes, clés = ids de bb-data.js ; BB.hasPlat(id).
+   Les temps forts (pour le son), en lecture réelle seulement (jamais en _seek, ni en mouvement réduit) ;
+   info.hero dit si c'est le grand format :
+     'compose'   la composition commence                   { }
+     'pose'      un élément se pose                         { kind, id, index, force (0..1), again }
+                 kind : 'assiette' | 'ardoise' | 'salade' | 'tomates' | 'fromage' | 'jambon' | 'saumon' | 'noix' |
+                        'poulet' | 'poivrons' | 'croutons' | 'toast' | 'miel' | 'pignons' | 'herbes' | 'viande' |
+                        'frites' | 'sauce' | 'galette' | 'gateau' | 'fruits' | 'amandes' | 'chocolat' | 'cafe' |
+                        'tarte' | 'meringue' | 'ramequin' | 'coulant' | 'fruit-givre' | 'coupe' | 'boule' |
+                        'verre' | 'bouteille' | 'autre'
+     'coupe'     le couteau passe (bavette, wrap)          { what: 'bavette' | 'wrap' }
+     'roule'     le wrap se roule                           { }
+     'verse'     on remplit un verre                        { kind: 'biere' | 'vin' | 'soft' | 'spiritueux', id, index }
+     'mousse'    la mousse monte (bière, soda)              { id, index }
+     'bulles'    les bulles (bière, soda)                   { id, index }
+     'eclate'    le détail commence (étiquettes)            { }
+     'etiquette' une étiquette apparaît                     { i, text }
+     'recompose' on revient au plat servi                   { }
+     'envol'     tout s'envole                              { }
+     'fige'      une carte se fige en image                 { }
    Script classique ; charger après bb-bake.js et bb-burger.js.
    ========================================================================== */
 (function () {
@@ -27,16 +53,22 @@
   if (!BB || !BB.Burger || !BB.Burger._kit || !BB.bake) return;
   const K = BB.Burger._kit;
   const { wake, observe, unobserve, injectCSS, measure, wrap: wrapText, attr, clamp, smooth, inOut, outCubic, r2, r3 } = K;
-  const PHI = ((BB.bake.PHI_PLAT || 40) * Math.PI) / 180, S = Math.sin(PHI), C = Math.cos(PHI);
+  const PHI_PLAT = BB.bake.PHI_PLAT || 40;
   const XLINK = 'http://www.w3.org/1999/xlink';
   const SHADOW = '#140C08';
-  const DROP = 1.5; // hauteur d'où tombent les ingrédients
+  const DROP = 1.5; // hauteur d'où tombent les éléments
   const PORT_W = 1.08, PORT_DY = 0.02; // devant un hublot : l'assiette ≈ 1,1 × son diamètre
+  // (les idéogrammes : une police de repli après la police de la page)
+  const CJK = ", 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif";
+  const trL = (o, lang) => (BB.trLang ? BB.trLang(o, lang) : !o ? '' : typeof o === 'string' ? o : o[lang] || (lang !== 'fr' && o.en) || o.fr || '');
 
   /* ======================================================================
-     Les scènes : couches dans l'ordre où elles arrivent ; w = l'ingrédient
-     de la carte qu'elles portent (index dans le texte de la carte, ou
-     'frites' / 'salade' pour les accompagnements des viandes)
+     Les scènes : couches dans l'ordre où elles arrivent ; w = l'élément de
+     la carte qu'elles portent (index dans le texte de la carte, ou 'frites' /
+     'salade' pour les accompagnements des viandes) ; lab = plusieurs étiquettes
+     sur une même couche (p : point d'ancrage donné par la cuisine) ; nw = un mot
+     du nom (desserts sans description) ; k = la nature (pour le son) ;
+     pour = un verre qui se remplit ; vary = la couche qui suit la variante.
      ====================================================================== */
   const SCENES = {
     bavette: { kind: 'viande', base: 'assiette', layers: [
@@ -74,10 +106,93 @@
       { tex: 'tortilla', w: 0 }, { tex: 'ruban-sauce-curry', w: 5 }, { tex: 'ruban-salade', w: 4 }, { tex: 'ruban-tomates', w: 2 },
       { tex: 'ruban-poivrons', w: 3 }, { tex: 'ruban-poulet', w: 1 },
     ] },
+
+    /* les desserts */
+    'tarte-citron': { kind: 'dessert', phi: 32, base: 'ardoise-d', layers: [
+      { tex: 'tarte-fond', k: 'tarte', lab: [{ w: 0, p: 0 }, { w: 1, p: 1 }] }, { tex: 'meringue', k: 'meringue', w: 2 },
+    ] },
+    framboisier: { kind: 'dessert', phi: 32, base: 'assiette-d', layers: [
+      { tex: 'framboisier-part', k: 'gateau', lab: [{ w: 0, p: 0 }, { w: 1, p: 1 }] }, { tex: 'framboises-dessus', k: 'fruits', w: 2 }, { tex: 'amandes-hachees', k: 'amandes', w: 3 },
+    ] },
+    'foret-noire': { kind: 'dessert', phi: 32, base: 'ardoise-d', layers: [
+      { tex: 'foret-noire-part', k: 'gateau', lab: [{ w: 0, p: 0 }, { w: 1, p: 1 }] }, { tex: 'copeaux-foret', k: 'chocolat', w: 2 },
+    ] },
+    moelleux: { kind: 'dessert', phi: 32, base: 'assiette-d', layers: [
+      { tex: 'moelleux', k: 'gateau', w: 0 }, { tex: 'coulant', k: 'coulant' },
+    ] },
+    'nougat-glace': { kind: 'dessert', phi: 32, base: 'assiette-d', layers: [
+      { tex: 'nougat-part', k: 'gateau', lab: [{ w: 0, p: 0 }, { w: 1, p: 1 }, { w: 2, p: 2 }, { w: 3, p: 3 }, { w: 4, p: 4 }, { w: 5, p: 5 }] },
+    ] },
+    'tiramisu-framboise': { kind: 'dessert', phi: 32, base: 'assiette-d', layers: [
+      { tex: 'tiramisu-framboise-part', k: 'gateau' }, { tex: 'framboises-tiramisu', k: 'fruits', nw: { fr: 'framboise', en: 'raspberry', es: 'frambuesa', zh: '覆盆子' } },
+    ] },
+    'tiramisu-cafe': { kind: 'dessert', phi: 32, base: 'assiette-d', layers: [
+      { tex: 'tiramisu-cafe-part', k: 'gateau' }, { tex: 'grains-cafe', k: 'cafe', nw: { fr: 'café', en: 'coffee', es: 'café', zh: '咖啡' } },
+    ] },
+    'mousse-chocolat': { kind: 'dessert', phi: 32, base: 'assiette-d', layers: [
+      { tex: 'ramequin-mousse', k: 'ramequin', nw: { fr: 'chocolat', en: 'chocolate', es: 'chocolate', zh: '巧克力' } }, { tex: 'copeaux-mousse', k: 'chocolat' },
+    ] },
+    givres: { kind: 'dessert', phi: 32, base: 'ardoise-d', layers: [
+      { tex: 'citron-givre', k: 'fruit-givre', nw: { fr: 'citron', en: 'lemon', es: 'limón', zh: '柠檬' } },
+      { tex: 'orange-givree', k: 'fruit-givre', nw: { fr: 'orange', en: 'orange', es: 'naranja', zh: '橙' } },
+      { tex: 'coco-givre', k: 'fruit-givre', nw: { fr: 'coco', en: 'coconut', es: 'coco', zh: '椰' } },
+    ] },
+    glaces: { kind: 'dessert', phi: 32, base: 'assiette-d', layers: [
+      { tex: 'coupe-glace', k: 'coupe' }, { tex: 'boules-glace', k: 'boule', nw: { fr: 'glaces', en: 'ice creams', es: 'helados', zh: '冰淇淋' } },
+      { tex: 'boule-sorbet', k: 'boule', nw: { fr: 'sorbets', en: 'sorbets', es: 'sorbetes', zh: '雪葩' } },
+    ] },
+    plateau: { kind: 'dessert', phi: 32, base: 'ardoise-d', layers: [
+      { tex: 'plateau-tarte', k: 'tarte' }, { tex: 'plateau-foret', k: 'gateau' }, { tex: 'plateau-mousse', k: 'ramequin' },
+      { tex: 'plateau-sorbet', k: 'boule' }, { tex: 'plateau-framboises', k: 'fruits' },
+    ] },
+
+    /* les boissons : de l'arrière vers l'avant */
+    softs: { kind: 'boisson', phi: 25, base: 'ardoise-b', variant: { fam: 'soft', def: 'cola' }, layers: [
+      { tex: 'bouteille-eau', k: 'bouteille', w: 3 }, { tex: 'bouteille-jus', k: 'bouteille', w: 2 },
+      { tex: 'verre-soft-{v}', k: 'verre', pour: 'soft', vary: true, w: 0 }, { tex: 'verre-the-glace', k: 'verre', pour: 'soft', w: 1 },
+    ] },
+    sagnes: { kind: 'boisson', phi: 25, base: 'ardoise-b', variant: { fam: 'beer', def: 'blonde' }, layers: [
+      { tex: 'bouteille-sagnes', k: 'bouteille' }, { tex: 'verre-sagnes-noire', k: 'verre', pour: 'biere' },
+      { tex: 'verre-sagnes-ambree', k: 'verre', pour: 'biere' }, { tex: 'verre-sagnes-v-{v}', k: 'verre', pour: 'biere', vary: true },
+    ] },
+    desprat: { kind: 'boisson', phi: 25, base: 'ardoise-b', variant: { fam: 'beer', def: 'blonde' }, layers: [
+      { tex: 'bouteille-desprat', k: 'bouteille' }, { tex: 'verre-desprat-{v}', k: 'verre', pour: 'biere', vary: true },
+    ] },
+    vins: { kind: 'boisson', phi: 25, base: 'ardoise-b', variant: { fam: 'wine', def: 'rouge' }, layers: [
+      { tex: 'bouteille-vin-{v}', k: 'bouteille', vary: true }, { tex: 'verre-vin-{v}', under: 'verre-vin-pied', k: 'verre', pour: 'vin', vary: true },
+    ] },
+    aperitifs: { kind: 'boisson', phi: 25, base: 'ardoise-b', layers: [
+      { tex: 'verre-rhum', k: 'verre', pour: 'spiritueux', w: 0 }, { tex: 'verre-whisky', k: 'verre', pour: 'spiritueux', w: 2 },
+      { tex: 'verre-pastis', k: 'verre', pour: 'spiritueux', w: 4 }, { tex: 'verre-vodka', k: 'verre', pour: 'spiritueux', w: 1 },
+      { tex: 'verre-tequila', k: 'verre', pour: 'spiritueux', w: 3 },
+    ] },
   };
   Object.keys(SCENES).forEach((id) => { SCENES[id].id = id; });
   BB.PLATS = SCENES;
   BB.hasPlat = (id) => !!SCENES[id];
+
+  /* ---------- les variantes des boissons : la teinte (bb-data.js) ; à défaut, l'id ou le nom ---------- */
+  const FAMS = { beer: ['blonde', 'ambree', 'blanche', 'ipa', 'noire'], wine: ['rouge', 'rose', 'blanc'], soft: ['cola', 'the', 'orange', 'eau', 'jus'] };
+  function variantKey(fam, v) {
+    if (!fam || !FAMS[fam]) return null;
+    const s = String(v == null ? '' : v).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    if (FAMS[fam].includes(s)) return s;
+    if (fam === 'beer') {
+      if (/noire|stout|black|brune|dark|porter|lave/.test(s)) return 'noire';
+      if (/ambr|amber|rousse|antidote|noix/.test(s)) return 'ambree';
+      if (/blanche|white|wit|weiss|druide|flagrant/.test(s)) return 'blanche';
+      if (/ipa|shiva/.test(s)) return 'ipa';
+      return 'blonde';
+    }
+    if (fam === 'wine') { if (/ros/.test(s)) return 'rose'; if (/blanc|white|blanco|bianco/.test(s)) return 'blanc'; return 'rouge'; }
+    if (/cola|coca/.test(s)) return 'cola';
+    if (/the|tea|fuze/.test(s)) return 'the';
+    if (/orang/.test(s)) return 'orange';
+    if (/pago|jus|juice|zumo|succo/.test(s)) return 'jus';
+    if (/eau|water|perrier|agua|acqua/.test(s)) return 'eau';
+    return 'cola';
+  }
+  const texOf = (spec, key) => spec.tex.replace('{v}', key || '');
 
   // géométrie commune avec bb-bake.js (le wrap roulé, les deux moitiés, la galette)
   const WR = { R: 0.21, y: -0.3, L: 0.62, top: 0.045 };
@@ -90,24 +205,64 @@
     'bavette-entiere': -0.22, 'steak-epais': -0.2, frites: -0.16, 'salade-maison': 0.4,
   };
   const BAV = { x: -0.24, y: -0.22, rot: -0.2, L: 0.54, cut: 0.32 };
-
-  /* ---------- les mots de la carte ---------- */
-  const menuItem = (id) => (BB.MENU_OTHER || []).find((it) => it.id === id);
-  const capit = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
-  function sidesParts(lang) {
-    const s = BB.SIDES ? BB.SIDES[lang] || BB.SIDES.fr : '';
-    const m = /(?:avec|with)\s+(.+?)\s+(?:et|and)\s+(.+?)\.?$/.exec(s);
-    return m ? [m[1], m[2]] : lang === 'en' ? ['homemade fries', 'house salad'] : ['frites faites maison', 'salade maison'];
+  // la nature d'un élément qui se pose (pour le son) et la force de l'impact
+  const KINDS = [
+    [/^assiette/, 'assiette', 0.9], [/^ardoise/, 'ardoise', 0.9], [/mesclun|salade|ruban-salade/, 'salade', 0.3], [/tomate/, 'tomates', 0.4],
+    [/cantal|bleu|chevre/, 'fromage', 0.35], [/jambon/, 'jambon', 0.35], [/saumon/, 'saumon', 0.35], [/noix/, 'noix', 0.45], [/poulet/, 'poulet', 0.45],
+    [/poivron/, 'poivrons', 0.35], [/crouton/, 'croutons', 0.5], [/toasts/, 'toast', 0.6], [/miel/, 'miel', 0.2], [/pignon/, 'pignons', 0.4],
+    [/herbes/, 'herbes', 0.15], [/steak|bavette/, 'viande', 0.8], [/frites/, 'frites', 0.55], [/sauce/, 'sauce', 0.3], [/tortilla/, 'galette', 0.4],
+  ];
+  const FORCE = { gateau: 0.6, fruits: 0.3, amandes: 0.2, chocolat: 0.25, cafe: 0.25, tarte: 0.6, meringue: 0.4, ramequin: 0.75, coulant: 0.2,
+    'fruit-givre': 0.55, coupe: 0.7, boule: 0.45, verre: 0.5, bouteille: 0.85 };
+  function kindOf(spec, tex) {
+    if (spec && spec.k) return [spec.k, FORCE[spec.k] || 0.5];
+    for (let i = 0; i < KINDS.length; i++) if (KINDS[i][0].test(tex)) return [KINDS[i][1], KINDS[i][2]];
+    return ['autre', 0.4];
   }
-  function labelText(scene, L, lang) {
-    if (L.w === 'frites') return capit(sidesParts(lang)[0]);
-    if (L.w === 'salade') return capit(sidesParts(lang)[1]);
+  // un verre qui se remplit : durée, mousse, bulles
+  const POUR = { biere: { d: 1.25, foam: 0.74, fizz: true }, vin: { d: 1.0 }, soft: { d: 1.0, fizz: true }, spiritueux: { d: 0.6 } };
+
+  /* ---------- les mots de la carte (toute langue : BB.trLang) ---------- */
+  const menuItem = (id) => (BB.menuItem && BB.menuItem(id)) || (BB.MENU_OTHER || []).find((it) => it.id === id);
+  const capit = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+  // la première phrase d'un texte (la liste des éléments ; « Sans cerises, sans alcool. » n'en est pas)
+  const firstSentence = (d) => String(d || '').split(/\.\s+|。|\.$/)[0].replace(/[.。]\s*$/, '');
+  // une liste : les virgules (aussi 、 et ，), et le dernier « et / and / y / e / 和 / 与 / 或 / ou / or / o »
+  const splitList = (s) => s.split(/\s*[,、，;；]\s*|\s+(?:et|and|y|e|ou|or|o|und)\s+|\s*[和与及或]\s*/).map((x) => x.trim()).filter(Boolean);
+  function sidesParts(lang) {
+    const s = trL(BB.SIDES || { fr: 'Servi avec frites faites maison et salade maison.', en: 'Served with homemade fries and house salad.' }, lang);
+    const m = /(?:avec|with|con|mit|配|配有|附)\s*(.+)$/.exec(s.replace(/[.。]\s*$/, ''));
+    const parts = m ? splitList(m[1]) : [];
+    if (parts.length >= 2) return [parts[0], parts[1]];
+    return lang === 'fr' ? ['frites faites maison', 'salade maison'] : ['homemade fries', 'house salad'];
+  }
+  function labelText(scene, L, lang, w) {
+    if (w === 'frites') return capit(sidesParts(lang)[0]);
+    if (w === 'salade') return capit(sidesParts(lang)[1]);
     const it = menuItem(scene.id);
-    const d = it && it.desc ? it.desc[lang] || it.desc.fr : '';
-    // la viande : la première phrase (« Bavette de bœuf charolais bio, 300 g ») ; sinon la liste, virgule par virgule
-    if (scene.kind === 'viande') return capit(d.split(/\.\s+/)[0].replace(/\.\s*$/, ''));
-    const parts = d.replace(/\.\s*$/, '').split(/,\s+/);
-    return capit(parts[L.w] || '');
+    const d = it && it.desc ? trL(it.desc, lang) : '';
+    // la viande : la première phrase (« Bavette de bœuf charolais bio, 300 g ») ; sinon la liste, élément par élément
+    if (scene.kind === 'viande') return capit(firstSentence(d));
+    if (scene.kind === 'salade' || scene.kind === 'wrap') {
+      // (« Salade et mesclun maison » est un seul élément : on ne coupe qu'aux virgules)
+      const parts = firstSentence(d).split(/\s*[,、，]\s*/);
+      return capit(parts[w] || '');
+    }
+    let parts = firstSentence(d);
+    // (une boisson : « Brasserie … : blonde, ambrée » → après les deux-points)
+    const colon = parts.search(/[:：]/);
+    if (colon >= 0) parts = parts.slice(colon + 1);
+    return capit(splitList(parts)[w] || '');
+  }
+  // un mot du nom (desserts sans description) : seulement s'il y figure, en français comme en anglais
+  function nameWord(scene, nw, lang) {
+    if (!nw) return '';
+    const it = menuItem(scene.id);
+    if (!it) return '';
+    const has = (l) => trL(it.name, l).toLowerCase().includes(String(nw[l] || '').toLowerCase());
+    if (!has('fr') || !has('en')) return '';
+    const word = nw[lang] || (lang === 'fr' ? nw.fr : nw.en);
+    return capit(word);
   }
 
   // les images figées des cartes (une par plat, taille et finesse)
@@ -123,12 +278,21 @@
       this.host = host;
       this.o = Object.assign({ size: 'card', autoplay: true, labels: hero, lang: 'fr', interactive: hero }, opts);
       this.hero = hero;
-      this.lang = this.o.lang === 'en' ? 'en' : 'fr';
+      this.lang = String(this.o.lang || 'fr');
       this.uid = BB.uid('bbp');
       this._once = this.o.autoplay === 'once';
       this.scene = SCENES[id] || SCENES.allier;
-      this.recipe = { id: this.scene.id, name: menuItem(this.scene.id) ? menuItem(this.scene.id).name : { fr: id, en: id } };
-      this._composeE = this.scene.kind === 'wrap' ? 1 : 0;
+      const sc = this.scene;
+      const it = menuItem(sc.id);
+      this.recipe = { id: sc.id, name: it ? it.name : { fr: id, en: id } };
+      this.onEvent = typeof this.o.onEvent === 'function' ? this.o.onEvent : null;
+      this._ev = { live: false, k: '', seg: -1 };
+      // la vue : 40° (plats), 32° (desserts), 25° (boissons)
+      const phi = ((sc.phi || PHI_PLAT) * Math.PI) / 180;
+      this._S = Math.sin(phi); this._C = Math.cos(phi);
+      this._variant = sc.variant ? variantKey(sc.variant.fam, this.o.variant != null ? this.o.variant : sc.variant.def) : null;
+      this._variantLabel = null;
+      this._composeE = sc.kind === 'wrap' ? 1 : 0;
       this._E = 0; this._target = 0;
       this._auto = false; this._wantAuto = false; this._resumeAt = 0;
       this._clock = 0; this._wait = 0; this._delay = 0;
@@ -168,6 +332,7 @@
       if (BB.reduced) this._E = this._target;
       this._kick(true);
     }
+    get variant() { return this._variant; }
     play() {
       if (this._frozen) return;
       this._wantAuto = true;
@@ -204,11 +369,29 @@
       this._kick(true);
     }
     setLang(lang) {
-      this.lang = lang === 'en' ? 'en' : 'fr';
+      this.lang = String(lang || 'fr');
       this._aria();
       if (this._frozen) return;
       this._layout();
       this._kick(true);
+    }
+    /* boissons : la variante choisie dans la fiche (teinte de bb-data.js, id ou nom) ; nom : le texte de son étiquette.
+       Le grand format se recompose avec la nouvelle couleur (le verre se remplit à nouveau). */
+    setVariant(v, name) {
+      const sc = this.scene;
+      if (!sc.variant || this._frozen) return this._variant;
+      const key = variantKey(sc.variant.fam, v);
+      this._variantLabel = name ? String(name) : null;
+      if (key === this._variant) { this._layout(); this._kick(true); return key; }
+      this._variant = key;
+      this._build();
+      this._texAsked = false;
+      this._layout();
+      if (this._near || this._seen) this._loadTextures();
+      if (this.o.autoplay && !BB.reduced) { this._clock = 0; this._wait = 0; this._auto = true; this._wantAuto = true; }
+      this._pose();
+      this._kick(true);
+      return key;
     }
     destroy() {
       this._alive = false;
@@ -225,11 +408,19 @@
     }
     _aria() {
       const it = menuItem(this.scene.id);
-      const name = it ? it.name[this.lang] || it.name.fr : this.scene.id;
-      const d = it && it.desc ? it.desc[this.lang] || it.desc.fr : '';
-      const txt = name + (this.lang === 'en' ? ': ' : ' : ') + d;
+      const name = it ? trL(it.name, this.lang) : this.scene.id;
+      const d = it && it.desc ? trL(it.desc, this.lang) : '';
+      const txt = name + (d ? (this.lang === 'fr' ? ' : ' : ': ') + d : '');
       if (this.svg) this.svg.setAttribute('aria-label', txt);
       if (this._img) this._img.alt = txt;
+    }
+    // un temps fort : seulement en lecture réelle (ni pose, ni _seek, ni mouvement réduit)
+    _emit(type, info) {
+      const fn = this.onEvent;
+      if (typeof fn !== 'function' || BB.reduced || !this._ev.live) return;
+      const o = info || {};
+      o.hero = this.hero;
+      try { fn.call(this, type, o); } catch (e) { /* un écouteur fautif n'arrête pas l'animation */ }
     }
 
     /* ---------- construction ---------- */
@@ -238,7 +429,7 @@
       return BB.svg('image', { x: r3(fr.x0), y: r3(fr.y0), width: r3(fr.x1 - fr.x0), height: r3(fr.y1 - fr.y0), preserveAspectRatio: 'none', opacity: 0 }, g);
     }
     _build() {
-      const svg = this.svg, uid = this.uid, sc = this.scene;
+      const svg = this.svg, uid = this.uid, sc = this.scene, C = this._C;
       while (svg.firstChild) svg.removeChild(svg.firstChild);
       const defs = BB.svg('defs', null, svg);
       const g0 = BB.svg('radialGradient', { id: uid + '-gr' }, defs);
@@ -259,13 +450,30 @@
       }
       const n = sc.layers.length;
       // dessin de l'arrière vers l'avant (le tas de salade d'abord) ; l'ordre d'arrivée reste celui de la scène
-      const order = sc.kind === 'wrap' ? sc.layers.map((x, i) => i)
+      // (desserts et boissons : les scènes sont déjà écrites de l'arrière vers l'avant)
+      const flat = sc.kind === 'wrap' || sc.kind === 'dessert' || sc.kind === 'boisson';
+      const order = flat ? sc.layers.map((x, i) => i)
         : sc.layers.map((x, i) => i).sort((a, b) => (a === 0 && sc.kind === 'salade' ? -9 : DEPTH[sc.layers[a].tex] || 0) - (b === 0 && sc.kind === 'salade' ? -9 : DEPTH[sc.layers[b].tex] || 0));
+      this._order = order;
       const groups = [];
       order.forEach((i) => { groups[i] = BB.svg('g', { class: 'bb-l', opacity: 0 }, parent); });
+      const vkey = this._variant;
       this.layers = sc.layers.map((spec, i) => {
         const g = groups[i];
-        const L = { i, spec, tex: spec.tex, w: spec.w, g, img: reg(spec.tex, this._image(g, spec.tex)), frame: BB.bake.frame(spec.tex), c: 0, d: 0, f: 0, imp: 0, al: 0, lz: 0, dz: 0 };
+        const full = spec.vary ? texOf(spec, vkey) : spec.tex;
+        const L = { i, spec, full, tex: spec.pour ? full + '-vide' : full, w: spec.w, g, frame: BB.bake.frame(full), c: 0, d: 0, f: 0, imp: 0, al: 0, lz: 0, dz: 0, fill: 1 };
+        if (spec.under) { L.under = spec.under; L.underImg = reg(spec.under, this._image(g, spec.under)); }
+        L.img = reg(L.tex, this._image(g, L.tex));
+        if (spec.pour) {
+          // le verre plein se découvre de bas en haut : la boisson monte
+          const fr = L.frame;
+          const cp = BB.svg('clipPath', { id: uid + '-p' + i }, defs);
+          L.pourClip = BB.svg('rect', { x: r3(fr.x0 - 0.05), y: r3(fr.y1), width: r3(fr.x1 - fr.x0 + 0.1), height: 0 }, cp);
+          L.fullImg = reg(full, this._image(g, full));
+          L.fullImg.setAttribute('clip-path', 'url(#' + uid + '-p' + i + ')');
+          L.pour = POUR[spec.pour] || POUR.soft;
+          L.pourKind = spec.pour;
+        }
         if (spec.sliced) {
           // la bavette : la version tranchée se découvre sous le couteau, du bout vers le centre
           const cp = BB.svg('clipPath', { id: uid + '-cut' }, defs);
@@ -274,6 +482,7 @@
           L.sliced.setAttribute('clip-path', 'url(#' + uid + '-cut)');
           this._knife = BB.svg('line', { stroke: '#FFF4DE', 'stroke-linecap': 'round', opacity: 0 }, this._cam);
         }
+        L.kind = kindOf(spec, full);
         return L;
       });
       if (sc.kind === 'wrap') {
@@ -290,26 +499,35 @@
       this._slice = sc.layers.some((s) => s.sliced) && this.o.autoplay && !BB.reduced ? 0 : 1;
       // chronologie de la composition
       let t = 0.25;
-      this.layers.forEach((L) => { L.t0 = t; L.dur = 0.62; t += 0.32; });
+      this.layers.forEach((L) => { L.t0 = t; L.dur = 0.62; t += sc.kind === 'boisson' ? 0.42 : 0.32; });
       const lastEnd = this.layers[n - 1].t0 + 0.62;
       let comp = lastEnd + 0.5;
+      // les verres se remplissent une fois posés
+      this.layers.forEach((L) => { if (L.pour) { L.tp = L.t0 + L.dur + 0.14; comp = Math.max(comp, L.tp + L.pour.d + 0.5); } });
       if (this.layers.some((L) => L.spec.sliced)) { this._tSlice = lastEnd + 0.2; comp = this._tSlice + 1.1; }
+      const hasLabels = this.o.labels && this._labelItems().length > 0;
       /* le cycle. E (écartement) : 0 = servi ; 1 = détaillé et étiqueté.
          Wrap : 0,5 = galette garnie ouverte ; au-dessus, la garniture s'élève en couches (étiquettes) ;
          en dessous, la galette se roule (0,5 → 0,22) puis on coupe (0,22 → 0).
+         Desserts et boissons sans étiquettes : servis, puis ils s'envolent.
          Une carte « once » : composition (puis, pour un wrap, roulé et coupé), et elle se fige. */
-      const segs = sc.kind === 'wrap'
-        ? (this._once
+      let segs;
+      if (sc.kind === 'wrap') {
+        segs = this._once
           ? [['comp', comp, 0.5], ['hold', 0.4, 0.5], ['go', 2.6, 0.5, 0], ['hold', 3, 0], ['off', 1.0, 0]]
-          : [['comp', comp, 0.5], ['hold', 1.0, 0.5], ['go', 1.6, 0.5, 1], ['hold', 3.4, 1], ['go', 1.3, 1, 0.5], ['go', 2.8, 0.5, 0], ['hold', 3.2, 0], ['off', 1.0, 0]])
-        : [['comp', comp, 0], ['hold', 1.4, 0], ['go', 1.2, 0, 1], ['hold', 4.0, 1], ['go', 1.0, 1, 0], ['hold', 1.8, 0], ['off', 1.0, 0]];
+          : [['comp', comp, 0.5], ['hold', 1.0, 0.5], ['go', 1.6, 0.5, 1], ['hold', 3.4, 1], ['go', 1.3, 1, 0.5], ['go', 2.8, 0.5, 0], ['hold', 3.2, 0], ['off', 1.0, 0]];
+      } else if ((sc.kind === 'dessert' || sc.kind === 'boisson') && !hasLabels) {
+        segs = [['comp', comp, 0], ['hold', 5.5, 0], ['off', 1.0, 0]];
+      } else segs = [['comp', comp, 0], ['hold', 1.4, 0], ['go', 1.2, 0, 1], ['hold', 4.0, 1], ['go', 1.0, 1, 0], ['hold', 1.8, 0], ['off', 1.0, 0]];
       this._segs = segs;
       this._T = { comp, P: segs.reduce((a, s) => a + s[1], 0), end: sc.kind === 'wrap' ? comp + 0.4 + 2.6 : comp };
       // le détail : de combien chaque couche s'élève (un wrap : la garniture en couches au-dessus de la galette)
       this.layers.forEach((L, i) => {
         if (sc.kind === 'wrap') L.lift = i === 0 ? 0 : 0.16 + 0.2 * (i - 1);
-        else L.lift = sc.kind === 'salade' && i === 0 ? 0 : 0.035;
+        else if (sc.kind === 'boisson') L.lift = 0;
+        else L.lift = (sc.kind === 'salade' || sc.kind === 'dessert') && i === 0 ? 0 : 0.035;
       });
+      this._C = C;
     }
 
     /* ---------- textures ---------- */
@@ -317,7 +535,10 @@
       const out = [[this.base.tex, 1]];
       const n = this.layers.length;
       this.layers.forEach((L, i) => {
-        out.push([L.tex, 0.95 - (0.5 * i) / Math.max(1, n - 1)]);
+        const w = 0.95 - (0.5 * i) / Math.max(1, n - 1);
+        if (L.under) out.push([L.under, w + 0.01]);
+        out.push([L.tex, w]);
+        if (L.pour) out.push([L.full, w - 0.02]);
         if (L.spec.sliced) out.push([L.spec.sliced, 0.3]);
       });
       if (this.roll) { out.push([this.roll.tex, 0.35], [this.halfB.tex, 0.3], [this.halfA.tex, 0.3]); }
@@ -408,7 +629,7 @@
     _pad() { return this.hero ? 8 : 5; }
     // l'emprise du plat pour un écartement E (sans la chute)
     _bounds(E) {
-      const fb = this.base.frame;
+      const fb = this.base.frame, C = this._C;
       let x0 = fb.x0, x1 = fb.x1, y0 = fb.y0, y1 = fb.y1 + 0.06;
       const e = this.scene.kind === 'wrap' ? clamp((E - 0.5) * 2) : E;
       this.layers.forEach((L) => { y0 = Math.min(y0, L.frame.y0 - L.lift * e * C); });
@@ -449,27 +670,39 @@
     _labelItems() {
       const seen = {};
       const items = [];
-      this.layers.forEach((L) => {
-        const text = labelText(this.scene, L, this.lang);
+      const add = (L, text, pt) => {
         if (!text || seen[text]) return;
         seen[text] = 1;
-        items.push({ L, text });
+        items.push({ L, text, pt });
+      };
+      this.layers.forEach((L) => {
+        const sp = L.spec;
+        if (sp.vary && this._variantLabel) { add(L, this._variantLabel); return; }
+        if (sp.lab) {
+          const pts = BB.bake.points ? BB.bake.points(L.full) : null;
+          sp.lab.forEach((lb) => add(L, labelText(this.scene, L, this.lang, lb.w), pts && pts[lb.p] ? pts[lb.p] : null));
+          return;
+        }
+        if (sp.nw) { add(L, nameWord(this.scene, sp.nw, this.lang)); return; }
+        if (sp.w != null) add(L, labelText(this.scene, L, this.lang, sp.w));
       });
       return items;
     }
-    // le point d'ancrage (écran, unités du plat) d'une couche dans la pose détaillée (E = 1)
-    _anchor(L, side) {
-      const aa = BB.bake.anchors(L.tex);
+    // le point d'ancrage (écran, unités du plat) d'une étiquette dans la pose détaillée (E = 1)
+    _anchor(it, side) {
+      const L = it.L, S = this._S, C = this._C, lz = L.lift;
+      if (it.pt) return { x: it.pt[0], y: it.pt[1] * S - (it.pt[2] + lz) * C, lz };
+      const aa = BB.bake.anchors(L.full);
       if (!aa) this._anchMiss = true;
       const f = L.frame;
       const an = aa ? aa[side > 0 ? 0 : 1] : [side > 0 ? f.x1 - 0.15 : f.x0 + 0.15, 0, 0];
-      const lz = L.lift;
       return { x: an[0], y: an[1] * S - (an[2] + lz) * C, lz };
     }
+    _font() { return (getComputedStyle(this.svg).fontFamily || 'system-ui, sans-serif') + CJK; }
     _labelPlan(W, H) {
       const items = this._labelItems();
       if (!items.length) return null;
-      const fam = getComputedStyle(this.svg).fontFamily || 'system-ui, sans-serif';
+      const fam = this._font();
       const fs0 = this.hero ? (W < 420 ? 13 : 14) : 10, fsMin = this.hero ? 12 : 9;
       this._anchMiss = false;
       let best = null;
@@ -491,7 +724,7 @@
       const colMax = Math.floor(W * (mode === 'both' ? 0.3 : 0.42)) - 2 * halo;
       // côté : à gauche ce qui est à gauche du plat (mode both), sinon à droite
       const rows = items.map((it) => {
-        const a0 = this._anchor(it.L, 1), a1 = this._anchor(it.L, -1);
+        const a0 = this._anchor(it, 1), a1 = this._anchor(it, -1);
         const side = mode === 'right' ? 1 : (a0.x + a1.x) / 2 < -0.05 ? -1 : 1;
         const w = wrapText(it.text, font, colMax);
         return { it, lines: w.lines, w: w.w + 2 * halo, side, an: side > 0 ? a0 : a1 };
@@ -502,8 +735,7 @@
         if (nR > Math.ceil(n * 0.6) || nR < Math.floor(n * 0.4)) {
           rows.sort((a, b) => a.an.x - b.an.x).forEach((r, i) => {
             r.side = i < n / 2 ? -1 : 1;
-            const a = this._anchor(r.it.L, r.side);
-            r.an = a;
+            r.an = this._anchor(r.it, r.side);
           });
         }
       }
@@ -541,6 +773,7 @@
     _layoutLabels(plan) {
       const g = this._labG;
       while (g.firstChild) g.removeChild(g.firstChild);
+      g.style.fontFamily = this._font();
       this._labels = [];
       this._plan = plan;
       if (!plan) return;
@@ -555,7 +788,7 @@
           sp.textContent = l;
         });
         const dot = BB.svg('circle', { r: this.hero ? 3.2 : 2.2 }, grp);
-        this._labels.push({ r, grp, hl, li, dot });
+        this._labels.push({ r, grp, hl, li, dot, a: -1 });
       });
     }
 
@@ -577,18 +810,22 @@
       for (let i = 0; i < segs.length; i++) {
         const s = segs[i];
         if (u < s[1]) {
-          if (s[0] === 'comp') return { k: 'comp', u, E: s[2] };
-          if (s[0] === 'hold') return { k: 'hold', u, E: s[2] };
-          if (s[0] === 'go') return { k: 'go', u, E: s[2] + (s[3] - s[2]) * inOut(u / s[1]), dir: s[3] > s[2] ? 1 : -1 };
-          return { k: 'off', u, E: s[2] };
+          if (s[0] === 'comp') return { k: 'comp', u, E: s[2], i };
+          if (s[0] === 'hold') return { k: 'hold', u, E: s[2], i };
+          if (s[0] === 'go') return { k: 'go', u, E: s[2] + (s[3] - s[2]) * inOut(u / s[1]), dir: s[3] > s[2] ? 1 : -1, i, to: s[3] };
+          return { k: 'off', u, E: s[2], i };
         }
         u -= s[1];
       }
-      return { k: 'hold', u: 0, E: segs[0][2] };
+      return { k: 'hold', u: 0, E: segs[0][2], i: 0 };
     }
     _waitTex(u) {
       if (!this._ok(this.base.tex)) return true;
-      for (let i = 0; i < this.layers.length; i++) { const L = this.layers[i]; if (L.t0 <= u + 0.04 && !this._ok(L.tex)) return true; }
+      for (let i = 0; i < this.layers.length; i++) {
+        const L = this.layers[i];
+        if (L.t0 <= u + 0.04 && (!this._ok(L.tex) || (L.under && !this._ok(L.under)))) return true;
+        if (L.pour && L.tp <= u + 0.04 && !this._ok(L.full)) return true;
+      }
       if (this._tSlice != null && u > this._tSlice - 0.1 && this.layers.some((L) => L.spec.sliced && !this._ok(L.spec.sliced))) return true;
       return false;
     }
@@ -599,7 +836,9 @@
       const t = now / 1000;
       const dt = this._tLast ? Math.min(0.05, Math.max(0, t - this._tLast)) : 1 / 60;
       this._tLast = t;
-      const sc = this.scene, n = this.layers.length;
+      const sc = this.scene, n = this.layers.length, S = this._S, C = this._C;
+      const ev = this._ev;
+      ev.live = !force && !this._frozen2 && !BB.reduced && typeof this.onEvent === 'function';
       const endT = this._T.end;
       if (this._once && !force && this._texReady() && (BB.reduced || (this._auto && this._clock >= endT + 0.2))) {
         this._freeze();
@@ -616,11 +855,21 @@
         if (this._once && this._clock > endT + 0.3) this._clock = endT + 0.3;
         ph = this._phase(this._clock);
         this._E = ph.E;
+        // les temps forts du cycle : le début de chaque étape
+        const segKey = ph.k === 'comp' && !this._started ? -1 : ph.i;
+        if (segKey !== ev.seg) {
+          if (ph.k === 'comp' && segKey >= 0) this._emit('compose');
+          else if (ph.k === 'off') this._emit('envol');
+          else if (ph.k === 'go' && sc.kind !== 'wrap') this._emit(ph.dir > 0 ? 'eclate' : 'recompose');
+          else if (ph.k === 'go' && sc.kind === 'wrap') { if (ph.dir > 0) this._emit('eclate'); else if (ph.to >= 0.5) this._emit('recompose'); }
+          ev.seg = segKey;
+        }
       } else {
         const k = this._drag ? 26 : 7.5;
         this._E += (this._target - this._E) * (1 - Math.exp(-dt * k));
         if (Math.abs(this._target - this._E) < 5e-4) this._E = this._target;
         if (this._wantAuto && !this._drag && this._resumeAt && t > this._resumeAt) { this._resumeAt = 0; this.play(); }
+        ev.seg = -2;
       }
       let busy = this._auto || this._E !== this._target || this._dirty;
       const E = this._E;
@@ -628,14 +877,16 @@
       const bOk = this._ok(this.base.tex);
       let baseA = bOk ? 1 : 0;
       if (ph && ph.k === 'comp') baseA = bOk ? smooth(0, 0.25, ph.u) : 0;
+      if (baseA > 0 && !(this._baseA > 0) && ph && ph.k === 'comp') { const kd = kindOf(null, this.base.tex); this._emit('pose', { kind: kd[0], id: this.base.tex, index: -1, force: kd[1], again: false }); }
+      this._baseA = baseA;
       attr(this.base.img, 'opacity', r2(baseA));
-      // les ingrédients : arrivée (chute), éclaté, envol
+      // les éléments : arrivée (chute), éclaté, envol
       for (let i = 0; i < n; i++) {
         const L = this.layers[i];
         let c = 1, d = 0;
         if (ph && ph.k === 'comp') c = clamp((ph.u - L.t0) / L.dur);
         if (ph && ph.k === 'off') d = clamp((ph.u - (n - 1 - i) * 0.05) / 0.6);
-        if (L.c < 1 && c >= 1) L.imp = t;
+        if (L.c < 1 && c >= 1) { L.imp = t; this._emit('pose', { kind: L.kind[0], id: L.full, index: i, force: L.kind[1], again: false }); }
         L.c = c; L.d = d;
         const w = n > 1 ? (n - 1 - i) / (n - 1) : 0;
         const e = sc.kind === 'wrap' ? clamp((E - 0.5) * 2 * 1.45 - 0.45 * w) : clamp(E * 1.45 - 0.45 * w);
@@ -645,10 +896,11 @@
         let sq = 0;
         if (L.imp) { const u = t - L.imp; if (u < 0.6) sq = Math.exp(-u * 8) * Math.sin(u * 26); else L.imp = 0; }
         if (L.imp) busy = true;
-        const lz = L.lift * fi + (fi > 0.001 && !BB.reduced ? 0.012 * fi * Math.sin(t * 1.1 + i * 1.7) : 0);
-        if (fi > 0.001 && !BB.reduced) busy = true;
+        const lz = L.lift * fi + (fi > 0.001 && L.lift > 0 && !BB.reduced ? 0.012 * fi * Math.sin(t * 1.1 + i * 1.7) : 0);
+        if (fi > 0.001 && L.lift > 0 && !BB.reduced) busy = true;
         L.lz = lz; L.dz = dz;
-        const al = this._ok(L.tex) ? smooth(0, 0.12, c) * (1 - smooth(0.45, 0.95, d)) : 0;
+        const okL = this._ok(L.tex) && (!L.under || this._ok(L.under));
+        const al = okL ? smooth(0, 0.12, c) * (1 - smooth(0.45, 0.95, d)) : 0;
         L.al = al;
         const ty = -(lz + dz) * C;
         // petit tassement à l'atterrissage (autour du bas de la couche)
@@ -656,11 +908,15 @@
         attr(L.g, 'transform', 'translate(' + r3(0) + ' ' + r3(ty + py * (1 - sy)) + ') scale(' + r3(sx) + ' ' + r3(sy) + ')');
         attr(L.g, 'opacity', r2(al));
         attr(L.img, 'opacity', 1);
+        if (L.underImg) attr(L.underImg, 'opacity', 1);
+        if (L.pour) busy = this._pourFrame(L, ph, i) || busy;
         if (L.sliced) {
           // le couteau : la version tranchée se découvre, du bout vers le milieu
           let sl = this._slice;
           if (ph && ph.k === 'comp') sl = clamp((ph.u - this._tSlice) / 0.9);
           else if (ph) sl = 1;
+          if (sl > 0 && !(this._slPrev > 0) && sl < 1) this._emit('coupe', { what: 'bavette' });
+          this._slPrev = sl;
           const okS = this._ok(L.spec.sliced);
           const xa = BAV.x + BAV.L * 1.08 * Math.cos(BAV.rot) + 0.05, xb = BAV.x + BAV.L * (BAV.cut - 0.06) * Math.cos(BAV.rot);
           const xs = xa + (xb - xa) * outCubic(sl);
@@ -683,7 +939,7 @@
       attr(this._ground, 'cx', r3(gx + 0.06));
       attr(this._ground, 'cy', r3(0.04));
       attr(this._ground, 'rx', r3((fb.x1 - fb.x0) * 0.56));
-      attr(this._ground, 'ry', r3((fb.x1 - fb.x0) * 0.56 * S * (sc.base === 'ardoise' ? 0.8 : 1.05)));
+      attr(this._ground, 'ry', r3((fb.x1 - fb.x0) * 0.56 * S * (/^ardoise/.test(sc.base) ? 0.8 : 1.05)));
       attr(this._ground, 'opacity', r2(baseA * 0.9));
       // caméra
       if (this._cam0) {
@@ -702,9 +958,34 @@
       return busy || (this._once && !force);
     }
 
+    /* un verre qui se remplit : le verre plein se découvre de bas en haut ; la mousse, puis les bulles */
+    _pourFrame(L, ph, i) {
+      let fill = 1;
+      if (ph && ph.k === 'comp') {
+        const u = clamp((ph.u - L.tp) / L.pour.d);
+        fill = 1 - (1 - u) * (1 - u);
+        if (ph.u < L.tp) fill = 0;
+      } else if (!ph && this._auto) fill = 1;
+      const prev = L.fill;
+      if (fill > 0 && !(prev > 0) && fill < 1) this._emit('verse', { kind: L.pourKind, id: L.full, index: i });
+      if (L.pour.foam && fill >= L.pour.foam && prev < L.pour.foam) this._emit('mousse', { id: L.full, index: i });
+      if (L.pour.fizz && fill >= 1 && prev < 1 && prev > 0 && (L.pourKind !== 'soft' || /cola/.test(L.full))) this._emit('bulles', { id: L.full, index: i });
+      L.fill = fill;
+      const fr = L.frame, hh = fr.y1 - fr.y0;
+      const okF = this._ok(L.full);
+      attr(L.pourClip, 'y', r3(fr.y1 - fill * hh - (fill >= 1 ? 0.05 : 0)));
+      attr(L.pourClip, 'height', r3(fill * hh + (fill >= 1 ? 0.1 : 0.001)));
+      attr(L.fullImg, 'opacity', okF ? 1 : 0);
+      return fill > 0 && fill < 1;
+    }
+
     /* le wrap : la galette se roule (le rouleau grossit en avançant), puis on coupe et les deux moitiés s'écartent */
     _wrapFrame(ph, E, t) {
+      const S = this._S, C = this._C;
       const p = clamp((0.5 - E) / 0.28), q = clamp((0.22 - E) / 0.22);
+      if (p > 0 && !(this._pPrev > 0)) this._emit('roule');
+      if (q > 0.05 && !(this._qPrev > 0.05)) this._emit('coupe', { what: 'wrap' });
+      this._pPrev = p; this._qPrev = q;
       const pe = inOut(p);
       const off = ph && ph.k === 'off' ? clamp(ph.u / 0.7) : 0;
       // la ligne du rouleau : de l'avant de la galette vers l'arrière
@@ -752,12 +1033,14 @@
 
     // étiquettes : dans la pose détaillée ; le trait suit la couche
     _drawLabels(E) {
-      const labs = this._labels;
+      const labs = this._labels, C = this._C;
       const a = smooth(0.8, 0.98, E);
       for (let j = 0; j < labs.length; j++) {
         const lb = labs[j], L = lb.r.it.L;
         const aj = a * (L.al > 0.5 ? 1 : 0);
         attr(lb.grp, 'opacity', r2(aj));
+        if (aj > 0 && !(lb.a > 0)) this._emit('etiquette', { i: j, text: lb.r.it.text });
+        lb.a = aj;
         if (aj <= 0) continue;
         const an = lb.r.an;
         const px = r2(this._cx + this._k * an.x), py = r2(this._cy + this._k * (an.y + (an.lz - L.lz - L.dz) * C));
@@ -770,7 +1053,7 @@
     /* ---------- l'image figée (cartes) ---------- */
     _stillKey() {
       const dpr = Math.min(2.5, window.devicePixelRatio || 1);
-      return ['plat', this.scene.id, this._w, this._h, dpr].join('|');
+      return ['plat', this.scene.id, this._variant || '', this._w, this._h, dpr].join('|');
     }
     _showCached() {
       if (!this._w || !this._h) return false;
@@ -787,6 +1070,9 @@
         this._freezing = false;
         if (!this._alive || !url) return;
         STILLS.set(key, url);
+        this._ev.live = this._seen && !this._frozen2 && typeof this.onEvent === 'function';
+        this._emit('fige');
+        this._ev.live = false;
         this._showStill(url, true);
       };
       const cv = this._paintStill();
@@ -820,7 +1106,7 @@
       this.svg = null;
       this._labels = [];
     }
-    // le plat servi, en pixels : ombre au sol, le plat, puis les ingrédients (ou les deux moitiés du wrap)
+    // le plat servi, en pixels : ombre au sol, le plat, puis les éléments dans l'ordre de dessin (ou les deux moitiés du wrap)
     _paintStill() {
       const W = this._w, H = this._h, dpr = Math.min(2.5, window.devicePixelRatio || 1);
       const cam = this._cam0;
@@ -832,7 +1118,7 @@
       const fb = this.base.frame, gw = (fb.x1 - fb.x0) * 0.56;
       ctx.save();
       ctx.translate((fb.x0 + fb.x1) / 2 + 0.06, 0.04);
-      ctx.scale(1, S * (this.scene.base === 'ardoise' ? 0.8 : 1.05));
+      ctx.scale(1, this._S * (/^ardoise/.test(this.scene.base) ? 0.8 : 1.05));
       const gr = ctx.createRadialGradient(0, 0, 0, 0, 0, gw);
       [[0, 0.5], [0.5, 0.34], [0.78, 0.12], [1, 0]].forEach(([o, a]) => gr.addColorStop(o, 'rgba(20,12,8,' + a * 0.9 + ')'));
       ctx.fillStyle = gr;
@@ -849,7 +1135,11 @@
         draw(this.halfB.tex, 0, 0);
         draw(this.halfA.tex, 0, 0);
       } else {
-        this.layers.forEach((L) => draw(L.spec.sliced || L.tex, 0, 0));
+        (this._order || this.layers.map((L, i) => i)).forEach((i) => {
+          const L = this.layers[i];
+          if (L.under) draw(L.under, 0, 0);
+          draw(L.spec.sliced || (L.pour ? L.full : L.tex), 0, 0);
+        });
       }
       return cv;
     }

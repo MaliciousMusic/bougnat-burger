@@ -20,14 +20,19 @@
   const total = () => cart.reduce((a, l) => a + l.qty * l.unit, 0);
 
   /* nom d'une ligne dans la langue courante */
+  const varianteDe = (it, l) => (l.variant && it.variants ? it.variants.find((v) => v.id === l.variant) : null);
   function lineName(l) {
     const it = BB.menuItem && BB.menuItem(l.base);
     if (!it) return l.name;
+    const v = varianteDe(it, l);
+    if (v) return BB.tr(v.name);
     return (it.cat === 'burgers' && !l.double ? BB.t('ti') + ' ' : '') + BB.tr(it.name);
   }
   function lineOption(l) {
     const it = BB.menuItem && BB.menuItem(l.base);
     if (!it) return l.option || '';
+    const v = varianteDe(it, l);
+    if (v) return v.desc ? BB.tr(v.desc) : BB.tr(it.name);
     const p = [];
     if (it.cat === 'burgers' && l.double) p.push(BB.t('double'));
     if (it.veggie || it.burger) p.push(l.veggie ? BB.t('galette') : BB.t('steak'));
@@ -79,7 +84,7 @@
     const diff = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - d0) / 86400000);
     if (diff === 0) return BB.t('today');
     if (diff === 1) return BB.t('tomorrow');
-    return BB.t('days')[d.getDay()] + ' ' + d.getDate();
+    return BB.fmtJour(d);
   }
 
   function renderSlots() {
@@ -143,13 +148,16 @@
       list.appendChild(li);
     });
     $('#co-total').textContent = BB.fmtPriceL(total());
+    const alc = $('#co-alcool');
+    if (alc) alc.hidden = !avecAlcool();
     if (n) renderSlots();
   }
 
+  const avecAlcool = () => cart.some((l) => { const it = BB.menuItem && BB.menuItem(l.base); return !!(it && it.alcool); });
   function add(line) {
     const found = cart.find((l) => l.id === line.id);
     if (found) found.qty = Math.min(20, found.qty + line.qty);
-    else cart.push({ id: line.id, base: line.base, name: line.name, double: !!line.double, veggie: !!line.veggie, unit: line.unit, qty: line.qty });
+    else cart.push({ id: line.id, base: line.base, variant: line.variant || null, name: line.name, double: !!line.double, veggie: !!line.veggie, unit: line.unit, qty: line.qty });
     save();
     renderCart();
     renderBadge(true);
@@ -185,6 +193,7 @@
       <p><b>${esc(BB.t('pickupAt', { d: dayLabel(slot.date), t: BB.fmtTime(slot.t) }))}</b></p>
       ${note && note.value.trim() ? `<p class="note-cuisine"><b>${esc(BB.t('noteCuisine'))}</b> ${esc(note.value.trim())}</p>` : ''}
       <ul>${lines}<li><span>${esc(BB.t('co.total') || 'Total')}</span><b>${esc(BB.fmtPriceL(total()))}</b></li></ul>
+      ${avecAlcool() ? `<p class="fine">${esc(BB.t('alcool'))}</p>` : ''}
       <p class="fine">${esc(BB.t('simulated'))}</p>
       <p style="margin-top:14px"><button class="btn btn-ghost" type="button" id="new-order" data-sfx="tap">${esc(BB.t('newOrder'))}</button></p>`;
     t.hidden = false;

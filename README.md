@@ -19,7 +19,7 @@ Puis http://localhost:5188 (serveur sans cache). Un double-clic sur `index.html`
 |---|---|
 | `?intro` | rejoue l'ouverture (elle ne passe qu'une fois par session) |
 | `?font=ultra` · `?font=alfa` · `?font=holtwood` · `?font=bagel` | compare d'autres polices pour les mots de l'ouverture (Shrikhand par défaut) |
-| `?lang=en` | force l'anglais (sinon : langue du téléphone, puis le choix FR/EN mémorisé) |
+| `?lang=en` · `?lang=es` · `?lang=zh` | force l'anglais, l'espagnol ou le chinois (sinon : le choix mémorisé, puis les langues du téléphone, sinon l'anglais) |
 | `lab/histoire.html` (`?t=`, `?plan=`) · `lab/bougnat-dessin.html` · `lab/burger.html` | labos du film (plan par plan), du personnage et des burgers dessinés |
 
 ## Ce qu'il y a dedans
@@ -29,8 +29,8 @@ Puis http://localhost:5188 (serveur sans cache). Un double-clic sur `index.html`
 | **Ouverture** | Leur logo : le volcan vert peint au pinceau et son contour blanc, vectorisés tels quels, dans un hublot à jante verte, la chaîne des Puys au pied de l'écran. Le vert se peint d'un coup de pinceau, puis le contour ; « BOUGNAT » et « BURGER » s'enroulent autour, en filigrane (Shrikhand). « Entrer » (le geste qui autorise le son) : les lettres éclosent une à une, chacune sur sa note, accord final, un reflet traverse le volcan et il fume. Son coupé : elle part toute seule. |
 | **Accueil** | L'enseigne des horaires en haut (un petit hublot qui passe à la nuit quand c'est fermé, un voyant vert qui bat quand c'est ouvert ; à l'heure de Paris : « Ouvert · jusqu'à 22h », « Ce soir dès 18h30 », « Fermé · ouvre mercredi à 11h30 ») qui se déplie sur la semaine. Le petit film, « Le bougnat s'est trompé de sac » (31 s, 17 plans, en boucle) : dans l'avion au-dessus des Puys, il prend le sac à emporter au lieu du parachute, saute, tire la poignée… et un menu s'envole. Il rattrape burger, frites et bière, mange tout, devient costaud, s'écrase dans un nuage de fumée, se relève indemne, remet sa casquette et croque une dernière frite. Dessiné et animé en SVG dans le navigateur, avec sa bande-son synthétisée. Accès rapides : Réserver · Commander · Appeler · Itinéraire. Les incontournables. La note Google. |
 | **Carte** | Une seule source pour le français et l'anglais (`js/bb-data.js`) : plus de carte anglaise ressaisie à la main. Rubriques collantes, puces qui y mènent. Chaque burger dessiné en pseudo-3D se compose puis flotte ; dans la fiche, il s'ouvre « en éclaté ». Fiche : « Ti' » ou double, steak ou galette, description recalculée depuis les ingrédients, tampon « frites maison », lait cru, allergènes déduits (à confirmer), quantité, ajout au sac. |
-| **Commander** | À emporter : le sac, les créneaux de retrait (aujourd'hui, sinon le prochain jour d'ouverture), prénom et téléphone, un mot pour la cuisine (allergies), paiement **simulé**, ticket tamponné avec numéro de commande. En livraison : Uber Eats, Deliveroo, Raboule, et l'encart « bientôt, directement ici ». |
-| **Réserver** | Jours d'ouverture sur deux semaines, midi ou soir, heures de leur module actuel, couverts, prénom, téléphone : demande **simulée**. |
+| **Commander** | À emporter : burgers, plats, desserts et boissons (softs, bières des Sagnes et Desprat, vins : le choix se fait dans la fiche ; mention alcool et vente interdite aux mineurs), le sac, les créneaux de retrait (aujourd'hui, sinon le prochain jour d'ouverture), prénom et téléphone, un mot pour la cuisine (allergies), paiement **simulé**, ticket tamponné avec numéro de commande. En livraison : Uber Eats, Deliveroo, Raboule, et l'encart « bientôt, directement ici ». |
+| **Réserver** | Jours d'ouverture sur deux semaines, midi ou soir, heures de leur module actuel, couverts, prénom, téléphone : demande **simulée**. À partir de 10 couverts, un bouton « Appeler pour confirmer » remplace la demande en ligne. |
 | **Nous** (la nuit sur les banquettes vertes) | L'histoire des bougnats, la salle vue par son hublot (peinte en vectoriel d'après une photo, jamais la photo elle-même), ce qu'il y a dans le pain (4 AOP, bœuf VBF, frites maison, bières du coin), une fenêtre sur les avis Google (une sélection d'avis réels, tels quels et datés, qu'on fait glisser), le diaporama des photos du restaurant dans le hublot, l'adresse, l'itinéraire, les réseaux, les mentions légales. |
 
 ```
@@ -59,7 +59,9 @@ tools/build-menu.mjs    carte HTML statique + données structurées + llms.txt, 
 tools/logo/             vectorisation du logo officiel (vectorize_logo.py) et des marques : icône, favicon, écusson (make_marks.py)
 tools/salle/            la salle peinte en vectoriel (facettes à dégradés)
 tools/puys/             le puy de Dôme relevé sur photo (trace.py), les masques de la chaîne et le paysage de l'ouverture
-tools/tampon/           le tampon « frites maison » de la fiche (dessin généré dans bb-carte.js)
+tools/tampon/           le tampon « frites maison » de la fiche (dessin généré dans bb-carte.js ; encre blanche, un tampon en bois vient l'apposer)
+js/i18n/bb-lang-es.js   l'espagnol ; bb-lang-zh.js le chinois simplifié (interface par clé, données : texte français → traduction)
+tools/i18n/             extraire.mjs (tous les textes à traduire → source.json) et verifier.mjs (rien d'oublié, variables et balises intactes)
 tools/fetch-fonts.py    polices hébergées sur le site (css/fonts.css + assets/fonts/)
 tools/render-icons.mjs  icônes PNG depuis assets/logo/badge.svg
 tools/render-og.mjs     image de partage (assets/img/og-bougnat.png)
@@ -75,7 +77,7 @@ Après une modification de la carte : `node tools/build-menu.mjs`.
 
 - **Prix des burgers doubles** : leur page « Nos burgers » affiche deux grilles (« double steak ou galette » et « double steak et galette », moins chère). La maquette prend la première ; la seconde est notée dans `double2` (`js/bb-data.js`).
 - **Carré d'Aurillac** : leur carte écrit « AOP », ce n'en est pas une. La maquette ne le dit pas.
-- **Desserts et boissons** : pas de prix publiés.
+- **Desserts et boissons** : pas de prix publiés sur leur site. Ceux de la maquette viennent de leur carte à emporter Raboule/CoopCycle (relevée le 27 septembre 2026) : 5 desserts, softs, 15 bières, 7 vins. Les autres desserts et les apéritifs sont notés « sur place uniquement ». Millésimes des vins non repris.
 - **Allergènes** : déduits de la composition ; la liste complète (14 allergènes) vient du restaurant.
 - **E-mail** : le site affiche bougnatburger@hotmail.fr, leurs mentions légales contact@bougnatburger.fr.
 - **Mentions légales** : capital, TVA, directeur de la publication (le gérant), hébergeur de production.
@@ -91,7 +93,12 @@ Après une modification de la carte : `node tools/build-menu.mjs`.
 5. **Avis Google en direct** (API Places) à la place de la sélection figée, avec l'attribution Google.
 6. **Légal** : CGV pour la vente en ligne, politique de confidentialité validée.
 
-## SEO local et IA
+## SEO local, accessibilité et IA
 
-En place : JSON-LD `Restaurant` + `Menu` (généré), horaires, géo, `hreflang` FR/EN, `llms.txt`, robots ouverts aux robots IA, manifest.
+En place :
+- quatre langues (FR dans le HTML, EN, ES, ZH par JS) avec `hreflang` et le sitemap qui les déclare ; titre et description de la page traduits ;
+- JSON-LD `Restaurant` (horaires, géo, actions « Réserver » et « Commander à emporter »), `WebSite` (langues), `Menu` généré (sous-sections pour les boissons, végétarien seulement pour le Vegetario) ;
+- la carte complète en HTML statique (lisible sans JS) et `llms.txt` : carte et prix, commande, réservation (groupes au téléphone), allergènes, résumés EN/ES/ZH ;
+- robots ouverts aux robots IA, manifest ;
+- accessibilité : lien d'évitement, un seul `h1`, contrôles tous nommés, vrais boutons radio pour les choix, annonces `aria-live` (couverts, groupe), cibles tactiles d'au moins 24 px, focus visible, `lang` sur chaque nom de langue ; audit : 0 problème relevé.
 Hors du site, le plus rentable : fiche Google à jour (lien de réservation, photos), Apple Plans, Bing, OpenStreetMap, et les mêmes nom, adresse, téléphone partout.

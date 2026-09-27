@@ -1,0 +1,1911 @@
+{
+ "ui": {
+  "skip": {
+   "fr": "Aller au contenu",
+   "en": "Skip to content"
+  },
+  "splash.go": {
+   "fr": "Entrer",
+   "en": "Come in"
+  },
+  "splash.hint": {
+   "fr": "Le son est plus beau, montez le volume.",
+   "en": "It sounds better with the volume up."
+  },
+  "hours.more": {
+   "fr": "les horaires",
+   "en": "opening hours"
+  },
+  "hours.title": {
+   "fr": "Horaires d'ouverture",
+   "en": "Opening hours"
+  },
+  "home.title1": {
+   "fr": "Le burger d'Auvergne,",
+   "en": "The Auvergne burger,"
+  },
+  "home.title2": {
+   "fr": "depuis 2012",
+   "en": "since 2012"
+  },
+  "home.lede": {
+   "fr": "Saint-Nectaire, Cantal et Bleu d'Auvergne AOP, steak façon bouchère VBF, pain artisanal et frites maison. Au 10 boulevard Léon-Malfreyt, à Clermont-Ferrand.",
+   "en": "Saint-Nectaire, Cantal and Bleu d'Auvergne PDO cheeses, butcher-style French beef, artisan buns and homemade fries. At 10 boulevard Léon-Malfreyt, Clermont-Ferrand."
+  },
+  "quick.book": {
+   "fr": "Réserver",
+   "en": "Book"
+  },
+  "quick.order": {
+   "fr": "Commander",
+   "en": "Order"
+  },
+  "quick.call": {
+   "fr": "Appeler",
+   "en": "Call"
+  },
+  "quick.route": {
+   "fr": "Itinéraire",
+   "en": "Directions"
+  },
+  "sig.title": {
+   "fr": "Les incontournables",
+   "en": "House favourites"
+  },
+  "sig.all": {
+   "fr": "Toute la carte",
+   "en": "Full menu"
+  },
+  "rating.text": {
+   "fr": "2 039 avis sur Google",
+   "en": "2,039 Google reviews"
+  },
+  "home.fine": {
+   "fr": "Sur place, à emporter ou en livraison. Terrasse aux beaux jours.",
+   "en": "Eat in, take away or delivered. Terrace when the sun is out."
+  },
+  "carte.title": {
+   "fr": "La carte",
+   "en": "The menu"
+  },
+  "carte.lede": {
+   "fr": "Chaque burger est servi avec frites maison et salade. Steak façon bouchère ou galette de pommes de terre, au choix.",
+   "en": "Every burger comes with homemade fries and salad. Butcher-style beef patty or potato rösti, your choice."
+  },
+  "carte.fine": {
+   "fr": "Prix nets, service compris. Allergènes : demandez à l'équipe, elle vous renseigne plat par plat.",
+   "en": "Prices include service. Allergies: ask the team, they will go through each dish with you."
+  },
+  "cmd.title": {
+   "fr": "Commander",
+   "en": "Order"
+  },
+  "cmd.takeaway": {
+   "fr": "À emporter",
+   "en": "Takeaway"
+  },
+  "cmd.delivery": {
+   "fr": "En livraison",
+   "en": "Delivery"
+  },
+  "cart.empty": {
+   "fr": "Votre sac est vide.",
+   "en": "Your bag is empty."
+  },
+  "cart.browse": {
+   "fr": "Voir la carte",
+   "en": "See the menu"
+  },
+  "co.when": {
+   "fr": "Retrait au comptoir",
+   "en": "Pick up at the counter"
+  },
+  "co.who": {
+   "fr": "À quel nom ?",
+   "en": "Name for the order"
+  },
+  "co.name": {
+   "fr": "Prénom",
+   "en": "First name"
+  },
+  "co.phone": {
+   "fr": "Téléphone",
+   "en": "Phone"
+  },
+  "co.note": {
+   "fr": "Allergies ou précisions pour la cuisine (facultatif)",
+   "en": "Allergies or notes for the kitchen (optional)"
+  },
+  "co.total": {
+   "fr": "Total",
+   "en": "Total"
+  },
+  "co.pay": {
+   "fr": "Payer et commander",
+   "en": "Pay and order"
+  },
+  "co.alcool": {
+   "fr": "Votre commande contient de l'alcool : vente interdite aux mineurs, une pièce d'identité peut être demandée au retrait. L'abus d'alcool est dangereux pour la santé, à consommer avec modération.",
+   "en": "Your order contains alcohol: no sale to under-18s, ID may be requested at pick-up. Please drink responsibly."
+  },
+  "co.fine": {
+   "fr": "Maquette : le paiement est simulé, aucune commande n'est transmise.",
+   "en": "Demo: payment is simulated, no order is sent."
+  },
+  "del.lede": {
+   "fr": "Aujourd'hui, la livraison passe par ces plateformes :",
+   "en": "For now, delivery goes through these apps:"
+  },
+  "del.soon.title": {
+   "fr": "Bientôt, directement ici",
+   "en": "Soon, right here"
+  },
+  "del.soon.text": {
+   "fr": "Vous commandez dans l'appli Bougnat Burger, un coursier vous livre. Mêmes prix qu'au restaurant, sans commission de plateforme.",
+   "en": "Order in the Bougnat Burger app and a courier brings it to you. Same prices as in the restaurant, no platform commission."
+  },
+  "resa.title": {
+   "fr": "Réserver une table",
+   "en": "Book a table"
+  },
+  "resa.lede": {
+   "fr": "Dites-nous quand, on vous garde la table. À partir de 10 personnes, appelez-nous.",
+   "en": "Tell us when and we'll keep a table for you. For 10 people or more, give us a call."
+  },
+  "resa.day": {
+   "fr": "Quel jour ?",
+   "en": "Which day?"
+  },
+  "resa.service": {
+   "fr": "Quel service ?",
+   "en": "Lunch or dinner?"
+  },
+  "resa.lunch": {
+   "fr": "Midi",
+   "en": "Lunch"
+  },
+  "resa.dinner": {
+   "fr": "Soir",
+   "en": "Dinner"
+  },
+  "resa.guests": {
+   "fr": "Combien de couverts ?",
+   "en": "How many people?"
+  },
+  "resa.who": {
+   "fr": "À quel nom ?",
+   "en": "Name for the booking"
+  },
+  "resa.note": {
+   "fr": "Un mot pour l'équipe (facultatif)",
+   "en": "A note for the team (optional)"
+  },
+  "resa.send": {
+   "fr": "Demander la table",
+   "en": "Request the table"
+  },
+  "resa.fine": {
+   "fr": "Maquette : la demande n'est pas transmise. En vrai, le restaurant confirme par SMS.",
+   "en": "Demo: the request is not sent. For real, the restaurant confirms by text message."
+  },
+  "nous.kicker": {
+   "fr": "Depuis le 2 février 2012",
+   "en": "Since 2 February 2012"
+  },
+  "nous.title": {
+   "fr": "Un bougnat, c'est un Auvergnat qui régale.",
+   "en": "A bougnat is someone from Auvergne who loves to feed you."
+  },
+  "nous.photos": {
+   "fr": "Photos : Bougnat Burger",
+   "en": "Photos: Bougnat Burger"
+  },
+  "nous.story1": {
+   "fr": "Aux XIX<sup>e</sup> et XX<sup>e</sup> siècles, les « bougnats » étaient ces Auvergnats montés à Paris qui tenaient les cafés-charbons : du vin, du bois, du charbon, et une table pour tout le monde.",
+   "en": "In the 19th and 20th centuries, the “bougnats” were people from Auvergne who moved to Paris and ran wine-and-coal cafés: wine, firewood, coal, and a table for everyone."
+  },
+  "nous.story2": {
+   "fr": "Au Bougnat Burger, on garde l'esprit et on change le menu : le burger, fait maison, avec ce que l'Auvergne a de meilleur. Tout le reste suit la même idée, des frites coupées ici aux desserts maison.",
+   "en": "At Bougnat Burger we keep the spirit and change the menu: homemade burgers with the best of Auvergne. Everything else follows the same idea, from fries cut here to homemade desserts."
+  },
+  "terroir.title": {
+   "fr": "Ce qu'il y a dans le pain",
+   "en": "What goes in the bun"
+  },
+  "terroir.aop": {
+   "fr": "Quatre AOP d'Auvergne",
+   "en": "Four Auvergne PDO cheeses"
+  },
+  "terroir.aop.t": {
+   "fr": "Saint-Nectaire fermier, Cantal, Salers et Bleu d'Auvergne.",
+   "en": "Farmhouse Saint-Nectaire, Cantal, Salers and Bleu d'Auvergne."
+  },
+  "terroir.beef": {
+   "fr": "Du bœuf français",
+   "en": "French beef"
+  },
+  "terroir.beef.t": {
+   "fr": "Steak haché façon bouchère VBF, bavette de charolais bio.",
+   "en": "Butcher-style VBF patties, organic Charolais flank steak."
+  },
+  "terroir.fries": {
+   "fr": "Frites maison",
+   "en": "Homemade fries"
+  },
+  "terroir.fries.t": {
+   "fr": "Avec chaque burger, et une salade maison.",
+   "en": "With every burger, plus a house salad."
+  },
+  "terroir.beer": {
+   "fr": "Bières du coin",
+   "en": "Local beers"
+  },
+  "terroir.beer.t": {
+   "fr": "Brasserie des Sagnes, Brasserie Desprat, vins d'Auvergne.",
+   "en": "Brasserie des Sagnes, Brasserie Desprat, Auvergne wines."
+  },
+  "avis.title": {
+   "fr": "Ce que disent les clients",
+   "en": "What guests say"
+  },
+  "avis.count": {
+   "fr": "2 039 avis Google",
+   "en": "2,039 Google reviews"
+  },
+  "avis.asof": {
+   "fr": "au 27 septembre 2026",
+   "en": "as of 27 September 2026"
+  },
+  "avis.bar": {
+   "fr": "Avis Google",
+   "en": "Google reviews"
+  },
+  "avis.fine": {
+   "fr": "Une sélection d'avis Google, reproduits tels quels avec leur date, et non vérifiés par le restaurant. Tous les avis, bons et moins bons, sont à lire sur Google. En production, ils s'affichent ici en direct.",
+   "en": "A selection of Google reviews, reproduced as written with their date, and not verified by the restaurant. All reviews, good and less good, can be read on Google. In production, they appear here live."
+  },
+  "avis.read": {
+   "fr": "Lire les avis",
+   "en": "Read the reviews"
+  },
+  "avis.write": {
+   "fr": "Laisser un avis",
+   "en": "Leave a review"
+  },
+  "infos.title": {
+   "fr": "Nous trouver",
+   "en": "Find us"
+  },
+  "infos.route": {
+   "fr": "Itinéraire",
+   "en": "Directions"
+  },
+  "foot.legal": {
+   "fr": "Mentions légales et confidentialité",
+   "en": "Legal notice and privacy"
+  },
+  "foot.demo": {
+   "fr": "Maquette de démonstration. Prix et informations issus de la carte du restaurant, septembre 2026.",
+   "en": "Demo version. Prices and details taken from the restaurant's menu, September 2026."
+  },
+  "tab.home": {
+   "fr": "Accueil",
+   "en": "Home"
+  },
+  "tab.menu": {
+   "fr": "Carte",
+   "en": "Menu"
+  },
+  "tab.order": {
+   "fr": "Commander",
+   "en": "Order"
+  },
+  "tab.book": {
+   "fr": "Réserver",
+   "en": "Book"
+  },
+  "tab.us": {
+   "fr": "Nous",
+   "en": "About"
+  },
+  "p.add": {
+   "fr": "Ajouter",
+   "en": "Add"
+  },
+  "sound": {
+   "fr": "Son",
+   "en": "Sound",
+   "attr": "aria-label"
+  },
+  "bag": {
+   "fr": "Mon sac",
+   "en": "My bag",
+   "attr": "aria-label"
+  },
+  "film.alt": {
+   "fr": "Petit film : un bougnat saute en chute libre au-dessus de la chaîne des Puys, mais il s'est trompé de sac ; au lieu du parachute, un menu s'envole. Il rattrape et mange le burger, les frites et la boisson, s'écrase dans un nuage de fumée, se relève indemne et croque une dernière frite.",
+   "en": "Short film: a bougnat skydives over the Chaîne des Puys volcanoes, but he grabbed the wrong bag: instead of a parachute, a meal flies out. He catches and eats the burger, the fries and the drink, crash-lands in a cloud of smoke, gets up unharmed and crunches one last fry.",
+   "attr": "aria-label"
+  },
+  "quick": {
+   "fr": "Accès rapides",
+   "en": "Quick actions",
+   "attr": "aria-label"
+  },
+  "carte.nav": {
+   "fr": "Rubriques de la carte",
+   "en": "Menu sections",
+   "attr": "aria-label"
+  },
+  "co.note.ph": {
+   "fr": "Ex. : allergie aux noix, sans tomate…",
+   "en": "E.g. nut allergy, no tomato…",
+   "attr": "placeholder"
+  },
+  "resa.less": {
+   "fr": "Un couvert de moins",
+   "en": "One guest fewer",
+   "attr": "aria-label"
+  },
+  "resa.more": {
+   "fr": "Un couvert de plus",
+   "en": "One more guest",
+   "attr": "aria-label"
+  },
+  "avis.window": {
+   "fr": "Avis Google",
+   "en": "Google reviews",
+   "attr": "aria-label"
+  },
+  "avis.open": {
+   "fr": "Ouvrir les avis sur Google",
+   "en": "Open the reviews on Google",
+   "attr": "aria-label"
+  },
+  "close": {
+   "fr": "Fermer",
+   "en": "Close",
+   "attr": "aria-label"
+  },
+  "p.less": {
+   "fr": "Un de moins",
+   "en": "One fewer",
+   "attr": "aria-label"
+  },
+  "p.more": {
+   "fr": "Un de plus",
+   "en": "One more",
+   "attr": "aria-label"
+  },
+  "meta.title": {
+   "fr": "Bougnat Burger · Le burger d'Auvergne à Clermont-Ferrand depuis 2012",
+   "en": "Bougnat Burger · The Auvergne burger in Clermont-Ferrand since 2012"
+  },
+  "meta.desc": {
+   "fr": "Bougnat Burger, 10 bd Léon-Malfreyt à Clermont-Ferrand : burgers au Saint-Nectaire, Cantal et Bleu d'Auvergne AOP, steak façon bouchère VBF, frites maison. Du mercredi au samedi, midi et soir. Réservation, à emporter, livraison.",
+   "en": "Bougnat Burger, 10 bd Léon-Malfreyt in Clermont-Ferrand: burgers with Saint-Nectaire, Cantal and Bleu d'Auvergne PDO cheeses, butcher-style French beef, homemade fries. Wednesday to Saturday, lunch and dinner. Book a table, take away, delivery."
+  }
+ },
+ "dyn": {
+  "days": {
+   "fr": [
+    "dimanche",
+    "lundi",
+    "mardi",
+    "mercredi",
+    "jeudi",
+    "vendredi",
+    "samedi"
+   ],
+   "en": [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+   ]
+  },
+  "daysShort": {
+   "fr": [
+    "dim.",
+    "lun.",
+    "mar.",
+    "mer.",
+    "jeu.",
+    "ven.",
+    "sam."
+   ],
+   "en": [
+    "Sun",
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat"
+   ]
+  },
+  "months": {
+   "fr": [
+    "janv.",
+    "févr.",
+    "mars",
+    "avr.",
+    "mai",
+    "juin",
+    "juil.",
+    "août",
+    "sept.",
+    "oct.",
+    "nov.",
+    "déc."
+   ],
+   "en": [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+   ]
+  },
+  "today": {
+   "fr": "aujourd'hui",
+   "en": "today"
+  },
+  "tomorrow": {
+   "fr": "demain",
+   "en": "tomorrow"
+  },
+  "openUntil": {
+   "fr": "Ouvert · jusqu'à {t}",
+   "en": "Open · until {t}"
+  },
+  "openTonight": {
+   "fr": "Ce soir dès {t}",
+   "en": "Tonight from {t}"
+  },
+  "closedOpens": {
+   "fr": "Fermé · ouvre {d} à {t}",
+   "en": "Closed · opens {d} at {t}"
+  },
+  "closedOpensToday": {
+   "fr": "Fermé · ouvre à {t}",
+   "en": "Closed · opens at {t}"
+  },
+  "weekClosed": {
+   "fr": "fermé",
+   "en": "closed"
+  },
+  "weekDaysClosed": {
+   "fr": "Dimanche, lundi, mardi",
+   "en": "Sunday, Monday, Tuesday"
+  },
+  "burgersNote": {
+   "fr": "Chaque burger existe en « Ti' » (un steak) ou en double. Steak façon bouchère VBF ou galette de pommes de terre.",
+   "en": "Every burger comes as a “Ti'” (one patty) or a double. Butcher-style French beef or potato rösti."
+  },
+  "from": {
+   "fr": "dès",
+   "en": "from"
+  },
+  "withFries": {
+   "fr": "frites maison",
+   "en": "homemade fries"
+  },
+  "ti": {
+   "fr": "Ti'",
+   "en": "Ti'"
+  },
+  "double": {
+   "fr": "Double",
+   "en": "Double"
+  },
+  "simpleLong": {
+   "fr": "Ti' · un steak",
+   "en": "Ti' · one patty"
+  },
+  "doubleLong": {
+   "fr": "Double · deux steaks",
+   "en": "Double · two patties"
+  },
+  "steak": {
+   "fr": "Steak VBF",
+   "en": "French beef patty"
+  },
+  "galette": {
+   "fr": "Galette de pommes de terre",
+   "en": "Potato rösti"
+  },
+  "steakShort": {
+   "fr": "Steak VBF",
+   "en": "Beef patty"
+  },
+  "galetteShort": {
+   "fr": "Galette végé",
+   "en": "Veggie rösti"
+  },
+  "priceOnSite": {
+   "fr": "prix sur place",
+   "en": "price on site"
+  },
+  "langue": {
+   "fr": "Langue",
+   "en": "Language"
+  },
+  "etoiles": {
+   "fr": "{n} étoiles sur 5",
+   "en": "{n} stars out of 5"
+  },
+  "avisN": {
+   "fr": "Avis {n}",
+   "en": "Review {n}"
+  },
+  "tamponHaut": {
+   "fr": "FRITES",
+   "en": "HOMEMADE"
+  },
+  "tamponBas": {
+   "fr": "MAISON",
+   "en": "FRIES"
+  },
+  "surPlace": {
+   "fr": "sur place uniquement",
+   "en": "eat in only"
+  },
+  "choix": {
+   "fr": "Votre choix",
+   "en": "Your choice"
+  },
+  "alcool": {
+   "fr": "L'abus d'alcool est dangereux pour la santé, à consommer avec modération. Vente d'alcool interdite aux mineurs : une pièce d'identité peut être demandée au retrait.",
+   "en": "Please drink responsibly. No sale of alcohol to under-18s: ID may be requested at pick-up."
+  },
+  "homemade": {
+   "fr": "fait maison",
+   "en": "homemade"
+  },
+  "local": {
+   "fr": "du coin",
+   "en": "local"
+  },
+  "veggie": {
+   "fr": "végé possible",
+   "en": "veggie option"
+  },
+  "spicy": {
+   "fr": "relevé",
+   "en": "spicy"
+  },
+  "raw": {
+   "fr": "lait cru",
+   "en": "raw milk"
+  },
+  "allergens": {
+   "fr": "Allergènes d'après la composition (liste complète à confirmer au restaurant) : {a}.",
+   "en": "Allergens from the recipe (full list to be confirmed at the restaurant): {a}."
+  },
+  "rawNote": {
+   "fr": "{r}",
+   "en": "{r}"
+  },
+  "added": {
+   "fr": "Dans le sac : {n}",
+   "en": "In your bag: {n}"
+  },
+  "removed": {
+   "fr": "Retiré du sac",
+   "en": "Removed from your bag"
+  },
+  "asap": {
+   "fr": "Au plus tôt",
+   "en": "Earliest"
+  },
+  "lunch": {
+   "fr": "Midi",
+   "en": "Lunch"
+  },
+  "dinner": {
+   "fr": "Soir",
+   "en": "Dinner"
+  },
+  "pickupDay": {
+   "fr": "Retrait {d}",
+   "en": "Pick-up {d}"
+  },
+  "closedToday": {
+   "fr": "Fermé aujourd'hui. Premier retrait possible {d}.",
+   "en": "Closed today. First pick-up {d}."
+  },
+  "needName": {
+   "fr": "Indiquez un prénom.",
+   "en": "Please add a first name."
+  },
+  "needPhone": {
+   "fr": "Numéro de téléphone incomplet.",
+   "en": "This phone number looks incomplete."
+  },
+  "needSlot": {
+   "fr": "Choisissez un créneau.",
+   "en": "Pick a time slot."
+  },
+  "paying": {
+   "fr": "Paiement…",
+   "en": "Paying…"
+  },
+  "orderNum": {
+   "fr": "Commande n°",
+   "en": "Order no."
+  },
+  "noteCuisine": {
+   "fr": "Pour la cuisine :",
+   "en": "For the kitchen:"
+  },
+  "pickupAt": {
+   "fr": "À retirer {d} à {t}, au comptoir.",
+   "en": "Pick up {d} at {t}, at the counter."
+  },
+  "thanks": {
+   "fr": "Merci {n} !",
+   "en": "Thank you {n}!"
+  },
+  "simulated": {
+   "fr": "Maquette : paiement simulé, rien n'est débité ni transmis.",
+   "en": "Demo: simulated payment, nothing is charged or sent."
+  },
+  "newOrder": {
+   "fr": "Nouvelle commande",
+   "en": "New order"
+  },
+  "guests": {
+   "fr": "{n} couverts",
+   "en": "{n} people"
+  },
+  "guest1": {
+   "fr": "1 couvert",
+   "en": "1 person"
+  },
+  "groupe": {
+   "fr": "À partir de {n} personnes, on organise votre table ensemble : appelez-nous pour confirmer la réservation.",
+   "en": "For {n} people or more, we set up your table together: please call us to confirm the booking."
+  },
+  "groupeCall": {
+   "fr": "Appeler pour confirmer",
+   "en": "Call to confirm"
+  },
+  "telAffiche": {
+   "fr": "07 60 12 00 63",
+   "en": "+33 7 60 12 00 63"
+  },
+  "resaSent": {
+   "fr": "Demande envoyée",
+   "en": "Request sent"
+  },
+  "resaText": {
+   "fr": "{g}, {d} à {t}. Le restaurant vous confirme par SMS au {p}.",
+   "en": "{g}, {d} at {t}. The restaurant will confirm by text message to {p}."
+  },
+  "resaAgain": {
+   "fr": "Faire une autre demande",
+   "en": "Make another request"
+  },
+  "pickDay": {
+   "fr": "Choisissez un jour.",
+   "en": "Pick a day."
+  },
+  "pickTime": {
+   "fr": "Choisissez une heure.",
+   "en": "Pick a time."
+  },
+  "dlvUber": {
+   "fr": "Livraison en voiture ou scooter",
+   "en": "Delivered by car or scooter"
+  },
+  "dlvDeliveroo": {
+   "fr": "Livraison en scooter ou vélo",
+   "en": "Delivered by scooter or bike"
+  },
+  "dlvBike": {
+   "fr": "Coursiers à vélo, coopérative locale",
+   "en": "Bike couriers, local co-op"
+  },
+  "qty": {
+   "fr": "Quantité",
+   "en": "Quantity"
+  },
+  "removeOne": {
+   "fr": "Retirer un",
+   "en": "Remove one"
+  },
+  "addOne": {
+   "fr": "Ajouter un",
+   "en": "Add one"
+  },
+  "noFilm": {
+   "fr": "",
+   "en": ""
+  }
+ },
+ "data": [
+  {
+   "fr": "Burgers",
+   "en": "Burgers",
+   "ou": [
+    "BB.CATS.0.name"
+   ]
+  },
+  {
+   "fr": "Viandes",
+   "en": "Meat",
+   "ou": [
+    "BB.CATS.1.name"
+   ]
+  },
+  {
+   "fr": "Salades",
+   "en": "Salads",
+   "ou": [
+    "BB.CATS.2.name"
+   ]
+  },
+  {
+   "fr": "Wraps",
+   "en": "Wraps",
+   "ou": [
+    "BB.CATS.3.name"
+   ]
+  },
+  {
+   "fr": "Enfant",
+   "en": "Kids",
+   "ou": [
+    "BB.CATS.4.name"
+   ]
+  },
+  {
+   "fr": "Desserts",
+   "en": "Desserts",
+   "ou": [
+    "BB.CATS.5.name"
+   ]
+  },
+  {
+   "fr": "Boissons",
+   "en": "Drinks",
+   "ou": [
+    "BB.CATS.6.name"
+   ]
+  },
+  {
+   "fr": "Mefia Te",
+   "en": "Mefia Te",
+   "ou": [
+    "BB.BURGER_LIST.0.name"
+   ]
+  },
+  {
+   "fr": "Les trois AOP d'un coup. « Méfie-toi » : il est copieux.",
+   "en": "All three PDO cheeses at once. \"Watch out\": it's a big one.",
+   "ou": [
+    "BB.BURGER_LIST.0.tagline"
+   ]
+  },
+  {
+   "fr": "Bougnat",
+   "en": "Bougnat",
+   "ou": [
+    "BB.BURGER_LIST.1.name"
+   ]
+  },
+  {
+   "fr": "Le classique de la maison : Saint-Nectaire et jambon sec.",
+   "en": "The house classic: Saint-Nectaire and dry-cured ham.",
+   "ou": [
+    "BB.BURGER_LIST.1.tagline"
+   ]
+  },
+  {
+   "fr": "Gourmand",
+   "en": "Gourmand",
+   "ou": [
+    "BB.BURGER_LIST.2.name"
+   ]
+  },
+  {
+   "fr": "Vulcano",
+   "en": "Vulcano",
+   "ou": [
+    "BB.BURGER_LIST.3.name"
+   ]
+  },
+  {
+   "fr": "Chorizo, poivrons et sauce chili : ça gronde.",
+   "en": "Chorizo, peppers and chili sauce: it rumbles.",
+   "ou": [
+    "BB.BURGER_LIST.3.tagline"
+   ]
+  },
+  {
+   "fr": "Blue",
+   "en": "Blue",
+   "ou": [
+    "BB.BURGER_LIST.4.name"
+   ]
+  },
+  {
+   "fr": "Rillac",
+   "en": "Rillac",
+   "ou": [
+    "BB.BURGER_LIST.5.name"
+   ]
+  },
+  {
+   "fr": "Salers",
+   "en": "Salers",
+   "ou": [
+    "BB.BURGER_LIST.6.name"
+   ]
+  },
+  {
+   "fr": "Cabri",
+   "en": "Cabri",
+   "ou": [
+    "BB.BURGER_LIST.7.name"
+   ]
+  },
+  {
+   "fr": "Vegetario",
+   "en": "Vegetario",
+   "ou": [
+    "BB.BURGER_LIST.8.name"
+   ]
+  },
+  {
+   "fr": "Mefiano",
+   "en": "Mefiano",
+   "ou": [
+    "BB.BURGER_LIST.9.name"
+   ]
+  },
+  {
+   "fr": "Tout le terroir dans un seul pain.",
+   "en": "The whole region in one bun.",
+   "ou": [
+    "BB.BURGER_LIST.9.tagline"
+   ]
+  },
+  {
+   "fr": "Bavette d'aloyau",
+   "en": "Flank steak",
+   "ou": [
+    "BB.MENU_OTHER.0.name"
+   ]
+  },
+  {
+   "fr": "Bavette de bœuf charolais bio, 300 g. Origine France.",
+   "en": "Organic Charolais beef flank steak, 300 g. French origin.",
+   "ou": [
+    "BB.MENU_OTHER.0.desc"
+   ]
+  },
+  {
+   "fr": "Steak haché façon bouchère",
+   "en": "Butcher-style beef patty",
+   "ou": [
+    "BB.MENU_OTHER.1.name"
+   ]
+  },
+  {
+   "fr": "Steak haché façon bouchère VBF. Viande bovine, origine France.",
+   "en": "Butcher-style patty, French beef (VBF).",
+   "ou": [
+    "BB.MENU_OTHER.1.desc"
+   ]
+  },
+  {
+   "fr": "Allier",
+   "en": "Allier",
+   "ou": [
+    "BB.MENU_OTHER.2.name"
+   ]
+  },
+  {
+   "fr": "Salade et mesclun maison, saumon fumé en Auvergne, Bleu d'Auvergne AOP, Cantal jeune AOP, tomates cerises.",
+   "en": "House salad and mesclun, salmon smoked in Auvergne, Bleu d'Auvergne PDO, young Cantal PDO, cherry tomatoes.",
+   "ou": [
+    "BB.MENU_OTHER.2.desc"
+   ]
+  },
+  {
+   "fr": "Chèvre chaud",
+   "en": "Warm goat's cheese",
+   "ou": [
+    "BB.MENU_OTHER.3.name"
+   ]
+  },
+  {
+   "fr": "Salade et mesclun maison, toasts chauds de chèvre moulé à la louche, miel, jambon d'Auvergne IGP, pignons de pin, herbes de Provence, tomates cerises.",
+   "en": "House salad and mesclun, warm toasts of ladle-moulded goat's cheese, honey, Auvergne PGI ham, pine nuts, herbes de Provence, cherry tomatoes.",
+   "ou": [
+    "BB.MENU_OTHER.3.desc"
+   ]
+  },
+  {
+   "fr": "Vercingétorix vs César",
+   "en": "Vercingetorix vs Caesar",
+   "ou": [
+    "BB.MENU_OTHER.4.name"
+   ]
+  },
+  {
+   "fr": "Salade et mesclun maison, Cantal jeune AOP, blanc de poulet, poivrons, croûtons à l'huile d'olive, tomates cerises.",
+   "en": "House salad and mesclun, young Cantal PDO, chicken breast, peppers, olive-oil croutons, cherry tomatoes.",
+   "ou": [
+    "BB.MENU_OTHER.4.desc"
+   ]
+  },
+  {
+   "fr": "Auvergnate",
+   "en": "Auvergnate",
+   "ou": [
+    "BB.MENU_OTHER.5.name"
+   ]
+  },
+  {
+   "fr": "Salade et mesclun maison, jambon d'Auvergne IGP, Bleu d'Auvergne AOP, Cantal jeune AOP, noix, tomates cerises.",
+   "en": "House salad and mesclun, Auvergne PGI ham, Bleu d'Auvergne PDO, young Cantal PDO, walnuts, cherry tomatoes.",
+   "ou": [
+    "BB.MENU_OTHER.5.desc"
+   ]
+  },
+  {
+   "fr": "Sancy",
+   "en": "Sancy",
+   "ou": [
+    "BB.MENU_OTHER.6.name"
+   ]
+  },
+  {
+   "fr": "Salade et mesclun maison, toasts chauds de Saint-Nectaire fermier AOP et de Bleu d'Auvergne AOP, Cantal jeune AOP, jambon d'Auvergne IGP, tomates cerises.",
+   "en": "House salad and mesclun, warm toasts of farmhouse Saint-Nectaire PDO and Bleu d'Auvergne PDO, young Cantal PDO, Auvergne PGI ham, cherry tomatoes.",
+   "ou": [
+    "BB.MENU_OTHER.6.desc"
+   ]
+  },
+  {
+   "fr": "Wrap saumon",
+   "en": "Salmon wrap",
+   "ou": [
+    "BB.MENU_OTHER.7.name"
+   ]
+  },
+  {
+   "fr": "Galette de blé, saumon fumé en Auvergne, tomates, salade et mesclun maison, sauce à l'aneth.",
+   "en": "Wheat tortilla, salmon smoked in Auvergne, tomatoes, house salad and mesclun, dill sauce.",
+   "ou": [
+    "BB.MENU_OTHER.7.desc"
+   ]
+  },
+  {
+   "fr": "Wrap chèvre",
+   "en": "Goat's cheese wrap",
+   "ou": [
+    "BB.MENU_OTHER.8.name"
+   ]
+  },
+  {
+   "fr": "Galette de blé, chèvre moulé à la louche, miel, jambon sec, tomates, salade et mesclun maison, sauce crème ciboulette.",
+   "en": "Wheat tortilla, ladle-moulded goat's cheese, honey, dry-cured ham, tomatoes, house salad and mesclun, sour cream and chive sauce.",
+   "ou": [
+    "BB.MENU_OTHER.8.desc"
+   ]
+  },
+  {
+   "fr": "Wrap poulet",
+   "en": "Chicken wrap",
+   "ou": [
+    "BB.MENU_OTHER.9.name"
+   ]
+  },
+  {
+   "fr": "Galette de blé, blanc de poulet, tomates, poivrons, salade et mesclun maison, sauce crème curry.",
+   "en": "Wheat tortilla, chicken breast, tomatoes, peppers, house salad and mesclun, creamy curry sauce.",
+   "ou": [
+    "BB.MENU_OTHER.9.desc"
+   ]
+  },
+  {
+   "fr": "Le Petiot",
+   "en": "Le Petiot",
+   "ou": [
+    "BB.MENU_OTHER.10.name"
+   ]
+  },
+  {
+   "fr": "Pain burger artisanal, steak haché VBF ou galette de pommes de terre, Cantal jeune AOP, tomates, salade et mesclun, sauce au Saint-Nectaire fermier. Avec un sirop et une boule de glace.",
+   "en": "Artisan bun, French beef patty or potato rösti, young Cantal PDO, tomatoes, salad and mesclun, farmhouse Saint-Nectaire sauce. With a cordial and one scoop of ice cream.",
+   "ou": [
+    "BB.MENU_OTHER.10.desc"
+   ]
+  },
+  {
+   "fr": "Tarte au citron meringuée",
+   "en": "Lemon meringue tart",
+   "ou": [
+    "BB.MENU_OTHER.11.name"
+   ]
+  },
+  {
+   "fr": "Pâte sucrée, crème au citron et meringue.",
+   "en": "Sweet shortcrust pastry, lemon cream and meringue.",
+   "ou": [
+    "BB.MENU_OTHER.11.desc"
+   ]
+  },
+  {
+   "fr": "Framboisier",
+   "en": "Raspberry cake",
+   "ou": [
+    "BB.MENU_OTHER.12.name"
+   ]
+  },
+  {
+   "fr": "Génoise nature, mousse bavaroise, framboises, amandes hachées torréfiées.",
+   "en": "Plain sponge, Bavarian cream, raspberries, toasted chopped almonds.",
+   "ou": [
+    "BB.MENU_OTHER.12.desc"
+   ]
+  },
+  {
+   "fr": "Forêt noire",
+   "en": "Black Forest cake",
+   "ou": [
+    "BB.MENU_OTHER.13.name"
+   ]
+  },
+  {
+   "fr": "Génoise au chocolat, chantilly maison, copeaux de chocolat au lait. Sans cerises, sans alcool.",
+   "en": "Chocolate sponge, homemade whipped cream, milk chocolate shavings. No cherries, no alcohol.",
+   "ou": [
+    "BB.MENU_OTHER.13.desc"
+   ]
+  },
+  {
+   "fr": "Moelleux au chocolat",
+   "en": "Chocolate molten cake",
+   "ou": [
+    "BB.MENU_OTHER.14.name"
+   ]
+  },
+  {
+   "fr": "Gâteau au chocolat au cœur fondant, servi tiède.",
+   "en": "Chocolate cake with a molten centre, served warm.",
+   "ou": [
+    "BB.MENU_OTHER.14.desc"
+   ]
+  },
+  {
+   "fr": "Nougat glacé",
+   "en": "Iced nougat",
+   "ou": [
+    "BB.MENU_OTHER.15.name"
+   ]
+  },
+  {
+   "fr": "Crème fraîche, abricots, raisins secs, noisettes, pistaches et amandes.",
+   "en": "Fresh cream, apricots, raisins, hazelnuts, pistachios and almonds.",
+   "ou": [
+    "BB.MENU_OTHER.15.desc"
+   ]
+  },
+  {
+   "fr": "Tiramisu framboise",
+   "en": "Raspberry tiramisu",
+   "ou": [
+    "BB.MENU_OTHER.16.name"
+   ]
+  },
+  {
+   "fr": "Tiramisu café",
+   "en": "Coffee tiramisu",
+   "ou": [
+    "BB.MENU_OTHER.17.name"
+   ]
+  },
+  {
+   "fr": "Mousse au chocolat",
+   "en": "Chocolate mousse",
+   "ou": [
+    "BB.MENU_OTHER.18.name"
+   ]
+  },
+  {
+   "fr": "Citron, coco ou orange givrés",
+   "en": "Frosted lemon, coconut or orange",
+   "ou": [
+    "BB.MENU_OTHER.19.name"
+   ]
+  },
+  {
+   "fr": "Glaces et sorbets",
+   "en": "Ice creams and sorbets",
+   "ou": [
+    "BB.MENU_OTHER.20.name"
+   ]
+  },
+  {
+   "fr": "Plateau gourmand",
+   "en": "Dessert platter",
+   "ou": [
+    "BB.MENU_OTHER.21.name"
+   ]
+  },
+  {
+   "fr": "Softs",
+   "en": "Soft drinks",
+   "ou": [
+    "BB.MENU_OTHER.22.name"
+   ]
+  },
+  {
+   "fr": "Sodas, thé glacé, jus Pago, eau minérale.",
+   "en": "Sodas, iced tea, Pago juice, mineral water.",
+   "ou": [
+    "BB.MENU_OTHER.22.desc"
+   ]
+  },
+  {
+   "fr": "Coca-Cola",
+   "en": "Coca-Cola",
+   "ou": [
+    "BB.MENU_OTHER.22.variants.0.name"
+   ]
+  },
+  {
+   "fr": "33 cl",
+   "en": "33 cl",
+   "ou": [
+    "BB.MENU_OTHER.22.variants.0.desc",
+    "BB.MENU_OTHER.22.variants.1.desc",
+    "BB.MENU_OTHER.22.variants.2.desc"
+   ]
+  },
+  {
+   "fr": "Coca-Cola Zero",
+   "en": "Coca-Cola Zero",
+   "ou": [
+    "BB.MENU_OTHER.22.variants.1.name"
+   ]
+  },
+  {
+   "fr": "Fuze Tea pêche intense",
+   "en": "Fuze Tea intense peach",
+   "ou": [
+    "BB.MENU_OTHER.22.variants.2.name"
+   ]
+  },
+  {
+   "fr": "Orangina",
+   "en": "Orangina",
+   "ou": [
+    "BB.MENU_OTHER.22.variants.3.name"
+   ]
+  },
+  {
+   "fr": "Perrier",
+   "en": "Perrier",
+   "ou": [
+    "BB.MENU_OTHER.22.variants.4.name"
+   ]
+  },
+  {
+   "fr": "Eau minérale",
+   "en": "Mineral water",
+   "ou": [
+    "BB.MENU_OTHER.22.variants.5.name"
+   ]
+  },
+  {
+   "fr": "Jus Pago",
+   "en": "Pago juice",
+   "ou": [
+    "BB.MENU_OTHER.22.variants.6.name"
+   ]
+  },
+  {
+   "fr": "20 cl · parfum au choix, à préciser dans le mot pour la cuisine",
+   "en": "20 cl · flavour of your choice, to write in the note for the kitchen",
+   "ou": [
+    "BB.MENU_OTHER.22.variants.6.desc"
+   ]
+  },
+  {
+   "fr": "Bières de la Brasserie des Sagnes",
+   "en": "Brasserie des Sagnes craft beers",
+   "ou": [
+    "BB.MENU_OTHER.23.name"
+   ]
+  },
+  {
+   "fr": "Brasserie artisanale auvergnate. Bouteilles de 33 cl.",
+   "en": "Auvergne craft brewery. 33 cl bottles.",
+   "ou": [
+    "BB.MENU_OTHER.23.desc"
+   ]
+  },
+  {
+   "fr": "Blonde des Sagnes",
+   "en": "Blonde des Sagnes",
+   "ou": [
+    "BB.MENU_OTHER.23.variants.0.name"
+   ]
+  },
+  {
+   "fr": "Blonde · maltée, douce amertume · 5 %",
+   "en": "Blonde · malty, gentle bitterness · 5%",
+   "ou": [
+    "BB.MENU_OTHER.23.variants.0.desc"
+   ]
+  },
+  {
+   "fr": "Ambrée des Sagnes",
+   "en": "Ambrée des Sagnes",
+   "ou": [
+    "BB.MENU_OTHER.23.variants.1.name"
+   ]
+  },
+  {
+   "fr": "Ambrée · notes caramélisées, légère amertume · 6 %",
+   "en": "Amber · caramel notes, light bitterness · 6%",
+   "ou": [
+    "BB.MENU_OTHER.23.variants.1.desc"
+   ]
+  },
+  {
+   "fr": "White Pale Ale",
+   "en": "White Pale Ale",
+   "ou": [
+    "BB.MENU_OTHER.23.variants.2.name"
+   ]
+  },
+  {
+   "fr": "Blanche pale ale · fruitée, amertume équilibrée · 5,5 %",
+   "en": "White pale ale · fruity, balanced bitterness · 5.5%",
+   "ou": [
+    "BB.MENU_OTHER.23.variants.2.desc"
+   ]
+  },
+  {
+   "fr": "Boom Shiva",
+   "en": "Boom Shiva",
+   "ou": [
+    "BB.MENU_OTHER.23.variants.3.name"
+   ]
+  },
+  {
+   "fr": "IPA · fruitée, amertume désaltérante · 5 %",
+   "en": "IPA · fruity, refreshing bitterness · 5%",
+   "ou": [
+    "BB.MENU_OTHER.23.variants.3.desc"
+   ]
+  },
+  {
+   "fr": "Owl Beer Pale Ale",
+   "en": "Owl Beer Pale Ale",
+   "ou": [
+    "BB.MENU_OTHER.23.variants.4.name"
+   ]
+  },
+  {
+   "fr": "Blonde pale ale · fruitée, amertume équilibrée · 5,5 %",
+   "en": "Blonde pale ale · fruity, balanced bitterness · 5.5%",
+   "ou": [
+    "BB.MENU_OTHER.23.variants.4.desc"
+   ]
+  },
+  {
+   "fr": "Black Sands",
+   "en": "Black Sands",
+   "ou": [
+    "BB.MENU_OTHER.23.variants.5.name"
+   ]
+  },
+  {
+   "fr": "Noire · veloutée, douce amertume · 5,9 %",
+   "en": "Dark · velvety, gentle bitterness · 5.9%",
+   "ou": [
+    "BB.MENU_OTHER.23.variants.5.desc"
+   ]
+  },
+  {
+   "fr": "Bières de la Brasserie Desprat",
+   "en": "Brasserie Desprat beers",
+   "ou": [
+    "BB.MENU_OTHER.24.name"
+   ]
+  },
+  {
+   "fr": "Une maison historique de la bière en Auvergne. Bouteilles de 33 cl.",
+   "en": "A historic Auvergne brewing house. 33 cl bottles.",
+   "ou": [
+    "BB.MENU_OTHER.24.desc"
+   ]
+  },
+  {
+   "fr": "Flagrant Désir",
+   "en": "Flagrant Désir",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.0.name"
+   ]
+  },
+  {
+   "fr": "Blanche · myrtille et céréales d'Auvergne · 6 %",
+   "en": "White beer · blueberry and Auvergne grain · 6%",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.0.desc"
+   ]
+  },
+  {
+   "fr": "Antidote bio",
+   "en": "Antidote (organic)",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.1.name"
+   ]
+  },
+  {
+   "fr": "Ambrée bio · châtaigne et gentiane · 6 %",
+   "en": "Organic amber · chestnut and gentian · 6%",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.1.desc"
+   ]
+  },
+  {
+   "fr": "Cloche Rouge",
+   "en": "Cloche Rouge",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.2.name"
+   ]
+  },
+  {
+   "fr": "Blonde · céréales d'Auvergne, notes de sureau · 6 %",
+   "en": "Blonde · Auvergne grain, elderflower notes · 6%",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.2.desc"
+   ]
+  },
+  {
+   "fr": "Noix de Dordogne",
+   "en": "Noix de Dordogne",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.3.name"
+   ]
+  },
+  {
+   "fr": "Ambrée aux noix · 6 %",
+   "en": "Amber with walnuts · 6%",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.3.desc"
+   ]
+  },
+  {
+   "fr": "Fée de l'Effet",
+   "en": "Fée de l'Effet",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.4.name"
+   ]
+  },
+  {
+   "fr": "Blonde · orge d'Auvergne, houblon d'Alsace, refermentée au miel d'Auvergne · 6 %",
+   "en": "Blonde · Auvergne barley, Alsace hops, bottle-conditioned with Auvergne honey · 6%",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.4.desc"
+   ]
+  },
+  {
+   "fr": "La Bière des Druides",
+   "en": "La Bière des Druides",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.5.name"
+   ]
+  },
+  {
+   "fr": "Blanche · verveine, orge et blé d'Auvergne · 5 %",
+   "en": "White beer · verbena, Auvergne barley and wheat · 5%",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.5.desc"
+   ]
+  },
+  {
+   "fr": "La Planèze",
+   "en": "La Planèze",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.6.name"
+   ]
+  },
+  {
+   "fr": "Blonde · aux lentilles de Saint-Flour · 5 %",
+   "en": "Blonde · with Saint-Flour lentils · 5%",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.6.desc"
+   ]
+  },
+  {
+   "fr": "Organic bio",
+   "en": "Organic",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.7.name"
+   ]
+  },
+  {
+   "fr": "Blonde bio · céréales d'Auvergne · 5 %",
+   "en": "Organic blonde · Auvergne grain · 5%",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.7.desc"
+   ]
+  },
+  {
+   "fr": "Bière de Lave",
+   "en": "Bière de Lave",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.8.name"
+   ]
+  },
+  {
+   "fr": "Noire · céréales d'Auvergne · 7 %",
+   "en": "Dark · Auvergne grain · 7%",
+   "ou": [
+    "BB.MENU_OTHER.24.variants.8.desc"
+   ]
+  },
+  {
+   "fr": "Vins bio et vins d'Auvergne",
+   "en": "Organic and Auvergne wines",
+   "ou": [
+    "BB.MENU_OTHER.25.name"
+   ]
+  },
+  {
+   "fr": "À emporter à la bouteille (75 cl) ; au verre, sur place.",
+   "en": "To take away by the bottle (75 cl); by the glass in the restaurant.",
+   "ou": [
+    "BB.MENU_OTHER.25.desc"
+   ]
+  },
+  {
+   "fr": "Boudes",
+   "en": "Boudes",
+   "ou": [
+    "BB.MENU_OTHER.25.variants.0.name"
+   ]
+  },
+  {
+   "fr": "Rouge fruité · Côtes d'Auvergne AOC",
+   "en": "Fruity red · Côtes d'Auvergne AOC",
+   "ou": [
+    "BB.MENU_OTHER.25.variants.0.desc"
+   ]
+  },
+  {
+   "fr": "Belleruche",
+   "en": "Belleruche",
+   "ou": [
+    "BB.MENU_OTHER.25.variants.1.name"
+   ]
+  },
+  {
+   "fr": "Rouge fruité · Côtes du Rhône AOC",
+   "en": "Fruity red · Côtes du Rhône AOC",
+   "ou": [
+    "BB.MENU_OTHER.25.variants.1.desc"
+   ]
+  },
+  {
+   "fr": "Pic Saint-Loup",
+   "en": "Pic Saint-Loup",
+   "ou": [
+    "BB.MENU_OTHER.25.variants.2.name"
+   ]
+  },
+  {
+   "fr": "Rouge épicé · Château de Lascaux, Languedoc AOC",
+   "en": "Spicy red · Château de Lascaux, Languedoc AOC",
+   "ou": [
+    "BB.MENU_OTHER.25.variants.2.desc"
+   ]
+  },
+  {
+   "fr": "Corent",
+   "en": "Corent",
+   "ou": [
+    "BB.MENU_OTHER.25.variants.3.name"
+   ]
+  },
+  {
+   "fr": "Rosé floral · Côtes d'Auvergne AOC",
+   "en": "Floral rosé · Côtes d'Auvergne AOC",
+   "ou": [
+    "BB.MENU_OTHER.25.variants.3.desc"
+   ]
+  },
+  {
+   "fr": "Charme des Demoiselles",
+   "en": "Charme des Demoiselles",
+   "ou": [
+    "BB.MENU_OTHER.25.variants.4.name"
+   ]
+  },
+  {
+   "fr": "Rosé frais · Château des Demoiselles, Côtes de Provence AOP",
+   "en": "Fresh rosé · Château des Demoiselles, Côtes de Provence PDO",
+   "ou": [
+    "BB.MENU_OTHER.25.variants.4.desc"
+   ]
+  },
+  {
+   "fr": "Domaine des Cailles",
+   "en": "Domaine des Cailles",
+   "ou": [
+    "BB.MENU_OTHER.25.variants.5.name"
+   ]
+  },
+  {
+   "fr": "Blanc sec · Saint-Pourçain AOP",
+   "en": "Dry white · Saint-Pourçain PDO",
+   "ou": [
+    "BB.MENU_OTHER.25.variants.5.desc"
+   ]
+  },
+  {
+   "fr": "Villa Dria",
+   "en": "Villa Dria",
+   "ou": [
+    "BB.MENU_OTHER.25.variants.6.name"
+   ]
+  },
+  {
+   "fr": "Blanc moelleux · Côtes de Gascogne IGP",
+   "en": "Sweet white · Côtes de Gascogne PGI",
+   "ou": [
+    "BB.MENU_OTHER.25.variants.6.desc"
+   ]
+  },
+  {
+   "fr": "Apéritifs",
+   "en": "Aperitifs",
+   "ou": [
+    "BB.MENU_OTHER.26.name"
+   ]
+  },
+  {
+   "fr": "Rhum, vodka, whisky, tequila, pastis.",
+   "en": "Rum, vodka, whisky, tequila, pastis.",
+   "ou": [
+    "BB.MENU_OTHER.26.desc"
+   ]
+  },
+  {
+   "fr": "pain burger artisanal",
+   "en": "artisan burger bun",
+   "ou": [
+    "BB.ING.pain"
+   ]
+  },
+  {
+   "fr": "steak haché façon bouchère VBF",
+   "en": "butcher-style French beef patty (VBF)",
+   "ou": [
+    "BB.ING.steak"
+   ]
+  },
+  {
+   "fr": "ou galette de pommes de terre",
+   "en": "or a potato rösti instead (veggie)",
+   "ou": [
+    "BB.ING.ouGalette"
+   ]
+  },
+  {
+   "fr": "galette de pommes de terre",
+   "en": "potato rösti",
+   "ou": [
+    "BB.ING.galette"
+   ]
+  },
+  {
+   "fr": "Saint-Nectaire fermier AOP",
+   "en": "farmhouse Saint-Nectaire PDO",
+   "ou": [
+    "BB.ING.stn"
+   ]
+  },
+  {
+   "fr": "Bleu d'Auvergne AOP",
+   "en": "Bleu d'Auvergne PDO",
+   "ou": [
+    "BB.ING.bleu"
+   ]
+  },
+  {
+   "fr": "Cantal jeune AOP",
+   "en": "young Cantal PDO",
+   "ou": [
+    "BB.ING.cantal"
+   ]
+  },
+  {
+   "fr": "Cantal Salers AOP",
+   "en": "Salers PDO cheese",
+   "ou": [
+    "BB.ING.salers"
+   ]
+  },
+  {
+   "fr": "Carré d'Aurillac",
+   "en": "Carré d'Aurillac soft cheese",
+   "ou": [
+    "BB.ING.aurillac"
+   ]
+  },
+  {
+   "fr": "fromage de chèvre moulé à la louche",
+   "en": "ladle-moulded goat's cheese",
+   "ou": [
+    "BB.ING.chevre"
+   ]
+  },
+  {
+   "fr": "jambon sec",
+   "en": "dry-cured ham",
+   "ou": [
+    "BB.ING.jambon"
+   ]
+  },
+  {
+   "fr": "chorizo",
+   "en": "chorizo",
+   "ou": [
+    "BB.ING.chorizo"
+   ]
+  },
+  {
+   "fr": "poivrons",
+   "en": "roasted peppers",
+   "ou": [
+    "BB.ING.poivrons"
+   ]
+  },
+  {
+   "fr": "tomates",
+   "en": "tomatoes",
+   "ou": [
+    "BB.ING.tomates"
+   ]
+  },
+  {
+   "fr": "pomme paillasson",
+   "en": "crispy potato straw cake",
+   "ou": [
+    "BB.ING.paillasson"
+   ]
+  },
+  {
+   "fr": "noix",
+   "en": "walnuts",
+   "ou": [
+    "BB.ING.noix"
+   ]
+  },
+  {
+   "fr": "miel",
+   "en": "honey",
+   "ou": [
+    "BB.ING.miel"
+   ]
+  },
+  {
+   "fr": "salade et mesclun maison",
+   "en": "house salad and mesclun",
+   "ou": [
+    "BB.ING.salade"
+   ]
+  },
+  {
+   "fr": "sauce au Saint-Nectaire fermier AOP",
+   "en": "farmhouse Saint-Nectaire PDO sauce",
+   "ou": [
+    "BB.ING.sStn"
+   ]
+  },
+  {
+   "fr": "sauce au Bleu d'Auvergne AOP",
+   "en": "Bleu d'Auvergne PDO sauce",
+   "ou": [
+    "BB.ING.sBleu"
+   ]
+  },
+  {
+   "fr": "sauce chili",
+   "en": "chili sauce",
+   "ou": [
+    "BB.ING.sChili"
+   ]
+  },
+  {
+   "fr": "sauce crème ciboulette",
+   "en": "sour cream and chive sauce",
+   "ou": [
+    "BB.ING.sCiboulette"
+   ]
+  },
+  {
+   "fr": "Servi avec frites faites maison et salade maison.",
+   "en": "Served with homemade fries and house salad.",
+   "ou": [
+    "BB.SIDES"
+   ]
+  },
+  {
+   "fr": "Fromage au lait cru : Saint-Nectaire fermier.",
+   "en": "Raw-milk cheese: farmhouse Saint-Nectaire.",
+   "ou": [
+    "BB.RAW.stn"
+   ]
+  },
+  {
+   "fr": "Fromage au lait cru : chèvre.",
+   "en": "Raw-milk cheese: goat's cheese.",
+   "ou": [
+    "BB.RAW.chevre"
+   ]
+  },
+  {
+   "fr": "Fromages au lait cru : Saint-Nectaire fermier et chèvre.",
+   "en": "Raw-milk cheeses: farmhouse Saint-Nectaire and goat's cheese.",
+   "ou": [
+    "BB.RAW.both"
+   ]
+  },
+  {
+   "fr": "gluten",
+   "en": "gluten",
+   "ou": [
+    "BB.ALLERGEN_LABELS.gluten"
+   ]
+  },
+  {
+   "fr": "lait",
+   "en": "milk",
+   "ou": [
+    "BB.ALLERGEN_LABELS.lait"
+   ]
+  },
+  {
+   "fr": "fruits à coque",
+   "en": "tree nuts",
+   "ou": [
+    "BB.ALLERGEN_LABELS.fruitsACoque"
+   ]
+  },
+  {
+   "fr": "poisson",
+   "en": "fish",
+   "ou": [
+    "BB.ALLERGEN_LABELS.poisson"
+   ]
+  },
+  {
+   "fr": "œufs",
+   "en": "eggs",
+   "ou": [
+    "BB.ALLERGEN_LABELS.oeufs"
+   ]
+  },
+  {
+   "fr": "sulfites",
+   "en": "sulphites",
+   "ou": [
+    "BB.ALLERGEN_LABELS.sulfites"
+   ]
+  },
+  {
+   "fr": "août 2026",
+   "en": "August 2026",
+   "ou": [
+    "BB.AVIS.0.date"
+   ]
+  },
+  {
+   "fr": "juillet 2026",
+   "en": "July 2026",
+   "ou": [
+    "BB.AVIS.1.date"
+   ]
+  },
+  {
+   "fr": "juin 2026",
+   "en": "June 2026",
+   "ou": [
+    "BB.AVIS.2.date"
+   ]
+  },
+  {
+   "fr": "décembre 2025",
+   "en": "December 2025",
+   "ou": [
+    "BB.AVIS.3.date"
+   ]
+  },
+  {
+   "fr": "novembre 2025",
+   "en": "November 2025",
+   "ou": [
+    "BB.AVIS.4.date"
+   ]
+  },
+  {
+   "fr": "octobre 2025",
+   "en": "October 2025",
+   "ou": [
+    "BB.AVIS.5.date"
+   ]
+  },
+  {
+   "fr": "2025",
+   "en": "2025",
+   "ou": [
+    "BB.AVIS.6.date"
+   ]
+  },
+  {
+   "fr": "double steak haché façon bouchère VBF",
+   "en": "double butcher-style French beef patty (VBF)",
+   "ou": [
+    "BB.burgerDesc (double)"
+   ]
+  },
+  {
+   "fr": "double galette de pommes de terre",
+   "en": "double potato rösti",
+   "ou": [
+    "BB.burgerDesc (double)"
+   ]
+  },
+  {
+   "fr": "Maquette : rien n'est envoyé.",
+   "en": "Demo: nothing is sent.",
+   "ou": [
+    "bb-resa.js (demande envoyée)"
+   ]
+  },
+  {
+   "fr": "steak haché VBF",
+   "en": "VBF beef patty",
+   "ou": [
+    "bb-burger.js (étiquette du Petiot)"
+   ]
+  },
+  {
+   "fr": "salade et mesclun",
+   "en": "salad and mesclun",
+   "ou": [
+    "bb-burger.js (étiquette du Petiot)"
+   ]
+  }
+ ],
+ "consignes": [
+  "Traduire depuis le français (l'anglais aide pour le sens). Garder les balises HTML et les {variables} telles quelles.",
+  "Noms propres en alphabet latin : noms des burgers (Mefia Te, Bougnat, Vulcano…), fromages (Saint-Nectaire, Cantal, Salers, Bleu d'Auvergne), bières, vins, lieux ; « Ti' » reste « Ti' ».",
+  "AOP : « DOP » en espagnol ; en chinois, garder « AOP » (原产地保护) après le nom. VBF : garder « VBF » (viande bovine française).",
+  "Listes des descriptions de plats : mêmes éléments, même ordre, séparés par « , » (es) ou « 、 » (zh) : chaque élément devient une étiquette du dessin.",
+  "Chinois : simplifié (zh-Hans), ton chaleureux et simple ; heures au format 22:00 ; les jours et mois en chinois.",
+  "Les avis Google restent en français (citations) : ils ne sont pas dans cette liste."
+ ]
+}

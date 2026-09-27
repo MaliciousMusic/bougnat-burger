@@ -19,7 +19,7 @@
    Devant un hublot (le ::before rond de l'hôte, s'il y en a un), le burger
    assemblé se cadre dessus : ~1,1 × son diamètre, centré.
 
-   const b = new BB.Burger(host, 'ti-bougnat' | BB.BURGERS[…], {
+   const b = new BB.Burger(host, 'ti-bougnat' | BB.BURGERS[…], {   // lang : toute langue (BB.trLang)
      size: 'card' | 'hero',   // carte (~160 px, allégée) ou grand format
      autoplay: true | 'once' | false, // boucle ; composition unique puis image figée ; immobile
      labels: true,            // étiquettes FR/EN (défaut : grand format seulement)
@@ -28,6 +28,20 @@
      patty: 'steak' | 'galette',
      shadows: true, float: true }); // ombres portées fines, flottement (défaut : grand format)
    b.explode = 0..1 ; b.play() ; b.stop() ; b.compose() ; b.setRecipe(r) ; b.setLang('en') ; b.destroy()
+   Les temps forts (pour le son) : option onEvent, ou b.onEvent = (type, info) => …, appelé à l'instant
+   même, en lecture réelle seulement (jamais en _seek ni en pose de test, jamais en mouvement réduit) ;
+   info.hero dit si c'est le grand format.
+     'compose'   la composition commence                     { }
+     'couche'    une couche se pose sur la pile              { id, kind, index, force (0..1), again }
+                 kind : 'pain-bas' | 'pain-haut' | 'steak' | 'galette' | 'fromage' | 'salade' | 'tomate' |
+                        'oignon' | 'jambon' | 'autre' ; again : true quand elle retombe après l'éclaté
+     'fond'      un fromage se met à fondre sur le steak     { id, index }
+     'sauce'     la sauce s'étale et coule                    { id, index }
+     'eclate'    l'éclaté commence                            { }
+     'etiquette' une étiquette apparaît                       { i, text }
+     'recompose' les couches reviennent                      { }
+     'envol'     les couches s'envolent                       { }
+     'fige'      une carte se fige en image                  { }
    BB.BURGERS : les recettes (clés 'ti-mefia-te', 'mefia-te' (double), …, 'petiot') ;
    BB.INGREDIENTS : libellés FR/EN ; BB.withPatty(r, 'galette').
    Étiquettes : crème cernée de sombre, lisibles sur tout fond ; variables CSS
@@ -82,6 +96,11 @@
     sCiboulette: { fr: 'sauce crème ciboulette', en: 'sour cream and chive sauce' },
   };
   const words = (k) => (BB.ING && BB.ING[k]) || WORDS[k];
+  // toute langue : bb-i18n.js (BB.trLang : la langue, sinon son dictionnaire, sinon l'anglais) ; à défaut, la langue ou le français
+  const trL = (o, lang) => (BB.trLang ? BB.trLang(o, lang) : !o ? '' : typeof o === 'string' ? o : o[lang] || (lang !== 'fr' && o.en) || o.fr || '');
+  // (les idéogrammes des étiquettes : une police de repli après celle de la page)
+  const CJK = ", 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif";
+  const DOUBLE = { fr: 'double ', en: 'double ', es: 'doble ', zh: '双层' };
   const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
   // couche dessinée → mot de la carte, et l'inverse
@@ -219,8 +238,8 @@
   function labelOf(L, recipe, lang) {
     const key = KEY[L.id];
     const w = (recipe.words && recipe.words[key]) || words(key);
-    let t = w ? w[lang] : L.id;
-    if (L.g.patty && recipe.double) t = 'double ' + t; // « double steak haché façon bouchère VBF »
+    let t = w ? trL(w, lang) : L.id;
+    if (L.g.patty && recipe.double) t = (DOUBLE[lang] || 'double ') + t; // « double steak haché façon bouchère VBF »
     return cap(t);
   }
 
@@ -236,6 +255,10 @@
   const LIFT = 0.14; // le pain du bas décolle un peu en éclaté
   const DROP = 1.7; // hauteur d'où tombent les couches
   const PORT_W = 1.1, PORT_DY = 0.05; // devant un hublot : burger assemblé ≈ 1,1 × son diamètre, un peu sous son centre
+  // pour le son : la nature d'une couche qui se pose, et la force de l'impact (l'épaisseur fait le poids)
+  const KIND = { 'bun-bottom': 'pain-bas', 'bun-top': 'pain-haut', steak: 'steak', galette: 'galette', salad: 'salade', tomato: 'tomate', jambon: 'jambon', oignon: 'oignon' };
+  const kindOf = (L) => KIND[L.id] || (L.cheese ? 'fromage' : 'autre');
+  const forceOf = (L) => r2(clamp(0.25 + 2.5 * L.th, 0.2, 1));
 
   /* ---------- une seule boucle d'animation pour tous les burgers ---------- */
   const ticking = new Set();
@@ -340,7 +363,7 @@
       this.host = host;
       this.o = Object.assign({ size: 'card', autoplay: true, labels: hero, lang: 'fr', interactive: hero, patty: null, shadows: hero, float: hero }, opts);
       this.hero = hero;
-      this.lang = this.o.lang === 'en' ? 'en' : 'fr';
+      this.lang = String(this.o.lang || 'fr');
       this.uid = BB.uid('bbb');
       this._once = this.o.autoplay === 'once';
       this._E = 0; this._target = 0; this._dir = 0;
@@ -350,6 +373,8 @@
       this._sway = 0; this._swayV = 0;
       this._tLast = 0; this._w = 0; this._h = 0;
       this._alive = true;
+      this.onEvent = typeof this.o.onEvent === 'function' ? this.o.onEvent : null;
+      this._ev = { live: false, k: -1, open: false, peak: 0 };
       // en lecture automatique, le burger commence vide : il va se composer sous nos yeux
       this._fresh = !!(this.o.autoplay && !BB.reduced);
       injectCSS();
@@ -428,7 +453,7 @@
       this._kick(true);
     }
     setLang(lang) {
-      this.lang = lang === 'en' ? 'en' : 'fr';
+      this.lang = String(lang || 'fr');
       this._aria();
       if (this._frozen) return;
       this._layout();
@@ -459,6 +484,15 @@
       if (this.svg) this.svg.remove();
       if (this._img) this._img.remove();
       if (this.host.__bb === this) this.host.__bb = null;
+    }
+
+    // un temps fort : seulement en lecture réelle (ni pose, ni _seek, ni mouvement réduit)
+    _emit(type, info) {
+      const fn = this.onEvent;
+      if (typeof fn !== 'function' || BB.reduced || !this._ev.live) return;
+      const o = info || {};
+      o.hero = this.hero;
+      try { fn.call(this, type, o); } catch (e) { /* un écouteur fautif n'arrête pas l'animation */ }
     }
 
     /* ---------- construction ---------- */
@@ -574,7 +608,7 @@
     _aria() {
       const r = this.recipe;
       const list = r.ingredients.map((id) => labelOf({ id, g: ING[id] }, r, this.lang)).join(', ');
-      const txt = r.name + (this.lang === 'en' ? ' burger: ' : ' : ') + list;
+      const txt = r.name + (this.lang === 'fr' ? ' : ' : this.lang === 'en' ? ' burger: ' : ': ') + list;
       if (this.svg) this.svg.setAttribute('aria-label', txt);
       if (this._img) this._img.alt = txt;
     }
@@ -770,7 +804,7 @@
       if (!items.length) return null;
       const n = this.layers.length;
       const zs1 = this._zs(new Array(n).fill(1));
-      const fam = getComputedStyle(this.svg).fontFamily || 'system-ui, sans-serif';
+      const fam = (getComputedStyle(this.svg).fontFamily || 'system-ui, sans-serif') + CJK;
       const fs0 = this.hero ? (W < 420 ? 13 : 14) : 10, fsMin = this.hero ? 12 : 9;
       this._anchMiss = false;
       let best = null;
@@ -832,6 +866,7 @@
 
     _layoutLabels(plan) {
       const g = this._labG;
+      g.style.fontFamily = (getComputedStyle(this.svg).fontFamily || 'system-ui, sans-serif') + CJK;
       while (g.firstChild) g.removeChild(g.firstChild);
       this._labels = [];
       if (!plan) return;
@@ -900,6 +935,8 @@
       const dt = this._tLast ? Math.min(0.05, Math.max(0, t - this._tLast)) : 1 / 60;
       this._tLast = t;
       const n = this.layers.length;
+      const ev = this._ev;
+      ev.live = !force && !this._frozen2 && !BB.reduced && typeof this.onEvent === 'function';
       // composition unique (cartes) : une fois posé, le burger se fige en image
       if (this._once && !force && this._texReady() && (BB.reduced || (this._auto && this._clock >= this._T.comp + 0.15))) {
         this._freeze();
@@ -916,11 +953,30 @@
         ph = this._phase(this._clock);
         this._E = ph.E;
         dir = ph.k === 2 ? 1 : ph.k === 3 ? -1 : 0;
+        // les temps forts du cycle : le début de chaque phase (la composition : quand elle démarre vraiment)
+        const k = ph.k === 0 && !this._started ? -1 : ph.k;
+        if (k !== ev.k) {
+          if (k === 0) this._emit('compose');
+          else if (k === 2) this._emit('eclate');
+          else if (k === 3) this._emit('recompose');
+          else if (k === 4) this._emit('envol');
+          ev.k = k;
+        }
       } else {
         const k = this._drag ? 26 : 7.5;
         this._E += (this._target - this._E) * (1 - Math.exp(-dt * k));
         if (Math.abs(this._target - this._E) < 5e-4) this._E = this._target;
         if (this._wantAuto && !this._drag && this._resumeAt && t > this._resumeAt) { this._resumeAt = 0; this.play(); }
+        ev.k = -1;
+        if (this._drag || ev.open) {
+          if (!ev.open && this._E > 0.08) { ev.open = true; ev.peak = this._E; this._emit('eclate'); }
+          else if (ev.open) {
+            ev.peak = Math.max(ev.peak, this._E);
+            if (!ev.down && this._E < ev.peak - 0.12) { ev.down = true; this._emit('recompose'); }
+            if (this._E > ev.peak - 0.02) ev.down = false;
+            if (this._E < 0.02) { ev.open = false; ev.down = false; }
+          }
+        }
       }
       this._dir = dir;
       // balancement (au doigt)
@@ -936,7 +992,7 @@
         let c = 1, d = 0;
         if (ph && ph.k === 0) c = clamp((ph.u - L.t0) / L.dur);
         if (ph && ph.k === 4) d = clamp((ph.u - (n - 1 - i) * T.offStep) / T.off);
-        if (L.c < 1 && c >= 1) L.imp = t; // posé : petit tassement
+        if (L.c < 1 && c >= 1) { L.imp = t; this._emit('couche', { id: L.id, kind: kindOf(L), index: i, force: forceOf(L), again: false }); } // posé : petit tassement
         if (c < 1) L.m = 0; // le fromage arrive en tranches, la sauce en flaque : ils fondront une fois posés
         L.c = c;
         L.d = d;
@@ -945,13 +1001,15 @@
         const e = clamp(this._E * (1 + STAGGER) - STAGGER * w);
         // en descente, les couches accélèrent et « tombent » ; sinon, douceur des deux côtés
         const fi = dir < 0 ? e * (2 - e) : inOut(e);
-        if (dir < 0 && L.f > 0.004 && fi <= 0.004) L.imp = t;
+        if (dir < 0 && L.f > 0.004 && fi <= 0.004) { L.imp = t; this._emit('couche', { id: L.id, kind: kindOf(L), index: i, force: r2(forceOf(L) * 0.5), again: true }); }
         L.e = e;
         L.f = fi;
         f[i] = fi;
         // le fromage fond une fois reposé sur le steak ; la sauce s'étale et coule
         if (L.melt) {
           const tgt = c >= 1 && fi < 0.006 && L.meltOk ? 1 : 0;
+          if (tgt && !L.melting && L.m < 0.5) { L.melting = true; this._emit(L.sauce ? 'sauce' : 'fond', { id: L.id, index: i }); }
+          if (!tgt) L.melting = false;
           const rate = tgt ? 1 / 0.55 : 1 / 0.14;
           L.m += (tgt - L.m) * (1 - Math.exp(-dt * rate * 3));
           if (Math.abs(tgt - L.m) < 0.003) L.m = tgt; else busy = true;
@@ -1047,6 +1105,7 @@
         const lb = labs[j], L = lb.r.it.L;
         const a = smooth(0.8, 0.98, L.f) * smooth(0.7, 0.95, this._E);
         attr(lb.grp, 'opacity', r2(a));
+        if (a > 0 && !(lb.a > 0)) this._emit('etiquette', { i: j, text: lb.r.it.text });
         lb.a = a;
         if (a <= 0) continue;
         // point d'ancrage : sur la matière de la couche, transformé comme elle
@@ -1080,6 +1139,9 @@
         this._freezing = false;
         if (!this._alive || !url) return;
         STILLS.set(key, url);
+        this._ev.live = this._seen && !this._frozen2 && typeof this.onEvent === 'function';
+        this._emit('fige');
+        this._ev.live = false;
         this._showStill(url, true);
       };
       const cv = this._paintStill();

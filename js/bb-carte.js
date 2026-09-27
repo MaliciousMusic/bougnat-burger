@@ -19,17 +19,33 @@
   const TF_BAS = 'M14.7 60A45.3 45.3 0 0 0 105.3 60';
   // TAMPON-FRITES:END
   function tamponFrites() {
-    const en = BB.lang === 'en';
-    const mot = (id, txt, fs, ls) => `<text stroke="none" font-size="${fs}" letter-spacing="${ls}" text-anchor="middle"><textPath href="#${id}" startOffset="50%">${txt}</textPath></text>`;
-    return `<svg viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+    const haut = BB.t('tamponHaut'), bas = BB.t('tamponBas');
+    const cjk = /[\u3000-\u9fff]/.test(haut + bas);
+    // la place sur l'arc (≈ 72 en haut, 80 en bas) : les mots longs se serrent, les idéogrammes s'espacent
+    const esp = (txt) => (cjk ? 9 : txt.length > 6 ? 1.2 : 2.4);
+    const taille = (txt, place) => Math.min(cjk ? 15 : 12.6, (place - (txt.length - 1) * esp(txt)) / (txt.length * (cjk ? 1 : 0.72)));
+    const mot = (id, txt, fs, ls) => `<text stroke="none" font-size="${fs}" letter-spacing="${ls}"${cjk ? ' font-weight="700"' : ''} text-anchor="middle"><textPath href="#${id}" startOffset="50%">${txt}</textPath></text>`;
+    return `<svg class="empreinte" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
       <defs><path id="tf-haut" d="${TF_HAUT}"/><path id="tf-bas" d="${TF_BAS}"/>
       <mask id="tf-masque" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">${TF_MASK}</mask></defs>
-      <g transform="rotate(-10 60 60)" filter="url(#encre-tampon)" fill="currentColor" stroke="currentColor" font-family="'Alfa Slab One', Rockwell, Georgia, serif">
+      <g transform="rotate(-10 60 60)" filter="url(#encre-tampon)" fill="currentColor" stroke="currentColor" font-family="'Alfa Slab One', Rockwell, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', Georgia, sans-serif">
         ${TF_ENCRE}<rect width="120" height="120" stroke="none" mask="url(#tf-masque)"/>
-        ${mot('tf-haut', en ? 'HOMEMADE' : 'FRITES', en ? 10.6 : 12.6, en ? 1.2 : 2.4)}
-        ${mot('tf-bas', en ? 'FRIES' : 'MAISON', 12.6, 2.4)}
-      </g></svg>`;
+        ${mot('tf-haut', haut, taille(haut, 72), esp(haut))}
+        ${mot('tf-bas', bas, taille(bas, 80), esp(bas))}
+      </g></svg>${TAMPONNEUR}`;
   }
+  // le tampon lui-même, vu de dessus (monture en bois, bague de laiton, poignée) : il descend, appuie, se relève
+  const TAMPONNEUR = `<svg class="tamponneur" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+      <defs><radialGradient id="tf-bois" cx=".38" cy=".34" r=".75"><stop offset="0" stop-color="#C08650"/><stop offset=".7" stop-color="#96623A"/><stop offset="1" stop-color="#6E4424"/></radialGradient>
+      <radialGradient id="tf-pommeau" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#9A623A"/><stop offset=".65" stop-color="#6A3F20"/><stop offset="1" stop-color="#4A2A14"/></radialGradient></defs>
+      <g transform="rotate(-10 60 60)">
+        <circle cx="60" cy="60" r="57" fill="url(#tf-bois)"/>
+        <circle cx="60" cy="60" r="55.4" fill="none" stroke="#5A3519" stroke-width="3"/>
+        <g fill="none" stroke="#F3D3A6" stroke-opacity=".14" stroke-width="1.1"><circle cx="58" cy="61" r="46"/><circle cx="61" cy="59" r="37.5"/><path d="M22 70q14 9 30 6t34 4"/></g>
+        <circle cx="60" cy="60" r="26" fill="#B89048"/><circle cx="60" cy="60" r="26" fill="none" stroke="#F4DC9C" stroke-opacity=".55" stroke-width="1.4"/>
+        <circle cx="60" cy="60" r="20.5" fill="url(#tf-pommeau)"/>
+        <ellipse cx="53" cy="52" rx="7.5" ry="4.6" fill="#FFF3DC" opacity=".3" transform="rotate(-30 53 52)"/>
+      </g></svg>`;
 
   const byId = new Map();
   const all = () => [...BB.BURGER_LIST, ...BB.MENU_OTHER];
@@ -54,6 +70,30 @@
   BB.drawnRecipe = drawnRecipe;
 
   const live = new Set(); // burgers dessinés actuellement montés
+  /* Les sons de l'assemblage : dans la fiche seulement (sur la carte, vingt vignettes à la fois feraient un vacarme),
+     et pendant le premier cycle après l'ouverture (ensuite le plat boucle en silence). Événements de bb-burger.js / bb-plat.js. */
+  // les couches d'un burger (kind de bb-burger.js ; les autres, d'après leur id)
+  const COUCHE = { 'pain-bas': 'pain', 'pain-haut': 'pain', steak: 'steak', galette: 'steak', fromage: 'fromage', salade: 'feuille', tomate: 'tranche', oignon: 'tranche', jambon: 'tranche' };
+  const COUCHE_ID = { noix: 'noix', walnuts: 'noix', paillasson: 'feuille', rosti: 'feuille', chorizo: 'tranche', poivrons: 'tranche', peppers: 'tranche', miel: 'sauce', honey: 'sauce' };
+  // ce qui se pose dans une assiette (kind de bb-plat.js)
+  const POSE = {
+    assiette: 'bol', ardoise: 'bol', ramequin: 'bol', coupe: 'bol',
+    salade: 'feuille', herbes: 'feuille', frites: 'feuille',
+    tomates: 'tranche', poivrons: 'tranche', jambon: 'tranche', saumon: 'tranche', poulet: 'tranche',
+    fromage: 'fromage', meringue: 'fromage', boule: 'fromage', 'fruit-givre': 'fromage', fruits: 'fromage', cafe: 'fromage',
+    noix: 'noix', pignons: 'noix', croutons: 'noix', amandes: 'noix',
+    toast: 'pain', galette: 'pain', gateau: 'pain', tarte: 'pain',
+    miel: 'sauce', sauce: 'sauce', coulant: 'sauce', chocolat: 'sauce',
+    viande: 'steak', verre: 'verre', bouteille: 'verre',
+  };
+  const AUTRES = { fond: 'fonte', sauce: 'sauce', eclate: 'eclate', recompose: 'rassemble', envol: 'envole', etiquette: 'etiquette', roule: 'roule', coupe: 'coupe', verse: 'verse', mousse: 'fizz', bulles: 'fizz' };
+  let sonsJusqua = 0;
+  function sonAssemblage(type, info) {
+    info = info || {};
+    if (!BB.sfx || info.hero === false || performance.now() > sonsJusqua) return;
+    const nom = type === 'couche' ? COUCHE[info.kind] || COUCHE_ID[info.id] || 'pain' : type === 'pose' ? POSE[info.kind] || 'pain' : AUTRES[type];
+    if (nom) BB.sfx.play(nom, { force: info.force != null ? 0.55 + 0.45 * info.force : 1, i: info.i || 0 });
+  }
   function mountBurger(host, item, opts, variant) {
     if (!BB.Burger) return null;
     const rec = drawnRecipe(item, variant);
@@ -75,12 +115,31 @@
       const host = en.target;
       io.unobserve(host);
       const item = byId.get(host.dataset.id);
-      if (item && !host._burger) host._burger = mountBurger(host, item, { size: 'card', labels: false, interactive: false, autoplay: 'once' }, {});
+      if (item && !host._burger) host._burger = monter(host, item, { size: 'card', labels: false, interactive: false, autoplay: 'once' });
     });
   }, { rootMargin: '200px 0px' }) : null;
+  const dessine = (it) => it.cat === 'burgers' || !!it.burger || !!(BB.Plat && BB.hasPlat && BB.hasPlat(it.id));
+  function mountPlat(host, item, opts) {
+    if (!BB.Plat || !BB.hasPlat || !BB.hasPlat(item.id)) return null;
+    try {
+      host.querySelector('.ph') && host.querySelector('.ph').remove();
+      const p = new BB.Plat(host, item.id, Object.assign({ lang: BB.lang }, opts));
+      live.add(p);
+      return p;
+    } catch (e) {
+      console.warn('Plat non dessiné', item.id, e);
+      return null;
+    }
+  }
+  // la variante dessinée par défaut d'une famille de boissons (sa teinte)
+  const teinteDe = (it, v) => (v ? v.teinte || v.id : it.variants ? it.variants[0].teinte || it.variants[0].id : undefined);
+  function monter(host, item, opts) {
+    if (item.cat === 'burgers' || item.burger) return mountBurger(host, item, opts, {});
+    return mountPlat(host, item, Object.assign({ variant: teinteDe(item) }, opts));
+  }
   function lazyBurger(host) {
     if (io) io.observe(host);
-    else host._burger = mountBurger(host, byId.get(host.dataset.id), { size: 'card', labels: false, interactive: false, autoplay: 'once' }, {});
+    else host._burger = monter(host, byId.get(host.dataset.id), { size: 'card', labels: false, interactive: false, autoplay: 'once' });
   }
 
   /* ---------- rendu de la carte ---------- */
@@ -88,15 +147,23 @@
     if (item.cat === 'burgers') {
       return `<span class="price"><span class="p-main">${esc(BB.fmtPriceL(item.price))}</span><span class="p-alt">${esc(BB.t('double'))} ${esc(BB.fmtPriceL(item.double))}</span></span>`;
     }
-    if (item.price == null) return `<span class="price"><span class="p-alt">${esc(BB.t('priceOnSite'))}</span></span>`;
+    if (item.variants) {
+      const ps = item.variants.map((v) => v.price).filter((n) => n != null);
+      const lo = Math.min(...ps), hi = Math.max(...ps);
+      return `<span class="price"><span class="p-main">${lo !== hi ? esc(BB.t('from')) + ' ' : ''}${esc(BB.fmtPriceL(lo))}</span></span>`;
+    }
+    if (item.price == null) return `<span class="price"><span class="p-alt">${esc(item.surPlace ? BB.t('surPlace') : BB.t('priceOnSite'))}</span></span>`;
     return `<span class="price"><span class="p-main">${esc(BB.fmtPriceL(item.price))}</span></span>`;
   }
 
   function tagsHTML(item) {
     const t = [];
-    if (item.veggie) t.push(`<span class="tag" title="${esc(BB.t('veggie'))}">${icon('i-feuille')}</span>`);
-    if (item.raw) t.push(`<span class="tag" title="${esc(BB.t('raw'))}">${icon('i-lait-cru')}</span>`);
-    if (item.spicy) t.push(`<span class="tag hot" title="${esc(BB.t('spicy'))}">${icon('i-piment')}</span>`);
+    const tag = (cls, txt, ic) => `<span class="${cls}" role="img" title="${esc(txt)}" aria-label="${esc(txt)}">${icon(ic)}</span>`;
+    if (item.veggie) t.push(tag('tag', BB.t('veggie'), 'i-feuille'));
+    if (item.raw) t.push(tag('tag', BB.t('raw'), 'i-lait-cru'));
+    if (item.spicy) t.push(tag('tag hot', BB.t('spicy'), 'i-piment'));
+    if (item.homemade) t.push(tag('tag', BB.t('homemade'), 'i-dessert'));
+    if (item.local) t.push(tag('tag', BB.t('local'), 'i-pin'));
     return t.length ? `<span class="tags">${t.join('')}</span>` : '';
   }
 
@@ -110,8 +177,19 @@
     return b;
   }
 
+  const commandable = (item) => item.price != null || !!item.variants;
+  function platCard(item) {
+    const b = el('button', 'bcard reveal' + (commandable(item) ? '' : ' sur-place'));
+    b.type = 'button';
+    b.dataset.open = item.id;
+    b.setAttribute('data-sfx', 'open');
+    const cat = BB.CATS.find((c) => c.id === item.cat);
+    b.innerHTML = `${tagsHTML(item)}<div class="vis" data-id="${item.id}"><div class="ph">${icon(cat ? cat.icon : 'i-burger')}</div></div>
+      <h4>${esc(BB.tr(item.name))}</h4>${priceHTML(item)}`;
+    return b;
+  }
   function itemRow(item) {
-    const addable = item.price != null;
+    const addable = commandable(item);
     const li = el('li', 'reveal');
     const b = el(addable ? 'button' : 'div', 'item' + (addable ? '' : ' plain'));
     if (addable) { b.type = 'button'; b.dataset.open = item.id; b.setAttribute('data-sfx', 'open'); }
@@ -142,9 +220,19 @@
         BB.BURGER_LIST.forEach((it) => grid.appendChild(burgerCard(it)));
         sec.appendChild(grid);
       } else {
-        const ul = el('ul', 'list-items');
-        BB.MENU_OTHER.filter((it) => it.cat === cat.id).forEach((it) => ul.appendChild(itemRow(it)));
-        sec.appendChild(ul);
+        const items = BB.MENU_OTHER.filter((it) => it.cat === cat.id);
+        const vignettes = items.filter(dessine), lignes = items.filter((it) => !dessine(it));
+        if (vignettes.length) {
+          const grid = el('div', 'grid-burgers grid-plats');
+          vignettes.forEach((it) => grid.appendChild(platCard(it)));
+          sec.appendChild(grid);
+        }
+        if (lignes.length) {
+          const ul = el('ul', 'list-items');
+          lignes.forEach((it) => ul.appendChild(itemRow(it)));
+          sec.appendChild(ul);
+        }
+        if (cat.id === 'boissons') sec.appendChild(el('p', 'fine alcool-note', esc(BB.t('alcool'))));
       }
       menu.appendChild(sec);
     });
@@ -220,10 +308,12 @@
   }
 
   /* ---------- la fiche d'un plat ---------- */
-  const sheet = { item: null, double: false, veggie: false, qty: 1, burger: null };
+  const sheet = { item: null, double: false, veggie: false, qty: 1, burger: null, variant: null };
+  const variante = () => (sheet.item && sheet.item.variants ? sheet.item.variants.find((v) => v.id === sheet.variant) || sheet.item.variants[0] : null);
 
   function unitPrice() {
     const it = sheet.item;
+    if (it.variants) return variante().price;
     if (it.cat === 'burgers') return sheet.double ? it.double : it.price;
     return it.price;
   }
@@ -248,18 +338,49 @@
     const tp = $('#p-tampon');
     tp.hidden = !(isBurger || it.sides);
     if (!tp.hidden && tp.dataset.lang !== BB.lang) { tp.innerHTML = tamponFrites(); tp.dataset.lang = BB.lang; }
+    if (!tp.dataset.son) {
+      tp.dataset.son = '1';
+      tp.addEventListener('animationstart', (e) => { if (e.animationName === 'empreinte' && BB.sfx) BB.sfx.play('stamp', { gain: 0.8 }); });
+    }
     if (it.raw) notes.push(`<li>${icon('i-lait-cru')}<span>${esc(BB.tr(BB.RAW[it.raw]))}</span></li>`);
-    const al = BB.allergens(it);
-    if (al.length) notes.push(`<li>${icon('i-fromage')}<span>${esc(BB.t('allergens', { a: al.map((a) => BB.tr(BB.ALLERGEN_LABELS[a])).join(', ') }))}</span></li>`);
+    const v = variante();
+    const al = [...new Set([...BB.allergens(it), ...((v && v.allergens) || [])])];
+    if (al.length) notes.push(`<li>${icon('i-fromage')}<span>${esc(BB.t('allergens', { a: BB.liste(al.map((a) => BB.tr(BB.ALLERGEN_LABELS[a]))) }))}</span></li>`);
+    if (it.alcool) notes.push(`<li class="alcool">${icon('i-biere')}<span>${esc(BB.t('alcool'))}</span></li>`);
     $('#p-notes').innerHTML = notes.join('');
     $('#p-count').textContent = String(sheet.qty);
+    // un plat servi seulement sur place : pas de quantité ni d'ajout, une mention à la place
+    const ok = commandable(it);
+    $('#p-qty').hidden = !ok;
+    $('#p-add').hidden = !ok;
+    $('#p-surplace').hidden = ok;
+    if (!ok) $('#p-surplace').textContent = BB.t('surPlaceLong');
     $('#p-price').textContent = BB.fmtPriceL(unitPrice() * sheet.qty);
     // options
     const opts = $('#p-options');
     opts.innerHTML = '';
     if (isBurger) opts.appendChild(seg('format', [['ti', BB.t('ti') + ' ' + BB.tr(it.name) + '\n' + BB.fmtPriceL(it.price)], ['double', BB.tr(it.name) + ' ' + BB.t('double').toLowerCase() + '\n' + BB.fmtPriceL(it.double)]], sheet.double ? 'double' : 'ti', (v) => { sheet.double = v === 'double'; refreshSheet(true); }));
+    if (it.variants) opts.appendChild(choix(it));
     if (it.veggie || it.burger) opts.appendChild(seg('patty', [['steak', BB.t('steakShort')], ['galette', BB.t('galetteShort')]], sheet.veggie ? 'galette' : 'steak', (v) => { sheet.veggie = v === 'galette'; refreshSheet(true); }, it.id === 'vegetario'));
     if (redraw) drawSheetVisual();
+  }
+  // le choix d'une bière, d'un vin, d'un soft : une liste de boutons radio (clavier et lecteurs d'écran natifs)
+  function choix(it) {
+    const f = el('fieldset', 'choix');
+    const cur = variante();
+    f.innerHTML = `<legend>${esc(BB.t('choix'))}</legend>` + it.variants.map((v) => `<label class="choix-opt">
+        <input type="radio" name="variante" value="${esc(v.id)}"${v === cur ? ' checked' : ''}>
+        <span class="c-nom">${esc(BB.tr(v.name))}</span>${v.desc ? `<span class="c-desc">${esc(BB.tr(v.desc))}</span>` : ''}
+        <span class="c-prix">${esc(BB.fmtPriceL(v.price))}</span></label>`).join('');
+    f.addEventListener('change', (e) => {
+      if (!e.target.matches('input[name="variante"]')) return;
+      sheet.variant = e.target.value;
+      const v = variante();
+      if (sheet.burger && sheet.burger.setVariant && v) sheet.burger.setVariant(v.teinte || v.id, BB.tr(v.name));
+      BB.sfx && BB.sfx.play('tab', { i: it.variants.findIndex((x) => x.id === sheet.variant) });
+      $('#p-price').textContent = BB.fmtPriceL(unitPrice() * sheet.qty);
+    });
+    return f;
   }
   function seg(name, choices, value, onChange, lockOnly) {
     const s = el('div', 'seg');
@@ -283,11 +404,19 @@
     vis.innerHTML = '';
     const it = sheet.item;
     const isBurger = it.cat === 'burgers' || it.burger;
-    vis.classList.toggle('small', !isBurger);
-    if (isBurger) {
+    const plat = !isBurger && BB.Plat && BB.hasPlat && BB.hasPlat(it.id);
+    vis.classList.toggle('small', !isBurger && !plat);
+    if (plat) {
+      const cat = BB.CATS.find((c) => c.id === it.cat);
+      vis.innerHTML = `<div class="ph">${icon(cat ? cat.icon : 'i-burger')}</div>`;
+      vis.classList.add('vis');
+      sonsJusqua = performance.now() + 12000;
+      sheet.burger = mountPlat(vis, it, { size: 'hero', labels: true, interactive: true, autoplay: true, variant: teinteDe(it, variante()), onEvent: sonAssemblage });
+    } else if (isBurger) {
       vis.innerHTML = `<div class="ph">${icon('i-burger')}</div>`;
       vis.classList.add('vis');
-      sheet.burger = mountBurger(vis, it, { size: 'hero', labels: true, interactive: true, autoplay: true }, { double: sheet.double, veggie: sheet.veggie || it.id === 'vegetario' });
+      sonsJusqua = performance.now() + 12000;
+      sheet.burger = mountBurger(vis, it, { size: 'hero', labels: true, interactive: true, autoplay: true, onEvent: sonAssemblage }, { double: sheet.double, veggie: sheet.veggie || it.id === 'vegetario' });
     } else {
       const cat = BB.CATS.find((c) => c.id === it.cat);
       vis.innerHTML = `<div class="ph">${icon(cat ? cat.icon : 'i-burger')}</div>`;
@@ -297,8 +426,11 @@
 
   function openSheet(id) {
     const it = byId.get(id);
-    if (!it || it.price == null) return;
+    if (!it || !(commandable(it) || dessine(it))) return;
     sheet.item = it;
+    sheet.variant = it.variants ? it.variants[0].id : null;
+    const pb = document.querySelector('#sheet-product .p-body');
+    if (pb) pb.scrollTop = 0;
     sheet.double = false;
     sheet.veggie = it.id === 'vegetario';
     sheet.qty = 1;
@@ -324,9 +456,11 @@
     $('#p-add').addEventListener('click', () => {
       const it = sheet.item;
       if (!it) return;
+      const v = variante();
       BB.shop.add({
-        id: it.id + (sheet.double ? ':double' : '') + (sheet.veggie ? ':galette' : ''),
-        name: (it.cat === 'burgers' && !sheet.double ? BB.t('ti') + ' ' : '') + BB.tr(it.name),
+        id: it.id + (v ? ':' + v.id : '') + (sheet.double ? ':double' : '') + (sheet.veggie ? ':galette' : ''),
+        variant: v ? v.id : null,
+        name: v ? BB.tr(v.name) : (it.cat === 'burgers' && !sheet.double ? BB.t('ti') + ' ' : '') + BB.tr(it.name),
         nameObj: it.name, base: it.id, option: optionLabel(), double: sheet.double, veggie: sheet.veggie,
         unit: unitPrice(), qty: sheet.qty,
       });
