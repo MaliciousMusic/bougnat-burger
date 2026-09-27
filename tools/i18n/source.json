@@ -553,6 +553,14 @@
    "fr": "Réduire",
    "en": "Show less"
   },
+  "ouvert": {
+   "fr": "Ouvert",
+   "en": "Open"
+  },
+  "ferme": {
+   "fr": "Fermé",
+   "en": "Closed"
+  },
   "langue": {
    "fr": "Langue",
    "en": "Language"

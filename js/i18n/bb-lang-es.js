@@ -129,6 +129,8 @@
       galetteShort: 'Tortita veggie',
       priceOnSite: 'precio en el local',
       langue: 'Idioma',
+      ouvert: 'Abierto',
+      ferme: 'Cerrado',
       avisPlus: 'Leer más',
       avisMoins: 'Leer menos',
       etoiles: '{n} estrellas de 5',

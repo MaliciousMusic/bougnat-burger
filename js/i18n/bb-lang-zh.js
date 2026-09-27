@@ -136,6 +136,8 @@
       galetteShort: '素食土豆饼',
       priceOnSite: '店内询价',
       langue: '语言',
+      ouvert: '营业中',
+      ferme: '休息中',
       avisPlus: '展开全文',
       avisMoins: '收起',
       etoiles: '{n} 星（满分 5 星）',

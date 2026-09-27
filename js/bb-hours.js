@@ -86,7 +86,19 @@
     const dot = document.createElement('i');
     dot.className = 'chalk-dot' + (st.open ? ' on' : '');
     el.appendChild(dot);
-    el.appendChild(document.createTextNode(st.text));
+    // un mot, pour un bandeau net ; le détail (jusqu'à quand, quand ça rouvre) est lu par les lecteurs d'écran
+    // et écrit en tête de la semaine dépliée
+    el.appendChild(document.createTextNode(BB.t(st.open ? 'ouvert' : 'ferme')));
+    const sr = document.createElement('span');
+    sr.className = 'sr-only';
+    sr.textContent = ' · ' + st.text;
+    el.appendChild(sr);
+    const wk = $('#ardoise-week');
+    if (wk) {
+      let now = $('#week-now');
+      if (!now) { now = document.createElement('p'); now.id = 'week-now'; now.className = 'week-now'; wk.insertBefore(now, wk.querySelector('.week')); }
+      now.textContent = st.text;
+    }
   }
 
   BB.hours = {

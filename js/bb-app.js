@@ -70,7 +70,7 @@
     });
     $('#tabbar').classList.toggle('on-nous', view === 'nous');
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', view === 'nous' ? '#1E2613' : '#1A130F');
+    if (meta) meta.setAttribute('content', '#1A130F'); // le charbon de la barre du haut, sur tous les onglets
     void first; void iOld;
     current = view;
     syncFilm();

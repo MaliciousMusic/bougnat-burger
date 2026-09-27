@@ -32,20 +32,31 @@
         ${TF_ENCRE}<rect width="120" height="120" stroke="none" mask="url(#tf-masque)"/>
         ${mot('tf-haut', haut, taille(haut, 72), esp(haut))}
         ${mot('tf-bas', bas, taille(bas, 80), esp(bas))}
-      </g></svg>${TAMPONNEUR}`;
+      </g></svg>`;
   }
   // le tampon lui-même, vu de dessus (monture en bois, bague de laiton, poignée) : il descend, appuie, se relève
-  const TAMPONNEUR = `<svg class="tamponneur" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
-      <defs><radialGradient id="tf-bois" cx=".38" cy=".34" r=".75"><stop offset="0" stop-color="#C08650"/><stop offset=".7" stop-color="#96623A"/><stop offset="1" stop-color="#6E4424"/></radialGradient>
-      <radialGradient id="tf-pommeau" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#9A623A"/><stop offset=".65" stop-color="#6A3F20"/><stop offset="1" stop-color="#4A2A14"/></radialGradient></defs>
-      <g transform="rotate(-10 60 60)">
-        <circle cx="60" cy="60" r="57" fill="url(#tf-bois)"/>
-        <circle cx="60" cy="60" r="55.4" fill="none" stroke="#5A3519" stroke-width="3"/>
-        <g fill="none" stroke="#F3D3A6" stroke-opacity=".14" stroke-width="1.1"><circle cx="58" cy="61" r="46"/><circle cx="61" cy="59" r="37.5"/><path d="M22 70q14 9 30 6t34 4"/></g>
-        <circle cx="60" cy="60" r="26" fill="#B89048"/><circle cx="60" cy="60" r="26" fill="none" stroke="#F4DC9C" stroke-opacity=".55" stroke-width="1.4"/>
-        <circle cx="60" cy="60" r="20.5" fill="url(#tf-pommeau)"/>
-        <ellipse cx="53" cy="52" rx="7.5" ry="4.6" fill="#FFF3DC" opacity=".3" transform="rotate(-30 53 52)"/>
-      </g></svg>`;
+  function placerGeste() {
+    const tp = $('#p-tampon'), g = $('#tampon-geste');
+    if (!tp || !g) return;
+    g.hidden = tp.hidden;
+    if (tp.hidden) return;
+    const panel = tp.closest('.sheet-panel'), a = tp.getBoundingClientRect(), p = panel.getBoundingClientRect();
+    Object.assign(g.style, { left: a.left - p.left + 'px', top: a.top - p.top + 'px', width: a.width + 'px', height: a.height + 'px' });
+  }
+  const TAMPONNEUR = `<span class="ombre-tampon" aria-hidden="true"></span><svg class="tamponneur" viewBox="0 0 120 160" aria-hidden="true" focusable="false">
+      <defs><linearGradient id="tf-bois" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5A3519"/><stop offset=".32" stop-color="#C48A54"/><stop offset=".62" stop-color="#9A623A"/><stop offset="1" stop-color="#4E2C14"/></linearGradient>
+      <radialGradient id="tf-pommeau" cx=".38" cy=".32" r=".78"><stop offset="0" stop-color="#E0A873"/><stop offset=".55" stop-color="#9A623A"/><stop offset="1" stop-color="#4E2C14"/></radialGradient>
+      <linearGradient id="tf-laiton" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7A5A22"/><stop offset=".42" stop-color="#F2D68C"/><stop offset="1" stop-color="#6E5020"/></linearGradient></defs>
+      <path d="M8 112v22a52 13 0 0 0 104 0v-22z" fill="url(#tf-bois)"/>
+      <path d="M9 132v6a51 12.5 0 0 0 102 0v-6a51 12.5 0 0 1-102 0z" fill="#2A1F18"/>
+      <ellipse cx="60" cy="112" rx="52" ry="13" fill="#B67C4A"/>
+      <ellipse cx="60" cy="112" rx="51" ry="12.2" fill="none" stroke="#E7B888" stroke-opacity=".5" stroke-width="1.2"/>
+      <path d="M50.5 42c1.4 18-.4 38-3.5 58h26c-3.1-20-4.9-40-3.5-58z" fill="url(#tf-bois)"/>
+      <path d="M44.5 99h31v9h-31z" fill="url(#tf-laiton)"/>
+      <ellipse cx="60" cy="108" rx="15.5" ry="3.6" fill="#8A6A2C"/>
+      <ellipse cx="60" cy="30" rx="21" ry="20" fill="url(#tf-pommeau)"/>
+      <ellipse cx="52.5" cy="21.5" rx="7.5" ry="4.5" fill="#FFF3DC" opacity=".38" transform="rotate(-28 52.5 21.5)"/>
+    </svg>`;
 
   const byId = new Map();
   const all = () => [...BB.BURGER_LIST, ...BB.MENU_OTHER];
@@ -346,6 +357,14 @@
     const tp = $('#p-tampon');
     tp.hidden = !(isBurger || it.sides);
     if (!tp.hidden && tp.dataset.lang !== BB.lang) { tp.innerHTML = tamponFrites(); tp.dataset.lang = BB.lang; }
+    // le geste (le tampon en bois et son ombre) : un calque de la fiche, au-dessus de l'empreinte
+    if (!$('#tampon-geste')) {
+      const g = el('div', 'tampon-geste', TAMPONNEUR);
+      g.id = 'tampon-geste';
+      g.setAttribute('aria-hidden', 'true');
+      tp.closest('.sheet-panel').appendChild(g);
+    }
+    placerGeste();
     if (!tp.dataset.son) {
       tp.dataset.son = '1';
       tp.addEventListener('animationstart', (e) => { if (e.animationName === 'empreinte' && BB.sfx) BB.sfx.play('stamp', { gain: 0.8 }); });
@@ -446,6 +465,7 @@
     BB.openSheet('#sheet-product', () => {
       if (sheet.burger) { try { sheet.burger.destroy(); } catch (e) { /* */ } live.delete(sheet.burger); sheet.burger = null; }
     });
+    placerGeste(); // la fiche est affichée : le tampon se cale sur l'empreinte
     requestAnimationFrame(drawSheetVisual);
   }
   BB.openProduct = openSheet;

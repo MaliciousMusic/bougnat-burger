@@ -41,14 +41,14 @@
   <meta name="apple-mobile-web-app-title" content="Bougnat">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="alternate" type="text/markdown" href="llms.txt" title="Bougnat Burger · résumé pour assistants IA">
 
   <!-- Polices hébergées sur le site (tools/fetch-fonts.py) : aucun appel à Google -->
-  <link rel="stylesheet" href="css/fonts.css?v=20260927235613">
-  <link rel="stylesheet" href="css/bougnat.css?v=20260927235613">
-  <link rel="stylesheet" href="css/puys.css?v=20260927235613">
+  <link rel="stylesheet" href="css/fonts.css?v=20260928002652">
+  <link rel="stylesheet" href="css/bougnat.css?v=20260928002652">
+  <link rel="stylesheet" href="css/puys.css?v=20260928002652">
 
   <!-- Données structurées (Google et assistants IA) : le restaurant ; la carte est ajoutée par tools/build-menu.mjs -->
   <script type="application/ld+json">
@@ -157,10 +157,10 @@
         </ul>
       </div>
       <button class="top-btn sound-btn" id="sound-btn" type="button" aria-pressed="true" aria-label="Son" data-i18n-attr="aria-label:sound" data-sfx="none">
-        <svg aria-hidden="true"><use href="#i-son"/></svg>
+        <svg class="son-on" aria-hidden="true"><use href="#i-haut-son"/></svg><svg class="son-off" aria-hidden="true"><use href="#i-haut-muet"/></svg>
       </button>
       <a class="top-btn bag-btn" id="bag-btn" href="#commander" aria-label="Mon sac" data-i18n-attr="aria-label:bag">
-        <svg aria-hidden="true"><use href="#i-sac"/></svg>
+        <svg aria-hidden="true"><use href="#i-haut-sac"/></svg>
         <span class="bag-count" id="bag-count" hidden>0</span>
       </a>
     </div>
@@ -588,9 +588,11 @@
     </symbol>
 
     <!-- Onglets (tampons gravés : aplats et réserves en creux) -->
-    <symbol id="i-volcan" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M18.2 3.4a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2zm0 1.5a2.1 2.1 0 1 0 0 4.2 2.1 2.1 0 0 0 0-4.2z"/><path d="M1 21v-1.9c2.4-.5 4.6-1.7 6.4-3.4 1.4-1.4 2.6-3.1 4-4.3l.8-.4h.8c1.6.3 3.4.7 4.4 1.4 1.4 1 2.4 3 3.9 4.4.7.7 1.6 1.2 2.5 1.6V21zM3.6 19.4c2.1-.6 4-1.7 5.5-3.2l.5.5c-1.6 1.6-3.6 2.8-5.8 3.4z"/><path d="M11.9 11.7V6.4h.8v5.3z"/><path d="M11.1 8h2.4v.7h-2.4z"/></g></symbol>
+    <symbol id="i-volcan" viewBox="0 0 24 24"><!-- le puy de Dôme (profil relevé et lissé, tools/puys), le chemin taillé dans la pente, l'antenne et son feu -->
+      <g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M1 21.6V19.47C1.2 19.38 1.11 19.53 2.2 18.91C3.29 18.29 6.49 16.43 7.54 15.76C8.58 15.09 7.86 15.56 8.46 14.9C9.05 14.25 10.59 12.41 11.13 11.83C11.66 11.25 11.49 11.51 11.68 11.43C11.86 11.34 11.52 11.07 12.23 11.3C12.94 11.53 15.19 12.5 15.91 12.82C16.63 13.14 16.33 13.02 16.56 13.22C16.79 13.43 16.8 13.36 17.29 14.06C17.78 14.76 18.72 16.44 19.5 17.4C20.28 18.36 21.4 19.32 21.99 19.84C22.57 20.35 22.83 20.4 23 20.51V21.6ZM6.6 18.9c2.4-.7 5-2 7.2-4.1l.6.6c-2.3 2.2-5 3.7-7.5 4.3z"/><path d="M11.8 11.7V4.9h.8V11.7zM11.2 12h2l-.3-1h-1.4zM12.2 3.2a.95.95 0 1 1 0 1.9.95.95 0 0 1 0-1.9z"/></g></symbol>
     <symbol id="i-burger" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M12 3.2c4.7 0 8.5 2.6 8.5 6.5 0 .5-.4.9-.9.9H4.4c-.5 0-.9-.4-.9-.9 0-3.9 3.8-6.5 8.5-6.5zM8.40 6.18a0.72 0.42 0 1 0 0 0.84a0.72 0.42 0 1 0 0 -0.84zM12.00 5.08a0.72 0.42 0 1 0 0 0.84a0.72 0.42 0 1 0 0 -0.84zM15.60 6.18a0.72 0.42 0 1 0 0 0.84a0.72 0.42 0 1 0 0 -0.84zM10.20 8.08a0.72 0.42 0 1 0 0 0.84a0.72 0.42 0 1 0 0 -0.84zM13.80 8.08a0.72 0.42 0 1 0 0 0.84a0.72 0.42 0 1 0 0 -0.84z"/><path d="M2.6 12.2c.6 0 .9.9 1.8.9s1.2-.9 1.8-.9c.6 0 .9.9 1.8.9s1.2-.9 1.8-.9c.6 0 .9.9 1.8.9s1.2-.9 1.8-.9c.6 0 .9.9 1.8.9s1.2-.9 1.8-.9c.6 0 .9.9 1.8.9s1.2-.9 1.8-.9c.6 0 .9.9 1.8.9V14.2H2.6z"/><path d="M3.5 15h17a1.25 1.25 0 0 1 1.25 1.25v.5A1.25 1.25 0 0 1 20.5 18h-17a1.25 1.25 0 0 1-1.25-1.25v-.5A1.25 1.25 0 0 1 3.5 15zM6.6 16.9l1.6-.7v.6l-1.6.7zm4.6 0 1.6-.7v.6l-1.6.7zm4.6 0 1.6-.7v.6l-1.6.7z"/><path d="M3.5 18.9h17v.2c0 1.4-1.1 2.5-2.5 2.5H6c-1.4 0-2.5-1.1-2.5-2.5z"/></g></symbol>
-    <symbol id="i-sac" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M5 8.1h14l-1.1 12.1c-.1 1-1 1.8-2 1.8H8.1c-1 0-1.9-.8-2-1.8zM5.9 10.3h12.2l-.1.9H5.8zM9.2 18.5l2-2.8 1 .9 1.5-2 2.1 3.9z"/><path d="M8.7 9.1V7.2a3.3 3.3 0 0 1 6.6 0v1.9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g></symbol>
+    <symbol id="i-sac" viewBox="0 0 24 24"><!-- le sac : corps droit, rabat, l'anse dessinée dedans (plus rien d'une poubelle) -->
+      <g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M6.4 2.8h11.2l2.9 4v13.1c0 1.2-1 2.1-2.1 2.1H5.6c-1.2 0-2.1-.9-2.1-2.1V6.8zM5.7 6.4h12.6l-1.6-2.2H7.3zM4.9 8.1v1.2h14.2V8.1zM15.9 11.2a3.9 3.9 0 0 1-7.8 0h1.5a2.4 2.4 0 0 0 4.8 0z"/></g></symbol>
     <symbol id="i-couverts" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M5.8 2.8H7v4.8h1V2.8h1.2v4.8h1V2.8h1.2v5.5c0 1.4-.9 2.5-2.1 2.9v9.3a1.15 1.15 0 0 1-2.3 0v-9.3c-1.2-.4-2.2-1.5-2.2-2.9z"/><path d="M17.4 2.8c-2.6.8-4.2 3.6-4.2 7.1 0 2 .6 3.3 1.6 3.8v7.1a1.3 1.3 0 0 0 2.6 0z"/></g></symbol>
     <!-- Nous : la casquette du bougnat -->
     <symbol id="i-casquette" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M2.8 14.2C2.9 10.5 6.6 7.5 12 7.3c4.6-.2 8.6 1.4 9.3 4.2.3 1.3-.4 2.4-1.8 2.7l-8.1 1.4zM6.2 11.2c3-1.8 7.3-2.3 11.4-1.2l-.2.8c-3.9-1-7.9-.5-10.8 1.1z"/><path d="M11 16.5c-3 .5-6 1.5-8 2.8-.6.4-.3 1.2.4 1.1 3.2-.5 6.3-1.4 8.8-2.4z"/><path d="M11.9 5.4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></g></symbol>
@@ -610,7 +612,10 @@
     <symbol id="i-pin" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M12 21.7c3.9-3.8 7-7.6 7-11.4a7 7 0 0 0-14 0c0 3.8 3.1 7.6 7 11.4zM8.4 12.6l2.4-3.3 1 .9 1.6-2.1 2.1 4.5z"/></g></symbol>
     <symbol id="i-mail" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M4.8 5.1h14.4c1.3 0 2.3 1 2.3 2.3v9.2c0 1.3-1 2.3-2.3 2.3H4.8c-1.3 0-2.3-1-2.3-2.3V7.4c0-1.3 1-2.3 2.3-2.3zM4.4 7.3l6.8 5.3c.5.4 1.1.4 1.6 0l6.8-5.3.6.8-6.8 5.3c-.8.7-2 .7-2.8 0L3.8 8.1z"/></g></symbol>
     <symbol id="i-velo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" filter="url(#encre)"><circle cx="5.6" cy="16.4" r="3.4"/><circle cx="18.4" cy="16.4" r="3.4"/><path d="m5.6 16.4 3.3-6.6h6.8l2.7 6.6M8.9 9.8l3.5 6.6h1.6M11.3 6.6h3"/><rect x="14.4" y="4" width="5.2" height="4.2" rx=".8" fill="currentColor"/></g></symbol>
-    <symbol id="i-son" viewBox="0 0 24 24"><g fill="currentColor" filter="url(#encre)"><path d="M3.6 9.2h3.3l4.9-4.2c.5-.4 1.3 0 1.3.6v12.8c0 .6-.8 1-1.3.6l-4.9-4.2H3.6c-.5 0-.9-.4-.9-.9v-3.8c0-.5.4-.9.9-.9z"/><path class="wave" d="M15.6 9a4 4 0 0 1 0 6M18.2 6.6a7.4 7.4 0 0 1 0 10.8" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/><path class="mute" d="m15.6 9.5 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></g></symbol>
+    <symbol id="i-haut-son" viewBox="0 0 24 24"><!-- barre du haut : dessins nets (sans encre), lisibles en petit -->
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.8 9.4h3.1L11.6 5.6v12.8l-4.7-3.8H3.8z" fill="currentColor"/><path d="M15.3 9.2a4 4 0 0 1 0 5.6M18.2 6.5a7.8 7.8 0 0 1 0 11"/></g></symbol>
+    <symbol id="i-haut-muet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.8 9.4h3.1L11.6 5.6v12.8l-4.7-3.8H3.8z" fill="currentColor"/><path d="M15.6 9.6l5 5M20.6 9.6l-5 5"/></g></symbol>
+    <symbol id="i-haut-sac" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 3.2h10.8L20 6.8v12.6a1.9 1.9 0 0 1-1.9 1.9H5.9A1.9 1.9 0 0 1 4 19.4V6.8z"/><path d="M4 6.8h16"/><path d="M15.6 10.2a3.6 3.6 0 0 1-7.2 0"/></g></symbol>
     <symbol id="i-fermer" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M6.4 6.4l11.2 11.2M17.6 6.4 6.4 17.6"/></g></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></g></symbol>
     <symbol id="i-moins" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M5.5 12h13"/></g></symbol>
@@ -623,25 +628,25 @@
   </defs>
 </svg>
 
-<script src="js/bb-core.js?v=20260927235613"></script>
-<script src="js/bb-anim.js?v=20260927235613"></script>
-<script src="js/bb-data.js?v=20260927235613"></script>
-<script src="js/i18n/bb-lang-es.js?v=20260927235613"></script>
-<script src="js/i18n/bb-lang-zh.js?v=20260927235613"></script>
-<script src="js/bb-i18n.js?v=20260927235613"></script>
-<script src="js/bb-logo.js?v=20260927235613"></script>
-<script src="js/bb-splash.js?v=20260927235613"></script>
-<script src="js/bb-hours.js?v=20260927235613"></script>
-<script src="js/bb-bake.js?v=20260927235613" onerror="void 0"></script>
-<script src="js/bb-burger.js?v=20260927235613" onerror="void 0"></script>
-<script src="js/bb-plat.js?v=20260927235613" onerror="void 0"></script>
-<script src="js/film/bb-bougnat-dessin.js?v=20260927235613" onerror="void 0"></script>
-<script src="js/film/bb-histoire.js?v=20260927235613" onerror="void 0"></script>
-<script src="js/bb-film-sound.js?v=20260927235613"></script>
-<script src="js/bb-carte.js?v=20260927235613"></script>
-<script src="js/bb-shop.js?v=20260927235613"></script>
-<script src="js/bb-avis.js?v=20260927235613"></script>
-<script src="js/bb-resa.js?v=20260927235613"></script>
-<script src="js/bb-app.js?v=20260927235613"></script>
+<script src="js/bb-core.js?v=20260928002652"></script>
+<script src="js/bb-anim.js?v=20260928002652"></script>
+<script src="js/bb-data.js?v=20260928002652"></script>
+<script src="js/i18n/bb-lang-es.js?v=20260928002652"></script>
+<script src="js/i18n/bb-lang-zh.js?v=20260928002652"></script>
+<script src="js/bb-i18n.js?v=20260928002652"></script>
+<script src="js/bb-logo.js?v=20260928002652"></script>
+<script src="js/bb-splash.js?v=20260928002652"></script>
+<script src="js/bb-hours.js?v=20260928002652"></script>
+<script src="js/bb-bake.js?v=20260928002652" onerror="void 0"></script>
+<script src="js/bb-burger.js?v=20260928002652" onerror="void 0"></script>
+<script src="js/bb-plat.js?v=20260928002652" onerror="void 0"></script>
+<script src="js/film/bb-bougnat-dessin.js?v=20260928002652" onerror="void 0"></script>
+<script src="js/film/bb-histoire.js?v=20260928002652" onerror="void 0"></script>
+<script src="js/bb-film-sound.js?v=20260928002652"></script>
+<script src="js/bb-carte.js?v=20260928002652"></script>
+<script src="js/bb-shop.js?v=20260928002652"></script>
+<script src="js/bb-avis.js?v=20260928002652"></script>
+<script src="js/bb-resa.js?v=20260928002652"></script>
+<script src="js/bb-app.js?v=20260928002652"></script>
 </body>
 </html>
