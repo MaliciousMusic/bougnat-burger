@@ -129,7 +129,8 @@ a { color: inherit; }
     width: 260px;
     color: var(--creme);
   }
-  .desk-kicker { font: 600 13px/1 var(--f-ui); letter-spacing: 0.18em; text-transform: uppercase; color: var(--pomme); margin: 0 0 14px; }
+  .desk-kicker { display: flex; align-items: center; gap: 12px; margin: 0 0 22px; font: 400 22px/0.98 var(--f-display); color: var(--creme); }
+  .desk-mark { width: 54px; height: 54px; flex: none; }
   .desk-title { font: 400 32px/1.08 var(--f-display); margin: 0 0 24px; }
   .desk-qr { width: 150px; height: 150px; background: var(--creme); border-radius: 18px; padding: 12px; box-shadow: 0 0 0 4px var(--olive), var(--shadow-lg); }
   .desk-qr svg { width: 100%; height: 100%; }
@@ -727,7 +728,8 @@ a { color: inherit; }
   --d: 150px;
   content: '';
   position: absolute;
-  inset: 0;
+  inset: 1px; /* un pixel avant le bord : la bordure et son éclairage au survol passent par-dessus */
+  border-radius: calc(var(--radius) - 1px);
   z-index: -1;
   pointer-events: none;
   background:
@@ -741,9 +743,11 @@ a { color: inherit; }
 .bcard.reveal:not(.is-in)::before, .reveal:not(.is-in) .sig-card::before { transform: scale(0.4); opacity: 0; }
 .bcard .vis::after, .sig-card .vis::after { content: none; }
 /* les plats figés flottent : un léger balancement droite-gauche, transform seul (sur le compositeur), chacun à son rythme */
-.vis .bb-still { transform-origin: 50% 62%; animation: flotte 6.4s ease-in-out infinite; }
-.grid-burgers > :nth-child(2n) .bb-still, .sig-row > :nth-child(2n) .bb-still { animation-duration: 7.2s; animation-delay: -2.3s; }
-.grid-burgers > :nth-child(3n) .bb-still, .sig-row > :nth-child(3n) .bb-still { animation-duration: 5.8s; animation-delay: -4.1s; }
+/* seulement les vignettes à l'écran (.is-vu, posé par bb-carte.js) ; départ après le fondu de l'image (0,35 s) */
+.vis .bb-still { transform-origin: 50% 62%; animation: flotte 6.4s ease-in-out 0.45s infinite; animation-play-state: paused; }
+.is-vu .vis .bb-still { animation-play-state: running; }
+.grid-burgers > :nth-child(2n) .bb-still, .sig-row > :nth-child(2n) .bb-still { animation-duration: 7.2s; animation-delay: 1.1s; }
+.grid-burgers > :nth-child(3n) .bb-still, .sig-row > :nth-child(3n) .bb-still { animation-duration: 5.8s; animation-delay: 1.9s; }
 .view:not(.is-active) .bb-still { animation-play-state: paused; }
 @keyframes flotte {
   0%, 100% { transform: translate(0, 0) rotate(0deg); }
@@ -1040,13 +1044,18 @@ legend { font: 400 20px/1.1 var(--f-display); margin-bottom: 12px; padding: 0 2p
 .avis-titre svg { width: 15px; height: 15px; color: var(--fromage); }
 .avis-ext { margin-left: auto; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; color: var(--pomme); background: var(--charbon-2); }
 .avis-ext svg { width: 16px; height: 16px; }
-.avis-piste { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 16px; scrollbar-width: none; }
+.avis-piste { display: flex; align-items: stretch; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 16px; padding: 16px; scrollbar-width: none;
+  -webkit-mask: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 34px), transparent); mask: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 34px), transparent); } /* les voisines s'effacent aux bords : on devine qu'il y en a d'autres */
 .avis-piste::-webkit-scrollbar { display: none; }
-.avis-carte { flex: 0 0 86%; scroll-snap-align: start; display: grid; gap: 10px; align-content: start; padding: 16px 18px; border-radius: 18px; background: var(--charbon); box-shadow: inset 0 0 0 1px var(--line); }
+.avis-carte { flex: 0 0 86%; scroll-snap-align: start; display: flex; flex-direction: column; align-items: stretch; gap: 10px; padding: 16px 18px; border-radius: 18px; background: var(--charbon); box-shadow: inset 0 0 0 1px var(--line); }
+.avis-carte footer { margin-top: auto; padding-top: 10px; border-top: 1px dashed var(--line); } /* le nom en bas de la carte, quelle que soit la longueur de l'avis */
+.avis-plus { align-self: flex-start; }
 .avis-etoiles { display: flex; gap: 2px; color: var(--fromage); }
 .avis-etoiles svg, .avis-etoiles i { width: 17px; height: 17px; }
 .avis-etoiles i { display: inline-block; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--creme-3); transform: scale(0.6); }
-.avis-texte { margin: 0; font: 400 16px/1.45 var(--f-ui); color: var(--creme); }
+.avis-texte { margin: 0; font: 400 16px/1.45 var(--f-ui); color: var(--creme); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 6; line-clamp: 6; overflow: hidden; }
+.avis-carte.ouvert .avis-texte { -webkit-line-clamp: unset; line-clamp: none; overflow: visible; }
+.avis-plus { justify-self: start; margin: -4px 0 0; padding: 4px 0; border: 0; background: none; color: var(--pomme); font: 650 14px/1.2 var(--f-ui); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .avis-carte footer { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--creme-3); }
 .avis-carte footer b { color: var(--pomme); font-weight: 700; }
 .avis-points { display: flex; justify-content: center; gap: 6px; padding: 0 0 14px; }

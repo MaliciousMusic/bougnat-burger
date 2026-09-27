@@ -34,3 +34,6 @@ for (const f of FILES) {
   }
 }
 console.log(`${current} → ${next} (${total} remplacement(s))`);
+// le QR code du décor pour ordinateur mène à la nouvelle adresse
+try { (await import('node:child_process')).execFileSync('python', [join(root, 'tools', 'render-qr.py')], { stdio: 'inherit' }); }
+catch (e) { console.warn('QR code à refaire : python tools/render-qr.py'); }

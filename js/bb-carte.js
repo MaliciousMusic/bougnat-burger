@@ -137,6 +137,11 @@
     if (item.cat === 'burgers' || item.burger) return mountBurger(host, item, opts, {});
     return mountPlat(host, item, Object.assign({ variant: teinteDe(item) }, opts));
   }
+  // les vignettes à l'écran (et un peu autour) : seules celles-là flottent
+  const vuIO = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
+    entries.forEach((en) => en.target.classList.toggle('is-vu', en.isIntersecting));
+  }, { rootMargin: '120px 0px' }) : null;
+  const suivreVu = (root) => root.querySelectorAll('.bcard, .sig-card').forEach((c) => (vuIO ? vuIO.observe(c) : c.classList.add('is-vu')));
   function lazyBurger(host) {
     if (io) io.observe(host);
     else host._burger = monter(host, byId.get(host.dataset.id), { size: 'card', labels: false, interactive: false, autoplay: 'once' });
@@ -237,6 +242,7 @@
       menu.appendChild(sec);
     });
     menu.querySelectorAll('.bcard .vis').forEach(lazyBurger);
+    suivreVu(menu);
   }
 
   function renderChips() {
@@ -274,6 +280,7 @@
       }
     });
   }
+  let spyCur = null;
   function spy() {
     const sc = $('#carte-scroll');
     if (!sc) return;
@@ -285,7 +292,7 @@
         const y = sc.scrollTop + 90;
         let cur = BB.CATS[0].id;
         BB.CATS.forEach((c) => { const s = document.getElementById('m-' + c.id); if (s && s.offsetTop <= y) cur = c.id; });
-        setChip(cur);
+        if (cur !== spyCur) { spyCur = cur; setChip(cur); } // les puces ne bougent que quand la rubrique change
       });
     }, { passive: true });
   }
@@ -304,6 +311,7 @@
         <h3>${esc(BB.t('ti'))} ${esc(BB.tr(item.name))}</h3><p>${esc(BB.tr(item.tagline))}</p>${priceHTML(item)}`;
       row.appendChild(c);
       lazyBurger(c.querySelector('.vis'));
+      if (vuIO) vuIO.observe(c); else c.classList.add('is-vu');
     });
   }
 

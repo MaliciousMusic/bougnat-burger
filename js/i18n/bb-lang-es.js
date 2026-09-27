@@ -7,6 +7,8 @@
   (BB.langPacks = BB.langPacks || []).push(['es', {
     ui: {
       skip: 'Ir al contenido',
+      'desk.title': 'La hamburguesa de Auvernia<br>se disfruta en el móvil.',
+      'desk.note': 'Escanea para abrir la app',
       'hours.more': 'horario',
       'hours.title': 'Horario de apertura',
       'home.title1': 'La hamburguesa de Auvernia,',
@@ -127,6 +129,8 @@
       galetteShort: 'Tortita veggie',
       priceOnSite: 'precio en el local',
       langue: 'Idioma',
+      avisPlus: 'Leer más',
+      avisMoins: 'Leer menos',
       etoiles: '{n} estrellas de 5',
       avisN: 'Reseña {n}',
       tamponHaut: 'PATATAS',

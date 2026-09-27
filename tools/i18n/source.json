@@ -4,6 +4,14 @@
    "fr": "Aller au contenu",
    "en": "Skip to content"
   },
+  "desk.title": {
+   "fr": "Le burger d'Auvergne<br>se déguste sur téléphone.",
+   "en": "The Auvergne burger<br>is best enjoyed on your phone."
+  },
+  "desk.note": {
+   "fr": "Scannez pour ouvrir l'appli",
+   "en": "Scan to open the app"
+  },
   "splash.go": {
    "fr": "Entrer",
    "en": "Come in"
@@ -537,6 +545,14 @@
    "fr": "prix sur place",
    "en": "price on site"
   },
+  "avisPlus": {
+   "fr": "Lire la suite",
+   "en": "Read more"
+  },
+  "avisMoins": {
+   "fr": "Réduire",
+   "en": "Show less"
+  },
   "langue": {
    "fr": "Langue",
    "en": "Language"
@@ -560,6 +576,10 @@
   "surPlace": {
    "fr": "sur place uniquement",
    "en": "eat in only"
+  },
+  "surPlaceLong": {
+   "fr": "Servi sur place uniquement : à déguster au restaurant.",
+   "en": "Served in the restaurant only."
   },
   "choix": {
    "fr": "Votre choix",

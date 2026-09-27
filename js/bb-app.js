@@ -178,21 +178,7 @@
     document.addEventListener('pointerdown', (e) => { if (!list.hidden && !e.target.closest('.lang-choix')) ouvrir(false); });
   }
 
-  /* ---------- QR pour ouvrir sur téléphone (ordinateur seulement) ---------- */
-  function drawQR() {
-    const box = $('#desk-qr');
-    if (!box || typeof window.qrcode !== 'function') return;
-    const url = /^https?:$/.test(location.protocol) && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)
-      ? location.origin + location.pathname
-      : document.querySelector('link[rel="canonical"]').href;
-    const qr = window.qrcode(0, 'M');
-    qr.addData(url);
-    qr.make();
-    const n = qr.getModuleCount();
-    let d = '';
-    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) d += `M${c} ${r}h1v1h-1z`;
-    box.innerHTML = `<svg viewBox="-1 -1 ${n + 2} ${n + 2}" shape-rendering="crispEdges" role="img" aria-label="QR code"><path d="${d}" fill="#2B1A10"/></svg>`;
-  }
+  /* le QR code du décor pour ordinateur est écrit dans la page (tools/render-qr.py) */
 
   /* ---------- démarrage ---------- */
   function init() {
@@ -208,10 +194,6 @@
     route(true);
     BB.splash(() => { filmAllowed = true; syncFilm(); });
     document.addEventListener('visibilitychange', () => { if (document.hidden) stopFilm(); else syncFilm(); });
-    if (window.matchMedia && matchMedia('(min-width: 900px)').matches) {
-      if (typeof window.qrcode === 'function') drawQR();
-      else window.addEventListener('load', drawQR);
-    }
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

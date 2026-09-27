@@ -17,6 +17,7 @@
     return `<article class="avis-carte">
       <div class="avis-etoiles" role="img" aria-label="${esc(BB.t('etoiles', { n }))}">${etoile.repeat(n)}${'<i></i>'.repeat(5 - n)}</div>
       <p class="avis-texte" lang="fr">« ${txt} »</p>
+      <button class="avis-plus" type="button" aria-expanded="false" hidden>${esc(BB.t('avisPlus'))}</button>
       <footer><b>${esc(a.nom)}</b><span>${esc(BB.tr(a.date))}</span></footer>
     </article>`;
   }
@@ -29,6 +30,22 @@
     points.innerHTML = BB.AVIS.map((_, i) => `<button type="button" aria-label="${esc(BB.t('avisN', { n: i + 1 }))}" data-i="${i}"></button>`).join('');
     points.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { touche = true; aller(+b.dataset.i); }));
     majPoints();
+    replis();
+  }
+  // « Lire la suite » seulement pour les avis qui dépassent leurs lignes
+  function replis() {
+    requestAnimationFrame(() => document.querySelectorAll('#avis-piste .avis-carte').forEach((c) => {
+      const t = c.querySelector('.avis-texte'), b = c.querySelector('.avis-plus');
+      if (!t || !b || c.classList.contains('ouvert')) return;
+      b.hidden = t.scrollHeight <= t.clientHeight + 2;
+    }));
+  }
+  function basculer(b) {
+    const c = b.closest('.avis-carte'), ouvert = !c.classList.contains('ouvert');
+    c.classList.toggle('ouvert', ouvert);
+    b.setAttribute('aria-expanded', String(ouvert));
+    b.textContent = BB.t(ouvert ? 'avisMoins' : 'avisPlus');
+    touche = true; // on lit : plus de défilement automatique
   }
   function aller(i) {
     const piste = $('#avis-piste');
@@ -58,6 +75,8 @@
       });
     }, { passive: true });
     ['pointerdown', 'wheel', 'touchstart'].forEach((ev) => piste.addEventListener(ev, () => { touche = true; }, { passive: true }));
+    piste.addEventListener('click', (e) => { const b = e.target.closest('.avis-plus'); if (b) basculer(b); });
+    if ('ResizeObserver' in window) new ResizeObserver(replis).observe(piste);
   }
   function defiler() {
     clearInterval(timer);

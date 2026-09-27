@@ -12,6 +12,8 @@
     meta: { court: '中' },
     ui: {
       skip: '跳到主要内容',
+      'desk.title': '奥弗涅汉堡，<br>用手机打开更好吃。',
+      'desk.note': '扫码打开应用',
       'splash.go': '进入',
       'splash.hint': '调高音量，效果更佳。',
       'hours.more': '营业时间',
@@ -134,6 +136,8 @@
       galetteShort: '素食土豆饼',
       priceOnSite: '店内询价',
       langue: '语言',
+      avisPlus: '展开全文',
+      avisMoins: '收起',
       etoiles: '{n} 星（满分 5 星）',
       avisN: '第 {n} 条评价',
       tamponHaut: '自制',
