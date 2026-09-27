@@ -2439,15 +2439,23 @@
       fondu(S.feuRouge, Math.sin(d * 3.2) > -0.2 ? 1 : 0.25);
       this._fumee(0, false, 0);
       S.face.G.setAttribute('transform', tr(300, 530, 0, 0.95));
-      const u1 = ease(seg(u, 0.05, 0.2)), u2 = ease(seg(u, 0.25, 0.42));
-      const hx = lerp(lerp(72, 30, u1), 26, u2), hy = lerp(lerp(100, -170, u1), -70, u2);
+      // la main (le bout des doigts, forme « pince ») : va chercher la frite sur la casquette, l'amène à la bouche,
+      // la pousse dedans — crunch —, puis se pose sur la joue pendant qu'il savoure
+      const u1 = ease(seg(u, 0.05, 0.2)), u2 = ease(seg(u, 0.25, 0.42)), u3 = ease(seg(u, 0.42, 0.47)), u4 = ease(seg(u, 0.5, 0.64));
+      const PRISE = [63, -160], BOUCHE = [42.6, -73.2], DEDANS = [37, -72.6], JOUE = [26, -70];
+      let hx = lerp(72, PRISE[0], u1), hy = lerp(100, PRISE[1], u1);
+      hx = lerp(hx, BOUCHE[0], u2); hy = lerp(hy, BOUCHE[1], u2);
+      hx = lerp(hx, DEDANS[0], u3); hy = lerp(hy, DEDANS[1], u3);
+      hx = lerp(hx, JOUE[0], u4); hy = lerp(hy, JOUE[1], u4);
       const mache = u > 0.5 ? Math.abs(Math.sin((u - 0.5) * 30)) : 0;
-      this.rig.poseFace(S.face, { bd: [62, -30, hx, hy], ombre: false, bouche: u > 0.42 && u < 0.5 ? 10 : 2 + mache * 5, yeux: u > 0.5 ? 0.25 : 1 });
+      this.rig.poseFace(S.face, { bd: [62, -30, hx, hy], mainD: u < 0.5 ? 'pince' : undefined, ombre: false, bouche: u > 0.36 && u < 0.47 ? 10 : 2 + mache * 5, yeux: u > 0.5 ? 0.25 : 1 });
       if (S.face.moust) S.face.moust.setAttribute('transform', `translate(0 ${f(u > 0.5 ? -2 - mache * 2 : 0)})`);
       if (S.face.tete) S.face.tete.setAttribute('transform', 'translate(0 -96)');
-      // la frite : posée sur la casquette, puis dans sa main
-      const fx = u < 0.12 ? 344 : 300 + hx * 0.95, fy = u < 0.12 ? 530 - 96 * 0.95 - 58 : 530 + hy * 0.95 - 16;
-      place(S.frite, fx, fy, u < 0.12 ? 80 : 20, 1);
+      // la frite : posée en travers sur la casquette ; une fois prise, tenue par son bout droit, l'autre bout
+      // arrive dans la bouche ouverte (bouche du rig : (0, 30) dans le repère de la tête) ; avalée d'un « croc »
+      show(S.frite, u < 0.47);
+      if (u < 0.2) place(S.frite, 344, 530 - 96 * 0.95 - 58, 80, 1);
+      else place(S.frite, 300 + hx * 0.95 - 15.9, 530 + hy * 0.95 + 2.8, 80, 1);
     }
     /* ---------- 17 · Iris : le cercle se referme sur son visage ---------- */
     _iris(t, u, setIris) {
