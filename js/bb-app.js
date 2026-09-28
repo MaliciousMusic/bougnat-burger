@@ -52,12 +52,19 @@
     }, first ? 0 : 380);
   }
 
+  // un onglet jamais ouvert n'est pas mis en page (CSS : .view sans .vue) ; à sa première ouverture, il naît
+  // (son style de départ est lu, pour que le fondu d'entrée joue), puis reste mis en page
   function show(view, first) {
     if (view === current) return;
     const iNew = VIEWS.indexOf(view), iOld = VIEWS.indexOf(current);
     document.querySelectorAll('.view').forEach((v) => {
       const i = VIEWS.indexOf(v.dataset.view);
       const on = v.dataset.view === view;
+      if (on && !v.classList.contains('vue')) {
+        v.classList.add('vue');
+        v.classList.toggle('is-left', i < iOld); // (il arrive du côté où il est rangé)
+        if (!first) void getComputedStyle(v).opacity;
+      }
       v.classList.toggle('is-active', on);
       v.classList.toggle('is-left', !on && i < iNew);
       v.setAttribute('aria-hidden', String(!on));
@@ -98,6 +105,7 @@
     if (!s) return;
     closers.set(sel, onClose);
     s.hidden = false;
+    document.documentElement.classList.add('feuille'); // (CSS : ce qui est derrière cesse de flotter)
     requestAnimationFrame(() => requestAnimationFrame(() => s.classList.add('is-open')));
     const panel = s.querySelector('.sheet-panel');
     panel.setAttribute('tabindex', '-1');
@@ -110,7 +118,12 @@
     s.classList.remove('is-open');
     const fn = closers.get(sel);
     closers.delete(sel);
-    setTimeout(() => { s.hidden = true; fn && fn(); syncFilm(); }, 420);
+    setTimeout(() => {
+      s.hidden = true;
+      if (!document.querySelector('.sheet.is-open')) document.documentElement.classList.remove('feuille');
+      fn && fn();
+      syncFilm();
+    }, 420);
   };
   function initSheets() {
     document.querySelectorAll('.sheet').forEach((s) => {

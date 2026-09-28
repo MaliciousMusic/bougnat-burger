@@ -3,7 +3,11 @@
    Chaque burger est empilé couche par couche avec, à la lettre, les ingrédients
    de la carte (bb-data.js : BB.BURGER_LIST, les mots de BB.ING). Chaque couche
    est une texture réaliste cuisinée par bb-bake.js (vue plongeante ~25°,
-   lumière de studio cuite dedans), posée dans le SVG.
+   lumière de studio cuite dedans), posée dans son propre calque : un petit SVG
+   placé par une matrice CSS (Stage) ; le processeur graphique le déplace, le
+   tourne, l'estompe sans rien repeindre. Les étiquettes sont dans le SVG du
+   dessus. Pendant les temps immobiles du cycle, plus aucune image n'est
+   calculée (on dort jusqu'à la suite).
    Le cycle, au rythme calme :
      1. composition : les couches tombent une à une et s'empilent ; le fromage
         arrive en tranches et fond sur le steak ; la sauce, glissée sous le pain
@@ -300,8 +304,11 @@
     const st = document.createElement('style');
     const halo = 'var(--bb-lab-halo,rgba(26,19,15,.85))', ink = 'var(--bb-lab-ink,#F5EAD4)';
     st.textContent =
-      '.bb-burger{display:block;width:100%;height:100%;overflow:visible;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}' +
-      '.bb-burger .bb-fb{transition:opacity .35s ease}' +
+      '.bb-burger{position:relative;display:block;width:100%;height:100%;overflow:visible;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}' +
+      '.bb-burger .bb-fb{transition:opacity .35s ease}' + // (dans un calque, la forme de repli s'efface d'un coup : invisible à ce moment-là, et plus rien à repeindre)
+      // les calques (Stage) : chacun sur le processeur graphique, placé par sa matrice, invisible avant sa première place
+      'div.bb-stage{position:absolute;left:0;top:0;width:0;height:0;overflow:visible;pointer-events:none}' +
+      '.bb-stage>.bb-cl{position:absolute;left:0;top:0;overflow:visible;transform-origin:0 0;will-change:transform,opacity;opacity:0;pointer-events:none}' +
       // étiquettes : crème cernée de sombre, lisibles sur le ciel comme sur le charbon ou la crème
       '.bb-burger .bb-lab text{font-family:inherit;font-weight:600;fill:' + ink + ';stroke:' + halo + ';stroke-width:3.5px;stroke-linejoin:round;paint-order:stroke fill}' +
       '.bb-burger .bb-lab .bb-lh{stroke:' + halo + ';stroke-width:3.2px;stroke-linecap:round;fill:none}' +
@@ -353,6 +360,84 @@
   // réapparaît tout de suite (changement de langue, retour sur la carte), sans rien recalculer
   const STILLS = new Map();
 
+  /* ---------- les calques composités ----------
+     Chaque couche d'un plat est un petit <svg> à part, posé dans une « scène » HTML et placé par une
+     matrice CSS : le navigateur le confie au processeur graphique, qui le déplace, le tourne, l'estompe
+     sans rien repeindre. (Un seul grand SVG animé se repeignait en entier à chaque image : c'était la
+     lenteur des plats sur téléphone.) Le contenu d'un calque, en unités du plat, n'est repeint que quand
+     il change : une texture qui arrive, un fromage qui fond, un verre qui se remplit, une galette roulée. */
+  const r4 = (v) => Math.round(v * 1e4) / 1e4;
+  class Stage {
+    constructor(host, before) {
+      this.el = document.createElement('div');
+      this.el.className = 'bb-stage';
+      this.el.setAttribute('aria-hidden', 'true');
+      host.insertBefore(this.el, before || null);
+      this.list = [];
+      this.k0 = 0;
+    }
+    // l'emprise (unités) de quelques cadres de textures, avec une marge
+    static box(frs, m) {
+      const b = { x0: 1e9, y0: 1e9, x1: -1e9, y1: -1e9 };
+      frs.forEach((f) => { if (f.x0 < b.x0) b.x0 = f.x0; if (f.y0 < b.y0) b.y0 = f.y0; if (f.x1 > b.x1) b.x1 = f.x1; if (f.y1 > b.y1) b.y1 = f.y1; });
+      m = m == null ? 0.03 : m;
+      return { x0: b.x0 - m, y0: b.y0 - m, x1: b.x1 + m, y1: b.y1 + m };
+    }
+    clear() {
+      while (this.el.firstChild) this.el.removeChild(this.el.firstChild);
+      this.list = [];
+      this.k0 = 0;
+    }
+    // un calque : box = son emprise en unités ; kk = sa finesse relative (1 : celle de la scène)
+    layer(box, kk) {
+      const svg = BB.svg('svg', { class: 'bb-cl', preserveAspectRatio: 'none', focusable: 'false' }, this.el);
+      const c = { svg, defs: BB.svg('defs', null, svg), g: BB.svg('g', null, svg), box, kk: kk || 1, m: '', o: '' };
+      svg.__cl = c;
+      this.list.push(c);
+      if (this.k0) this._fit(c);
+      return c;
+    }
+    // la finesse : k0 pixels par unité (la plus grande échelle de la caméra) ; on ne repeint que si elle change vraiment
+    scale(k0) {
+      if (!(k0 > 0) || (this.k0 && Math.abs(k0 / this.k0 - 1) < 0.03)) return;
+      this.k0 = k0;
+      this.list.forEach((c) => this._fit(c));
+    }
+    // une texture un peu plus grande que son cadre nominal : le calque s'agrandit
+    grow(c, f) {
+      const b = c.box;
+      if (f.x0 >= b.x0 && f.y0 >= b.y0 && f.x1 <= b.x1 && f.y1 <= b.y1) return;
+      c.box = Stage.box([b, f], 0.01);
+      if (this.k0) this._fit(c);
+    }
+    _fit(c) {
+      const b = c.box, k = this.k0 * c.kk;
+      c.svg.setAttribute('viewBox', r4(b.x0) + ' ' + r4(b.y0) + ' ' + r4(b.x1 - b.x0) + ' ' + r4(b.y1 - b.y0));
+      c.svg.style.width = r2((b.x1 - b.x0) * k) + 'px';
+      c.svg.style.height = r2((b.y1 - b.y0) * k) + 'px';
+      c.m = '';
+    }
+    // place un calque : la caméra (k, cx, cy : pixels) × la transformation de la couche (a b c d e f : unités), et son opacité
+    put(c, cam, a, b, cc, d, e, f, op) {
+      if (!this.k0 || !c) return;
+      const k = cam.k, s = k / (this.k0 * c.kk), x0 = c.box.x0, y0 = c.box.y0;
+      const m = 'matrix(' + r4(a * s) + ',' + r4(b * s) + ',' + r4(cc * s) + ',' + r4(d * s) + ',' +
+        r2(cam.cx + k * (a * x0 + cc * y0 + e)) + ',' + r2(cam.cy + k * (b * x0 + d * y0 + f)) + ')';
+      if (m !== c.m) { c.m = m; c.svg.style.transform = m; }
+      const o = String(r3(op > 0 ? op : 0));
+      if (o !== c.o) { c.o = o; c.svg.style.opacity = o; }
+    }
+    // la scène se cale sur le SVG des étiquettes (pixels de l'hôte)
+    place(left, top) {
+      this.el.style.left = r2(left) + 'px';
+      this.el.style.top = r2(top) + 'px';
+    }
+    remove() {
+      this.el.remove();
+      this.list = [];
+    }
+  }
+
   /* ======================================================================
      Le burger
      ====================================================================== */
@@ -381,6 +466,7 @@
       if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
       this.svg = BB.svg('svg', { class: 'bb-burger bb-burger--' + (hero ? 'hero' : 'card'), role: 'img', focusable: 'false' });
       host.appendChild(this.svg);
+      this._stage = new Stage(host, this.svg); // les couches, sous le SVG des étiquettes
       if (host.clientHeight < 8) { this.svg.style.height = 'auto'; this.svg.style.aspectRatio = hero ? '3 / 4' : '4 / 5'; }
       this.setRecipe(recipe);
       if (typeof ResizeObserver !== 'undefined') {
@@ -477,11 +563,14 @@
     }
     destroy() {
       this._alive = false;
+      clearTimeout(this._napT);
+      clearTimeout(this._relab);
       ticking.delete(this);
       unobserve(this);
       if (this._ro) this._ro.disconnect();
       if (this._hit) this._hit.remove();
       if (this.svg) this.svg.remove();
+      if (this._stage) this._stage.remove();
       if (this._img) this._img.remove();
       if (this.host.__bb === this) this.host.__bb = null;
     }
@@ -497,17 +586,17 @@
 
     /* ---------- construction ---------- */
     _build() {
-      const svg = this.svg, uid = this.uid;
+      const svg = this.svg, uid = this.uid, st = this._stage;
       while (svg.firstChild) svg.removeChild(svg.firstChild);
-      const defs = BB.svg('defs', null, svg);
-      const grad = (id, stops) => {
+      st.clear();
+      const grad = (defs, id, stops) => {
         const g = BB.svg('radialGradient', { id }, defs);
         stops.forEach(([o, a]) => BB.svg('stop', { offset: o, 'stop-color': SHADOW, 'stop-opacity': a }, g));
       };
-      grad(uid + '-gr', [[0, 0.55], [0.45, 0.4], [0.75, 0.16], [1, 0]]);
-      grad(uid + '-sh', [[0, 0.95], [0.6, 0.85], [0.84, 0.42], [1, 0]]);
-      this._cam = BB.svg('g', { class: 'bb-cam' }, svg);
-      this._ground = BB.svg('ellipse', { fill: 'url(#' + uid + '-gr)', opacity: 0 }, this._cam);
+      // l'ombre au sol : un disque (rayon 1) au dégradé doux, étiré et placé à chaque image
+      const gc = this._groundC = st.layer({ x0: -1, y0: -1, x1: 1, y1: 1 }, 1.3);
+      grad(gc.defs, uid + '-gr', [[0, 0.55], [0.45, 0.4], [0.75, 0.16], [1, 0]]);
+      BB.svg('ellipse', { cx: 0, cy: 0, rx: 1, ry: 1, fill: 'url(#' + uid + '-gr)' }, gc.g);
       const ids = this.recipe.layers;
       const seen = {};
       const empty = this._fresh || (this._auto && this._clock < 0.01);
@@ -541,8 +630,10 @@
         L.count = seen[L.id];
         if (L.count > 1) L.label = L.label && this.layers.filter((M) => M.id === L.id).pop() === L;
       });
+      // chaque couche dans son calque : sa texture, son fondu, sa forme de repli (et l'ombre de la couche du dessus)
       this.layers.forEach((L, i) => {
-        const g = BB.svg('g', { class: 'bb-l', opacity: empty ? 0 : 1 }, this._cam);
+        const cl = L.cl = st.layer(this._boxOf(L));
+        const g = cl.g, defs = cl.defs;
         L.el = { g };
         L.el.fb = this._fallback(L, g);
         L.el.img = this._image(g, L.sprite);
@@ -559,11 +650,12 @@
         const U = this.layers[i + 1];
         if (this.o.shadows && U && !L.dome) {
           // l'ombre de la couche du dessus ne tombe que sur la matière : masque = la texture elle-même
+          grad(defs, uid + '-sh' + i, [[0, 0.95], [0.6, 0.85], [0.84, 0.42], [1, 0]]);
           const mk = BB.svg('mask', { id: uid + '-m' + i, maskContentUnits: 'userSpaceOnUse', style: 'mask-type:alpha' }, defs);
           L.el.mk = this._image(mk, L.sprite);
           L.el.mk.setAttribute('opacity', 1);
           if (L.melt) L.el.mk2 = this._image(mk, L.melt); // la bascule tranche → fondu, aussi dans le masque
-          L.el.sh = BB.svg('ellipse', { fill: 'url(#' + uid + '-sh)', mask: 'url(#' + uid + '-m' + i + ')', opacity: 0 }, g);
+          L.el.sh = BB.svg('ellipse', { fill: 'url(#' + uid + '-sh' + i + ')', mask: 'url(#' + uid + '-m' + i + ')', opacity: 0 }, g);
         }
       });
       this._labG = BB.svg('g', { class: 'bb-lab' }, svg);
@@ -589,6 +681,14 @@
     _image(g, sid) {
       const fr = BB.bake.frame(sid);
       return BB.svg('image', { x: r3(fr.x0), y: r3(fr.y0), width: r3(fr.x1 - fr.x0), height: r3(fr.y1 - fr.y0), preserveAspectRatio: 'none', opacity: 0 }, g);
+    }
+
+    // l'emprise d'une couche (unités) : ses textures et sa forme de repli
+    _boxOf(L) {
+      const r = Math.max(L.r, 1), top = Math.max(L.top, 0.1);
+      const frs = [{ x0: -r, x1: r, y0: -top * C - r * S, y1: r * S + 0.03 }, BB.bake.frame(L.sprite)];
+      if (L.melt) frs.push(BB.bake.frame(L.melt));
+      return Stage.box(frs, 0.04);
     }
 
     _fallback(L, g) {
@@ -664,11 +764,12 @@
           el.setAttribute('width', r3(t.frame.x1 - t.frame.x0));
           el.setAttribute('height', r3(t.frame.y1 - t.frame.y0));
         });
+        if (L.cl && this._stage) this._stage.grow(L.cl, t.frame);
         L.im[key] = { im, frame: t.frame };
         L[key + 'Ok'] = true;
-        // les points d'ancrage arrivent avec les textures : on replace les étiquettes (une fois par image)
-        if (this._anchMiss && this.o.labels && !this._relab) {
-          this._relab = requestAnimationFrame(() => { this._relab = 0; if (this._anchMiss) this._layout(); });
+        // les points d'ancrage arrivent avec les textures : on replace les étiquettes (une fois pour toutes celles qui arrivent ensemble)
+        if (this._anchMiss && this._labOn && !this._relab) {
+          this._relab = setTimeout(() => { this._relab = 0; if (this._anchMiss && this._alive && !this._frozen) { this._layout(); this._kick(true); } }, 160);
         }
         this._kick(true);
       };
@@ -685,7 +786,8 @@
     /* ---------- mise en page : caméra (assemblé / éclaté) et étiquettes ---------- */
     _resize() {
       if (this._frozen || !this.svg) return;
-      const b = this.svg.getBoundingClientRect();
+      const b = this.svg.getBoundingClientRect(), hb = this.host.getBoundingClientRect();
+      this._stage.place(b.left - hb.left - this.host.clientLeft, b.top - hb.top - this.host.clientTop);
       const w = Math.round(b.width), h = Math.round(b.height);
       if (!w || !h || (w === this._w && h === this._h)) return;
       this._w = w;
@@ -774,19 +876,33 @@
       return { k: pc.k + (box.k - pc.k) * lf, cx: pc.cx + (box.cx - pc.cx) * lf, cy: pc.cy + (box.cy - pc.cy) * lf };
     }
     _pad() { return this.hero ? 8 : 6; }
+    // la plus grande échelle que prendra la caméra (assemblé, éclaté et entre les deux)
+    _kTop() {
+      const n = this.layers.length, f = new Array(n);
+      let k = 0;
+      for (let E = 0; E <= 1.001; E += 0.125) {
+        for (let i = 0; i < n; i++) f[i] = inOut(clamp(E * (1 + STAGGER) - STAGGER * (n > 1 ? (n - 1 - i) / (n - 1) : 0)));
+        k = Math.max(k, this._fit(this._zs(f), smooth(0.25, 0.9, E)).k);
+      }
+      return k;
+    }
 
-    _layout() {
+    _layout(force) {
       const W = this._w, H = this._h;
       if (!W || !H || !this.layers) return;
       const n = this.layers.length;
       const dpr = window.devicePixelRatio || 1;
       this._kMax = (BB.bake.TIERS[this.hero ? 2 : 1] * 1.7) / dpr; // au-delà, la texture deviendrait floue
-      const plan = this.o.labels ? this._labelPlan(W, H) : null;
+      // les étiquettes : leur plan attend que le burger soit composé (_frame) ; ensuite il suit la taille et la langue
+      if (force) this._labOn = true;
+      const plan = this.o.labels && this._labOn ? this._labelPlan(W, H) : null;
+      this._labStale = !!this.o.labels && !this._labOn;
       this._colL = plan ? plan.colL : 0;
       this._colR = plan ? plan.colR : 0;
       this._cam0 = this._fit(this._zs(new Array(n).fill(0)), 0);
       this._cam1 = plan ? plan.cam : this._fit(this._zs(new Array(n).fill(1)), 1);
       this._camS = null;
+      if (this._stage) this._stage.scale(this._kTop() * 1.03); // (+3 % : le tassement à l'atterrissage)
       this._layoutLabels(plan);
     }
 
@@ -794,6 +910,7 @@
        On essaie une colonne à droite et deux colonnes (gauche/droite), avec la
        plus grande taille de texte possible (12 px au moins en grand format) ; on
        garde le plan qui tient et qui laisse le burger le plus grand. */
+    _font() { return this._fam || (this._fam = (getComputedStyle(this.svg).fontFamily || 'system-ui, sans-serif') + CJK); } // (lue une fois)
     _labelItems() {
       const items = [];
       this.layers.forEach((L) => { if (L.label) items.push({ L, text: labelOf(L, this.recipe, this.lang) }); });
@@ -804,7 +921,7 @@
       if (!items.length) return null;
       const n = this.layers.length;
       const zs1 = this._zs(new Array(n).fill(1));
-      const fam = (getComputedStyle(this.svg).fontFamily || 'system-ui, sans-serif') + CJK;
+      const fam = this._font();
       const fs0 = this.hero ? (W < 420 ? 13 : 14) : 10, fsMin = this.hero ? 12 : 9;
       this._anchMiss = false;
       let best = null;
@@ -866,7 +983,7 @@
 
     _layoutLabels(plan) {
       const g = this._labG;
-      g.style.fontFamily = (getComputedStyle(this.svg).fontFamily || 'system-ui, sans-serif') + CJK;
+      g.style.fontFamily = this._font();
       while (g.firstChild) g.removeChild(g.firstChild);
       this._labels = [];
       if (!plan) return;
@@ -932,7 +1049,9 @@
       if (!this._alive || this._frozen) return false;
       if (!force && !this._seen && typeof IntersectionObserver !== 'undefined') return false;
       const t = now / 1000;
-      const dt = this._tLast ? Math.min(0.05, Math.max(0, t - this._tLast)) : 1 / 60;
+      let dt = this._tLast ? Math.min(0.05, Math.max(0, t - this._tLast)) : 1 / 60;
+      // au réveil d'une sieste (un temps immobile, voir _sieste) : le temps passé compte en entier
+      if (this._nap) { if (this._auto && !this._frozen2) this._clock += Math.max(0, t - this._nap); this._nap = 0; clearTimeout(this._napT); dt = 1 / 60; }
       this._tLast = t;
       const n = this.layers.length;
       const ev = this._ev;
@@ -978,6 +1097,8 @@
           }
         }
       }
+      // les étiquettes : leur plan (mesures de texte, colonnes) attend que le burger soit composé, ou qu'on l'ouvre au doigt
+      if (this._labStale && !force && (!this._auto || (ph && ph.k !== 0) || this._E > 0)) this._layout(true);
       this._dir = dir;
       // balancement (au doigt)
       this._swayV += (-42 * this._sway - 6.5 * this._swayV) * dt;
@@ -986,6 +1107,7 @@
 
       const f = this._f || (this._f = new Array(n));
       let busy = this._auto || this._E !== this._target || this._sway !== 0 || this._dirty;
+      let calm = (this._auto || this._E === this._target) && this._sway === 0 && !this._drag; // (rien ne bouge : voir _sieste)
       for (let i = 0; i < n; i++) {
         const L = this.layers[i];
         // arrivée (composition) et départ (envol)
@@ -1012,10 +1134,10 @@
           if (!tgt) L.melting = false;
           const rate = tgt ? 1 / 0.55 : 1 / 0.14;
           L.m += (tgt - L.m) * (1 - Math.exp(-dt * rate * 3));
-          if (Math.abs(tgt - L.m) < 0.003) L.m = tgt; else busy = true;
+          if (Math.abs(tgt - L.m) < 0.003) L.m = tgt; else { busy = true; calm = false; }
         }
-        if (L.imp) busy = true;
-        if (fi > 0.001 && !BB.reduced && this.o.float) busy = true; // ça flotte
+        if (L.imp) { busy = true; calm = false; }
+        if (fi > 0.001 && !BB.reduced && this.o.float) { busy = true; calm = false; } // ça flotte
       }
       const zs = this._zs(f, this._zbuf || (this._zbuf = new Array(n)));
       const fl = BB.reduced || !this.o.float ? 0 : 1;
@@ -1040,9 +1162,7 @@
         L.z = zs[i] + dz;
         L.tx = dx; L.ty = -L.z * C; L.rot = rot;
         L.sx = 1 + 0.028 * sq; L.sy = (1 - 0.05 * sq) * pitch;
-        attr(L.el.g, 'transform', 'translate(' + r3(L.tx) + ' ' + r3(L.ty) + ') rotate(' + r2(rot) + ' 0 ' + r3(-L.top * C * 0.5) + ') scale(' + r3(L.sx) + ' ' + r3(L.sy) + ')');
-        attr(L.el.g, 'opacity', r2(al));
-        L.al = al;
+        L.al = al; // (la pose est appliquée avec la caméra, plus bas)
         // images : fondu du fromage et de la sauce, repli tant que la texture cuit
         const imgOk = !!L.imgOk, meltOk = !!L.meltOk;
         if (L.melt) {
@@ -1076,12 +1196,7 @@
       }
       // ombre au sol
       const L0 = this.layers[0], f0 = L0.f;
-      const gr = 1.16 * (1 + 0.3 * f0);
-      attr(this._ground, 'cx', r3(0.07 + 0.1 * f0));
-      attr(this._ground, 'cy', 0.02);
-      attr(this._ground, 'rx', r3(gr));
-      attr(this._ground, 'ry', r3(gr * S * 1.05));
-      attr(this._ground, 'opacity', r2((1 - 0.35 * f0) * smooth(0, 1, L0.c) * Math.max(0, L0.al)));
+      const gr = 1.16 * (1 + 0.3 * f0), gop = (1 - 0.35 * f0) * smooth(0, 1, L0.c) * Math.max(0, L0.al);
       // caméra : elle cadre la pile telle qu'elle est (on recule pendant l'éclaté), en douceur
       if (this._cam0) {
         const tg = this._fit(zs, smooth(0.25, 0.9, this._E));
@@ -1089,13 +1204,44 @@
         if (!cm) cm = this._camS = { k: tg.k, cx: tg.cx, cy: tg.cy };
         const q = 1 - Math.exp(-dt * 12);
         cm.k += (tg.k - cm.k) * q; cm.cx += (tg.cx - cm.cx) * q; cm.cy += (tg.cy - cm.cy) * q;
-        if (Math.abs(tg.k - cm.k) > 0.01 || Math.abs(tg.cx - cm.cx) > 0.05 || Math.abs(tg.cy - cm.cy) > 0.05) busy = true;
-        attr(this._cam, 'transform', 'translate(' + r2(cm.cx) + ' ' + r2(cm.cy) + ') scale(' + r3(cm.k) + ')');
+        if (Math.abs(tg.k - cm.k) > 0.01 || Math.abs(tg.cx - cm.cx) > 0.05 || Math.abs(tg.cy - cm.cy) > 0.05) { busy = true; calm = false; }
+        // chaque calque à sa place : la caméra × la couche (translation, bascule autour du milieu de son épaisseur, tassement)
+        const st = this._stage;
+        st.put(this._groundC, cm, gr, 0, 0, gr * S * 1.05, 0.07 + 0.1 * f0, 0.02, gop);
+        for (let i = 0; i < n; i++) {
+          const L = this.layers[i], th = (L.rot * Math.PI) / 180, co = Math.cos(th), si = Math.sin(th), oy = -L.top * C * 0.5;
+          st.put(L.cl, cm, co * L.sx, si * L.sx, -si * L.sy, co * L.sy, L.tx + oy * si, L.ty + oy - oy * co, L.al);
+        }
         this._k = cm.k; this._cx = cm.cx; this._cy = cm.cy;
         this._drawLabels();
       }
       this._dirty = false;
+      if (this._auto && calm && !force && !this._once && !this._frozen2 && ph && ph.k === 1 && this._sieste(t)) return false;
       return busy || (this._once && !force);
+    }
+    // un temps immobile du cycle (servi, détaillé…) : plus rien ne bouge ; on dort jusqu'à la suite, sans calculer
+    // une seule image (le temps passé est rendu à l'horloge au réveil)
+    _sieste(t) {
+      const left = this._holdLeft(this._clock);
+      if (left < 0.2) return false;
+      this._nap = t;
+      clearTimeout(this._napT);
+      this._napT = setTimeout(() => { this._napT = 0; this._kick(true); }, (left - 0.03) * 1000);
+      return true;
+    }
+    // le temps qui reste dans un temps immobile du cycle (0 ailleurs)
+    _holdLeft(tc) {
+      const P = this._T;
+      let u = ((tc % P.P) + P.P) % P.P;
+      if (u < P.comp) return 0;
+      u -= P.comp;
+      if (u < T.hold0) return T.hold0 - u;
+      u -= T.hold0 + T.up;
+      if (u < 0) return 0;
+      if (u < T.hold1) return T.hold1 - u;
+      u -= T.hold1 + T.down;
+      if (u < 0) return 0;
+      return u < T.hold2 ? T.hold2 - u : 0;
     }
 
     // étiquettes : apparaissent quand la couche est bien écartée ; le trait suit la couche qui flotte
@@ -1160,7 +1306,8 @@
       ticking.delete(this);
       unobserve(this);
       if (this._ro) { this._ro.disconnect(); this._ro = null; }
-      const svg = this.svg;
+      const svg = this.svg, stage = this._stage;
+      this._stage = null;
       this._aria();
       if (svg) {
         if (svg.style.aspectRatio) { img.style.height = 'auto'; img.style.aspectRatio = svg.style.aspectRatio; }
@@ -1172,15 +1319,20 @@
             setTimeout(() => {
               img.style.position = ''; img.style.left = ''; img.style.top = ''; img.style.transition = '';
               svg.remove();
+              if (stage) stage.remove();
             }, 380);
           };
           if (img.decode) img.decode().then(show, show); else img.onload = show;
         } else {
           svg.parentNode.replaceChild(img, svg);
+          if (stage) stage.remove();
         }
-      } else this.host.appendChild(img);
+      } else {
+        this.host.appendChild(img);
+        if (stage) stage.remove();
+      }
       this.svg = null;
-      this.layers.forEach((L) => { L.el = null; L.im = null; });
+      this.layers.forEach((L) => { L.el = null; L.im = null; L.cl = null; });
       this._labels = [];
     }
     // le burger assemblé, en pixels, avec les ombres de contact entre couches et l'ombre au sol
@@ -1294,5 +1446,5 @@
 
   BB.Burger = Burger;
   // les outils partagés avec les autres plats (bb-plat.js) : même horloge, mêmes observateurs, mêmes étiquettes
-  Burger._kit = { wake, observe, unobserve, injectCSS, measure, wrap, attr, clamp, smooth, inOut, outCubic, r2, r3, STILLS, S, C };
+  Burger._kit = { wake, observe, unobserve, injectCSS, measure, wrap, attr, clamp, smooth, inOut, outCubic, r2, r3, STILLS, S, C, Stage };
 })();

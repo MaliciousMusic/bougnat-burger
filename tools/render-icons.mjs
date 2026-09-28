@@ -1,5 +1,6 @@
-// L'icône de l'appli (écran d'accueil du téléphone, PWA) : leur logo tel quel, « BOUGNAT » courbé au-dessus et
-// « BURGER » au-dessous, comme à l'ouverture (Shrikhand, crème imprimé sur une ombre olive), sur le charbon.
+// L'icône de l'appli (écran d'accueil du téléphone, PWA) : un badge franc, comme une enseigne. Grand disque crème
+// cerclé sur le charbon, « BOUGNAT » courbé au-dessus et « BURGER » au-dessous (Shrikhand, en charbon), deux losanges
+// verts, et au centre leur logo tel quel, dans un médaillon charbon cerclé de vert.
 // Écrit les PNG (assets/icons/), assets/logo/icone-app.svg (source, police en @font-face) et assets/icons/favicon.svg
 // (le volcan seul : les mots seraient illisibles dans un onglet). Chrome sans tête.
 // Usage : node tools/render-icons.mjs
@@ -23,30 +24,30 @@ html, body { margin: 0; background: #1A130F; }
 <script src="${logoUrl}"></script>
 <script>
 window.dessiner = async function (k) {
-  await document.fonts.load("44px 'Shrikhand'");
+  await document.fonts.load("72px 'Shrikhand'");
   const L = BB.LOGO, NS = 'http://www.w3.org/2000/svg', svg = document.getElementById('ic');
   const S = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const a in attrs) e.setAttribute(a, attrs[a]); parent.appendChild(e); return e; };
   const f = (n) => Math.round(n * 100) / 100;
-  svg.innerHTML = '<defs><radialGradient id="fond" cx=".5" cy=".42" r=".76"><stop offset="0" stop-color="#3A271B"/><stop offset=".62" stop-color="#1D140F"/><stop offset="1" stop-color="#110C09"/></radialGradient></defs>'
+  // un badge franc, comme une enseigne : fond charbon, grand disque crème cerclé, les mots en charbon tout autour,
+  // au centre le médaillon charbon et leur volcan vert (repère 512)
+  svg.innerHTML = '<defs><radialGradient id="fond" cx=".5" cy=".4" r=".78"><stop offset="0" stop-color="#2E2018"/><stop offset=".7" stop-color="#1A130F"/><stop offset="1" stop-color="#110C09"/></radialGradient>'
+    + '<radialGradient id="creme" cx=".5" cy=".38" r=".7"><stop offset="0" stop-color="#FBF1DD"/><stop offset="1" stop-color="#EEDDBE"/></radialGradient>'
+    + '<radialGradient id="med" cx=".45" cy=".38" r=".75"><stop offset="0" stop-color="#3A2618"/><stop offset=".7" stop-color="#22160F"/><stop offset="1" stop-color="#170F0A"/></radialGradient></defs>'
     + '<rect width="512" height="512" fill="url(#fond)"/>';
-  const CX = 200, CY = 200, R_WORDS = 124, VOLCANO_W = 212;
-  const font = { family: 'Shrikhand', size: 44, spacing: 1.8, cap: 0.74 };
-  const g = S('g', { transform: 'translate(256 256) scale(' + (1.3 * k) + ') translate(-200 -200)' }, svg);
-  // le filet pointillé et les deux losanges verts entre les mots, comme à l'ouverture
-  S('circle', { cx: CX, cy: CY, r: R_WORDS - 10, fill: 'none', stroke: '#FBF4E6', 'stroke-opacity': 0.16, 'stroke-width': 1.4, 'stroke-dasharray': '2 6', 'stroke-linecap': 'round' }, g);
-  [-1, 1].forEach((side) => { const x = CX + side * (R_WORDS + 18), y = CY; S('path', { d: 'M' + x + ' ' + (y - 7) + 'L' + (x + 6) + ' ' + y + 'L' + x + ' ' + (y + 7) + 'L' + (x - 6) + ' ' + y + 'Z', fill: L.green }, g); });
-  // le volcan, tel quel
-  const s = VOLCANO_W / L.w, vh = L.h * s, vx = CX - VOLCANO_W / 2, vy = CY - vh / 2 + 6;
-  const vol = S('g', { transform: 'translate(' + f(vx) + ' ' + f(vy) + ') scale(' + f(s * 1000) / 1000 + ')' }, g);
-  S('path', { d: L.dGreen, fill: L.green, 'fill-rule': 'evenodd' }, vol);
-  S('path', { d: L.dWhite, fill: '#FFFFFF', 'fill-rule': 'evenodd' }, vol);
-  // les mots, lettre par lettre sur l'arc (même calcul que js/bb-splash.js)
+  const g = S('g', { transform: 'translate(256 256) scale(' + k + ') translate(-256 -256)' }, svg);
+  const CX = 256, CY = 256, R_BADGE = 232, R_MED = 120;
+  S('circle', { cx: CX, cy: CY + 6, r: R_BADGE + 4, fill: '#000', opacity: 0.35 }, g);
+  S('circle', { cx: CX, cy: CY, r: R_BADGE, fill: 'url(#creme)' }, g);
+  S('circle', { cx: CX, cy: CY, r: R_BADGE - 12, fill: 'none', stroke: '#1A130F', 'stroke-width': 4 }, g);
+  S('circle', { cx: CX, cy: CY, r: R_MED + 12, fill: 'none', stroke: '#1A130F', 'stroke-width': 2.5 }, g);
+  // les mots, lettre par lettre sur l'arc (le mot du bas se lit à l'endroit)
+  const font = { size: 64, spacing: 3, cap: 0.74 };
   const measure = S('text', { x: -999, y: -999, 'font-family': "'Shrikhand'", 'font-size': font.size }, svg);
   const widthOf = (ch) => { measure.textContent = ch; return measure.getComputedTextLength() || font.size * 0.7; };
-  const cap = font.size * font.cap;
+  const cap = font.size * font.cap, R_TXT = 160;
   function place(word, top) {
     const ws = [...word].map(widthOf);
-    const R = top ? R_WORDS : R_WORDS + cap, Rm = top ? R + cap * 0.35 : R - cap * 0.35;
+    const R = top ? R_TXT : R_TXT + cap, Rm = top ? R + cap * 0.35 : R - cap * 0.35;
     const total = ws.reduce((a, b) => a + b, 0) + font.spacing * (ws.length - 1);
     let acc = -total / 2;
     [...word].forEach((ch, i) => {
@@ -56,14 +57,21 @@ window.dessiner = async function (k) {
       const x = CX + R * Math.sin(th), y = top ? CY - R * Math.cos(th) : CY + R * Math.cos(th);
       const rot = top ? (th * 180) / Math.PI : (-th * 180) / Math.PI;
       const lg = S('g', { transform: 'translate(' + f(x) + ' ' + f(y) + ') rotate(' + f(rot) + ')' }, g);
-      const attrs = { 'text-anchor': 'middle', 'font-family': "'Shrikhand', Georgia, serif", 'font-size': font.size };
-      S('text', Object.assign({}, attrs, { x: 2, y: 2.6, fill: '#7C8A3A' }), lg).textContent = ch; // l'impression en deux couleurs : olive…
-      S('text', Object.assign({}, attrs, { fill: '#FBF4E6' }), lg).textContent = ch;                // … et crème
+      S('text', { 'text-anchor': 'middle', 'font-family': "'Shrikhand', Georgia, serif", 'font-size': font.size, fill: '#1A130F' }, lg).textContent = ch;
     });
   }
   place('BOUGNAT', true);
   place('BURGER', false);
   measure.remove();
+  // deux losanges verts entre les mots
+  [-1, 1].forEach((side) => { const x = CX + side * (R_TXT + 22), y = CY; S('path', { d: 'M' + x + ' ' + (y - 11) + 'L' + (x + 9) + ' ' + y + 'L' + x + ' ' + (y + 11) + 'L' + (x - 9) + ' ' + y + 'Z', fill: L.green }, g); });
+  // le médaillon charbon, cerclé du vert du logo, et le volcan
+  S('circle', { cx: CX, cy: CY, r: R_MED, fill: 'url(#med)' }, g);
+  S('circle', { cx: CX, cy: CY, r: R_MED - 5, fill: 'none', stroke: L.green, 'stroke-width': 3 }, g);
+  const VW = 186, s = VW / L.w, vh = L.h * s, vx = CX - VW / 2, vy = CY - vh / 2 + 4;
+  const vol = S('g', { transform: 'translate(' + f(vx) + ' ' + f(vy) + ') scale(' + f(s * 1000) / 1000 + ')' }, g);
+  S('path', { d: L.dGreen, fill: L.green, 'fill-rule': 'evenodd' }, vol);
+  S('path', { d: L.dWhite, fill: '#FFFFFF', 'fill-rule': 'evenodd' }, vol);
   return svg.outerHTML;
 };
 </script></body></html>`;
@@ -74,7 +82,7 @@ const JOBS = [
   ['apple-touch-icon.png', 180, 1],
   ['icon-192.png', 192, 1],
   ['icon-512.png', 512, 1],
-  ['icon-maskable-512.png', 512, 0.9], // tout dans le cercle de sécurité (80 %) du masque d'Android
+  ['icon-maskable-512.png', 512, 0.82], // tout dans le cercle de sécurité (80 %) du masque d'Android
 ];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const port = 9400 + Math.floor(Math.random() * 90);

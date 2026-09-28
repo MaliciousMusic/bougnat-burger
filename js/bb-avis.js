@@ -30,7 +30,7 @@
     points.innerHTML = BB.AVIS.map((_, i) => `<button type="button" aria-label="${esc(BB.t('avisN', { n: i + 1 }))}" data-i="${i}"></button>`).join('');
     points.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { touche = true; aller(+b.dataset.i); }));
     majPoints();
-    replis();
+    if (document.getElementById('nous') && document.getElementById('nous').classList.contains('is-active')) replis();
   }
   // « Lire la suite » seulement pour les avis qui dépassent leurs lignes
   function replis() {
@@ -109,7 +109,7 @@
     suivre();
     defiler();
     diaporama();
-    if (BB.on) BB.on('lang', render);
+    if (BB.on) { BB.on('lang', render); BB.on('view', (v) => { if (v === 'nous') replis(); }); }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();

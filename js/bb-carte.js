@@ -58,6 +58,20 @@
       <ellipse cx="52.5" cy="21.5" rx="7.5" ry="4.5" fill="#FFF3DC" opacity=".38" transform="rotate(-28 52.5 21.5)"/>
     </svg>`;
 
+  /* ---------- le moteur 3D (fiche seulement) : chargé à la demande, sans bloquer le démarrage ---------- */
+  const VERSION = ((document.currentScript && /\?v=[^&"]+/.exec(document.currentScript.src)) || [''])[0];
+  let moteur = null;
+  const moteurPret = () => !!(BB.Burger && BB.Plat);
+  function chargerMoteur() {
+    if (moteurPret()) return Promise.resolve();
+    if (moteur) return moteur;
+    const script = (f) => new Promise((ok) => { const s = document.createElement('script'); s.src = 'js/' + f + '.js' + VERSION; s.onload = ok; s.onerror = ok; document.head.appendChild(s); });
+    moteur = script('bb-bake').then(() => script('bb-burger')).then(() => script('bb-plat'));
+    // sans vignettes toutes prêtes (?cuire, outils), la carte se redessine avec le moteur
+    if (!BB.VIGNETTES) moteur.then(() => BB.emit('burgers-ready'));
+    return moteur;
+  }
+  BB.chargerMoteur = chargerMoteur;
   const byId = new Map();
   const all = () => [...BB.BURGER_LIST, ...BB.MENU_OTHER];
   all().forEach((it) => byId.set(it.id, it));
@@ -99,6 +113,32 @@
   };
   const AUTRES = { fond: 'fonte', sauce: 'sauce', eclate: 'eclate', recompose: 'rassemble', envol: 'envole', etiquette: 'etiquette', roule: 'roule', coupe: 'coupe', verse: 'verse', mousse: 'fizz', bulles: 'fizz' };
   let sonsJusqua = 0;
+  // la fiche : pendant que le plat en 3D prépare ses textures, sa vignette toute prête (fondue dès que la composition part)
+  function attente(vis, it, toujours) {
+    const url = BB.VIGNETTES && BB.VIGNETTES[it.id];
+    if (!url || (!toujours && (BB.reduced || (sheet.double && it.cat === 'burgers')))) return;
+    if (vis.querySelector('img.attente:not(.fin)')) return; // (déjà là : celle posée à l'ouverture de la fiche)
+    const img = new Image();
+    img.className = 'attente';
+    img.alt = '';
+    img.dataset.id = it.id;
+    img.src = url;
+    vis.appendChild(img);
+    setTimeout(() => finAttente(vis), 8000); // au pire
+  }
+  function finAttente(vis) {
+    const img = (vis || document).querySelector('#p-visual .attente, .attente');
+    if (!img) return;
+    img.classList.add('fin');
+    setTimeout(() => img.remove(), 400);
+  }
+  // les temps forts du plat de la fiche : le son ; la vignette d'attente s'efface ; après un tour, le plat s'arrête
+  // (plus rien ne tourne, il reste manipulable au doigt)
+  function evFiche(type, info) {
+    sonAssemblage(type, info);
+    if (type === 'compose') finAttente();
+    if (type === 'envol' && sheet.burger && sheet.burger.stop) sheet.burger.stop();
+  }
   function sonAssemblage(type, info) {
     info = info || {};
     if (!BB.sfx || info.hero === false || performance.now() > sonsJusqua) return;
@@ -129,7 +169,7 @@
       if (item && !host._burger) host._burger = monter(host, item, { size: 'card', labels: false, interactive: false, autoplay: 'once' });
     });
   }, { rootMargin: '200px 0px' }) : null;
-  const dessine = (it) => it.cat === 'burgers' || !!it.burger || !!(BB.Plat && BB.hasPlat && BB.hasPlat(it.id));
+  const dessine = (it) => it.cat === 'burgers' || !!it.burger || !!(BB.VIGNETTES && BB.VIGNETTES[it.id]) || !!(BB.Plat && BB.hasPlat && BB.hasPlat(it.id));
   function mountPlat(host, item, opts) {
     if (!BB.Plat || !BB.hasPlat || !BB.hasPlat(item.id)) return null;
     try {
@@ -144,7 +184,24 @@
   }
   // la variante dessinée par défaut d'une famille de boissons (sa teinte)
   const teinteDe = (it, v) => (v ? v.teinte || v.id : it.variants ? it.variants[0].teinte || it.variants[0].id : undefined);
+  // la vignette toute prête (assets/img/vignettes/, js/bb-vignettes.js) : une simple image, rien à cuire ni à animer
+  function vignette(host, item) {
+    const url = BB.VIGNETTES && BB.VIGNETTES[item.id];
+    if (!url) return null;
+    const ph = host.querySelector('.ph');
+    if (ph) ph.remove();
+    const img = new Image();
+    img.className = 'bb-still vignette';
+    img.alt = '';
+    img.decoding = 'async';
+    img.draggable = false;
+    img.onload = () => img.classList.add('charge');
+    img.src = url;
+    host.appendChild(img);
+    return { vignette: true, destroy() { img.remove(); } };
+  }
   function monter(host, item, opts) {
+    if (opts && opts.size === 'card') { const v = vignette(host, item); if (v) return v; }
     if (item.cat === 'burgers' || item.burger) return mountBurger(host, item, opts, {});
     return mountPlat(host, item, Object.assign({ variant: teinteDe(item) }, opts));
   }
@@ -174,7 +231,7 @@
 
   function tagsHTML(item) {
     const t = [];
-    const tag = (cls, txt, ic) => `<span class="${cls}" role="img" title="${esc(txt)}" aria-label="${esc(txt)}">${icon(ic)}</span>`;
+    const tag = (cls, txt, ic) => `<span class="${cls}" role="img" title="${esc(txt)}" aria-label="${esc(txt)}">${icon(ic + '-net')}</span>`; // sans encre : elles sont des dizaines
     if (item.veggie) t.push(tag('tag', BB.t('veggie'), 'i-feuille'));
     if (item.raw) t.push(tag('tag', BB.t('raw'), 'i-lait-cru'));
     if (item.spicy) t.push(tag('tag hot', BB.t('spicy'), 'i-piment'));
@@ -428,9 +485,23 @@
   function drawSheetVisual() {
     const vis = $('#p-visual');
     if (sheet.burger) { try { sheet.burger.destroy(); } catch (e) { /* */ } live.delete(sheet.burger); sheet.burger = null; }
-    vis.innerHTML = '';
     const it = sheet.item;
+    // la vignette d'attente posée à l'ouverture (même plat) reste en place : pas d'éclair
+    const garde = vis.querySelector('img.attente:not(.fin)');
+    vis.innerHTML = '';
+    const garder = () => { if (garde && garde.dataset.id === it.id) vis.appendChild(garde); };
     const isBurger = it.cat === 'burgers' || it.burger;
+    if (!moteurPret() && BB.VIGNETTES && BB.VIGNETTES[it.id]) {
+      // le moteur 3D se charge : la vignette en attendant, le plat se compose dès qu'il est là
+      vis.classList.remove('small');
+      vis.classList.add('vis');
+      vis.innerHTML = '';
+      garder();
+      attente(vis, it, true);
+      const id = it.id;
+      chargerMoteur().then(() => { if (sheet.item && sheet.item.id === id && !$('#sheet-product').hidden) drawSheetVisual(); });
+      return;
+    }
     const plat = !isBurger && BB.Plat && BB.hasPlat && BB.hasPlat(it.id);
     vis.classList.toggle('small', !isBurger && !plat);
     if (plat) {
@@ -438,12 +509,16 @@
       vis.innerHTML = `<div class="ph">${icon(cat ? cat.icon : 'i-burger')}</div>`;
       vis.classList.add('vis');
       sonsJusqua = performance.now() + 12000;
-      sheet.burger = mountPlat(vis, it, { size: 'hero', labels: true, interactive: true, autoplay: true, variant: teinteDe(it, variante()), onEvent: sonAssemblage });
+      garder();
+      attente(vis, it);
+      sheet.burger = mountPlat(vis, it, { size: 'hero', labels: true, interactive: true, autoplay: true, float: false, variant: teinteDe(it, variante()), onEvent: evFiche });
     } else if (isBurger) {
       vis.innerHTML = `<div class="ph">${icon('i-burger')}</div>`;
       vis.classList.add('vis');
       sonsJusqua = performance.now() + 12000;
-      sheet.burger = mountBurger(vis, it, { size: 'hero', labels: true, interactive: true, autoplay: true, onEvent: sonAssemblage }, { double: sheet.double, veggie: sheet.veggie || it.id === 'vegetario' });
+      garder();
+      attente(vis, it);
+      sheet.burger = mountBurger(vis, it, { size: 'hero', labels: true, interactive: true, autoplay: true, shadows: false, float: false, onEvent: evFiche }, { double: sheet.double, veggie: sheet.veggie || it.id === 'vegetario' });
     } else {
       const cat = BB.CATS.find((c) => c.id === it.cat);
       vis.innerHTML = `<div class="ph">${icon(cat ? cat.icon : 'i-burger')}</div>`;
@@ -463,10 +538,23 @@
     sheet.qty = 1;
     refreshSheet(false);
     BB.openSheet('#sheet-product', () => {
+      clearTimeout(sheet.montage);
       if (sheet.burger) { try { sheet.burger.destroy(); } catch (e) { /* */ } live.delete(sheet.burger); sheet.burger = null; }
     });
     placerGeste(); // la fiche est affichée : le tampon se cale sur l'empreinte
-    requestAnimationFrame(drawSheetVisual);
+    // la fiche glisse d'abord, sa vignette toute prête dedans ; le plat en 3D se monte une fois qu'elle est en place
+    // (tout le calcul du montage tombait sur la première image de la glissade)
+    clearTimeout(sheet.montage);
+    if (!dessine(it)) { drawSheetVisual(); return; } // (rien à monter : l'icône de la rubrique, tout de suite)
+    const vis = $('#p-visual');
+    if (sheet.burger) { try { sheet.burger.destroy(); } catch (e) { /* */ } live.delete(sheet.burger); sheet.burger = null; }
+    vis.innerHTML = '';
+    vis.classList.remove('small');
+    vis.classList.add('vis');
+    attente(vis, it, true);
+    sheet.montage = setTimeout(() => {
+      if (sheet.item === it && !$('#sheet-product').hidden) drawSheetVisual();
+    }, BB.reduced ? 0 : 470);
   }
   BB.openProduct = openSheet;
 
@@ -500,6 +588,14 @@
   BB.carte = {
     init() {
       try { document.fonts.load("12px 'Alfa Slab One'"); } catch (e) { /* la police du tampon, chargée d'avance */ }
+      // le moteur 3D se charge quand on s'arrête sur la carte (2,5 s sans défiler), jamais en plein défilement
+      let planMoteur = 0;
+      const planifier = () => { if (moteur) return; clearTimeout(planMoteur); planMoteur = setTimeout(chargerMoteur, 2500); };
+      BB.on('view', (v) => { if (v === 'carte') planifier(); else clearTimeout(planMoteur); });
+      const scMoteur = document.getElementById('carte-scroll');
+      if (scMoteur) scMoteur.addEventListener('scroll', planifier, { passive: true });
+      if (!BB.VIGNETTES) chargerMoteur(); // pas de vignettes : le moteur tout de suite
+      document.addEventListener('pointerdown', (e) => { if (e.target.closest && e.target.closest('[data-open]')) chargerMoteur(); }, { passive: true });
       renderChips();
       renderMenu();
       renderSignatures();

@@ -756,6 +756,7 @@ a { color: inherit; }
 .grid-burgers > :nth-child(2n) .bb-still, .sig-row > :nth-child(2n) .bb-still { animation-duration: 7.2s; animation-delay: 1.1s; }
 .grid-burgers > :nth-child(3n) .bb-still, .sig-row > :nth-child(3n) .bb-still { animation-duration: 5.8s; animation-delay: 1.9s; }
 .view:not(.is-active) .bb-still { animation-play-state: paused; }
+html.feuille .vis .bb-still { animation-play-state: paused; } /* une fiche ouverte par-dessus : la carte derrière s'immobilise */
 @keyframes flotte {
   0%, 100% { transform: translate(0, 0) rotate(0deg); }
   25% { transform: translate(-2.5px, -3px) rotate(-1.2deg); }
@@ -1219,3 +1220,15 @@ legend { font: 400 20px/1.1 var(--f-display); margin-bottom: 12px; padding: 0 2p
 .ens-hublot { width: 34px; height: 34px; }
 .ardoise-state { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 18px; }
 .week-now { margin: 0 0 10px; font: 400 16px/1.25 var(--f-display); color: var(--pomme); }
+
+/* les vignettes toutes prêtes : une image qui apparaît en fondu (puis flotte, comme avant) */
+.vis > img.bb-still.vignette { display: block; width: 100%; height: 100%; object-fit: contain; -webkit-user-select: none; user-select: none; pointer-events: none; opacity: 0; transition: opacity 0.35s ease; }
+.vis > img.bb-still.vignette.charge { opacity: 1; }
+/* la fiche : la vignette pendant que le plat en 3D se prépare */
+.p-visual > img.attente { position: absolute; left: 50%; top: 50%; width: 78%; height: 78%; object-fit: contain; transform: translate(-50%, -46%); z-index: 1; pointer-events: none; transition: opacity 0.22s ease; } /* (vite : les couches tombent déjà) */
+.p-visual > img.attente.fin { opacity: 0; }
+
+/* un onglet jamais ouvert n'existe pas encore pour le navigateur (rien à mettre en page au démarrage) ;
+   une fois ouvert (.vue, posé par bb-app.js), il reste mis en page quand on le quitte : sa position de défilement est gardée.
+   (Pas de content-visibility : sur les onglets cachés, Chrome recalculait tout à chaque image, sans fin.) */
+.view:not(.is-active):not(.vue) { display: none; }

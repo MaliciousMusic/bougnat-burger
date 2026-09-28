@@ -28,7 +28,7 @@ Puis http://localhost:5188 (serveur sans cache). Un double-clic sur `index.html`
 |---|---|
 | **Ouverture** | Leur logo : le volcan vert peint au pinceau et son contour blanc, vectorisés tels quels, dans un hublot à jante verte, la chaîne des Puys au pied de l'écran. Le vert se peint d'un coup de pinceau, puis le contour ; « BOUGNAT » et « BURGER » s'enroulent autour, en filigrane (Shrikhand). « Entrer » (le geste qui autorise le son) : les lettres éclosent une à une, chacune sur sa note, accord final, un reflet traverse le volcan et il fume. Son coupé : elle part toute seule. |
 | **Accueil** | L'enseigne des horaires en haut (un petit hublot qui passe à la nuit quand c'est fermé, un voyant vert qui bat quand c'est ouvert ; à l'heure de Paris : « Ouvert · jusqu'à 22h », « Ce soir dès 18h30 », « Fermé · ouvre mercredi à 11h30 ») qui se déplie sur la semaine. Le petit film, « Le bougnat s'est trompé de sac » (31 s, 17 plans, en boucle) : dans l'avion au-dessus des Puys, il prend le sac à emporter au lieu du parachute, saute, tire la poignée… et un menu s'envole. Il rattrape burger, frites et bière, mange tout, devient costaud, s'écrase dans un nuage de fumée, se relève indemne, remet sa casquette et croque une dernière frite. Dessiné et animé en SVG dans le navigateur, avec sa bande-son synthétisée. Accès rapides : Réserver · Commander · Appeler · Itinéraire. Les incontournables. La note Google. |
-| **Carte** | Une seule source pour le français et l'anglais (`js/bb-data.js`) : plus de carte anglaise ressaisie à la main. Rubriques collantes, puces qui y mènent. Chaque burger dessiné en pseudo-3D se compose puis flotte ; dans la fiche, il s'ouvre « en éclaté ». Fiche : « Ti' » ou double, steak ou galette, description recalculée depuis les ingrédients, tampon « frites maison », lait cru, allergènes déduits (à confirmer), quantité, ajout au sac. |
+| **Carte** | Une seule source pour le français et l'anglais (`js/bb-data.js`) : plus de carte anglaise ressaisie à la main. Rubriques collantes, puces qui y mènent. Chaque plat a sa vignette toute prête (une image cuite d'avance) qui flotte doucement ; dans la fiche, il se compose en pseudo-3D sous vos yeux, puis s'ouvre « en éclaté ». Fiche : « Ti' » ou double, steak ou galette, description recalculée depuis les ingrédients, tampon « frites maison », lait cru, allergènes déduits (à confirmer), quantité, ajout au sac. |
 | **Commander** | À emporter : burgers, plats, desserts et boissons (softs, bières des Sagnes et Desprat, vins : le choix se fait dans la fiche ; mention alcool et vente interdite aux mineurs), le sac, les créneaux de retrait (aujourd'hui, sinon le prochain jour d'ouverture), prénom et téléphone, un mot pour la cuisine (allergies), paiement **simulé**, ticket tamponné avec numéro de commande. En livraison : Uber Eats, Deliveroo, Raboule, et l'encart « bientôt, directement ici ». |
 | **Réserver** | Jours d'ouverture sur deux semaines, midi ou soir, heures de leur module actuel, couverts, prénom, téléphone : demande **simulée**. À partir de 10 couverts, un bouton « Appeler pour confirmer » remplace la demande en ligne. |
 | **Nous** (la nuit sur les banquettes vertes) | L'histoire des bougnats, la salle vue par son hublot (peinte en vectoriel d'après une photo, jamais la photo elle-même), ce qu'il y a dans le pain (4 AOP, bœuf VBF, frites maison, bières du coin), une fenêtre sur les avis Google (une sélection d'avis réels, tels quels et datés, qu'on fait glisser), le diaporama des photos du restaurant dans le hublot, l'adresse, l'itinéraire, les réseaux, les mentions légales. |
@@ -45,7 +45,8 @@ js/bb-splash.js         l'ouverture : leur logo sur l'écusson, les mots enroul�
 js/bb-hours.js          l'ardoise des horaires
 js/bb-carte.js          la carte, la fiche d'un plat
 js/bb-bake.js           les textures des ingrédients, calculées dans le navigateur (Web Workers, cache IndexedDB)
-js/bb-burger.js         les burgers en éclaté qui se composent (pseudo-3D, textures réalistes)
+js/bb-burger.js         les burgers en éclaté qui se composent (pseudo-3D, textures réalistes, un calque par couche)
+js/bb-vignettes.js      les vignettes toutes prêtes de la carte (assets/img/vignettes/, générées par tools/render-vignettes.mjs)
 js/bb-plat.js           les autres plats dessinés de la même façon (viandes, salades, wraps…)
 js/bb-avis.js           la fenêtre des avis Google et le diaporama du hublot de « Nous »
 js/bb-shop.js           le sac, le retrait, la livraison
@@ -63,7 +64,8 @@ tools/tampon/           le tampon « frites maison » de la fiche (dessin géné
 js/i18n/bb-lang-es.js   l'espagnol ; bb-lang-zh.js le chinois simplifié (interface par clé, données : texte français → traduction)
 tools/i18n/             extraire.mjs (tous les textes à traduire → source.json) et verifier.mjs (rien d'oublié, variables et balises intactes)
 tools/fetch-fonts.py    polices hébergées sur le site (css/fonts.css + assets/fonts/)
-tools/render-icons.mjs  icônes PNG depuis assets/logo/badge.svg
+tools/render-icons.mjs  l'icône de l'appli : le badge crème, leur volcan au centre (PNG + assets/logo/icone-app.svg)
+tools/render-vignettes.mjs  les vignettes de la carte, cuites par le moteur 3D puis figées en WebP
 tools/render-og.mjs     image de partage (assets/img/og-bougnat.png)
 assets/img/hublot-ciel.svg  le couchant d'affiche sur les Puys, au fond de chaque hublot
 tools/dev-server.py     serveur local sans cache
@@ -71,7 +73,7 @@ tools/set-domain.mjs    mettre le vrai domaine partout
 tools/bump.mjs          estampiller CSS et JS avant chaque publication (cache GitHub Pages)
 ```
 
-Après une modification de la carte : `node tools/build-menu.mjs`.
+Après une modification de la carte : `node tools/build-menu.mjs` ; d'un plat dessiné ou d'une texture : `node tools/render-vignettes.mjs`.
 
 ## À confirmer avec le restaurant
 
@@ -83,6 +85,14 @@ Après une modification de la carte : `node tools/build-menu.mjs`.
 - **Mentions légales** : capital, TVA, directeur de la publication (le gérant), hébergeur de production.
 - **Nom de domaine** : aujourd'hui au nom d'« ELTEG SAS » ; à transférer au nom de CHABAILLE.
 - **Logo** : vectorisé depuis leur site ; demander le fichier source (vectoriel) pour la version finale.
+
+## Fluidité (téléphones modestes compris)
+
+- la carte et l'accueil affichent des vignettes toutes prêtes (WebP) : rien à calculer en faisant défiler ; elles flottent sur le compositeur, et seulement à l'écran ;
+- le moteur 3D (textures, burgers, plats) n'est chargé que pour les fiches : quand on s'arrête sur la carte, ou dès qu'on touche un plat ;
+- dans la fiche, chaque couche est un calque que le processeur graphique déplace sans rien repeindre ; pendant les temps immobiles du cycle, plus aucune image n'est calculée ; la fiche glisse d'abord avec sa vignette, le plat se monte ensuite ;
+- un onglet jamais ouvert n'est pas mis en page ; les pastilles des vignettes n'ont pas de filtre d'encre ;
+- mesures (Chrome, processeur ralenti ×4, écran de téléphone) : carte au repos 88 % → 3 % d'occupation ; défilement de la carte ~30 → 50–60 images/s ; fiche ouverte 98 % → 45 % d'occupation, 0 % pendant les temps immobiles ; première vignette 10–11 s → 2,5 s.
 
 ## Passer en production
 

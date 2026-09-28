@@ -2,7 +2,7 @@
    Bougnat Burger — les autres plats en 3D : viandes, salades, wraps, desserts, boissons
    Même cuisine que les burgers (bb-bake.js : chaque élément cuit pixel par
    pixel, lumière de studio) et même moteur (bb-burger.js : horloge commune,
-   observateurs, étiquettes, image figée des cartes).
+   observateurs, étiquettes, calques composités, image figée des cartes).
    Présentation calquée sur celle du restaurant :
      · viandes : assiette blanche, la viande grillée (bavette tranchée au bout,
        steak haché épais au cœur saignant), frites maison et salade maison ;
@@ -52,7 +52,7 @@
   const BB = window.BB;
   if (!BB || !BB.Burger || !BB.Burger._kit || !BB.bake) return;
   const K = BB.Burger._kit;
-  const { wake, observe, unobserve, injectCSS, measure, wrap: wrapText, attr, clamp, smooth, inOut, outCubic, r2, r3 } = K;
+  const { wake, observe, unobserve, injectCSS, measure, wrap: wrapText, attr, clamp, smooth, inOut, outCubic, r2, r3, Stage } = K;
   const PHI_PLAT = BB.bake.PHI_PLAT || 40;
   const XLINK = 'http://www.w3.org/1999/xlink';
   const SHADOW = '#140C08';
@@ -304,6 +304,7 @@
       if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
       this.svg = BB.svg('svg', { class: 'bb-burger bb-plat bb-plat--' + (hero ? 'hero' : 'card'), role: 'img', focusable: 'false' });
       host.appendChild(this.svg);
+      this._stage = new Stage(host, this.svg); // les éléments, sous le SVG des étiquettes
       if (host.clientHeight < 8) { this.svg.style.height = 'auto'; this.svg.style.aspectRatio = hero ? '4 / 3' : '1 / 1'; }
       this._build();
       this._aria();
@@ -395,10 +396,13 @@
     }
     destroy() {
       this._alive = false;
+      clearTimeout(this._napT);
+      clearTimeout(this._relab);
       unobserve(this);
       if (this._ro) this._ro.disconnect();
       if (this._hit) this._hit.remove();
       if (this.svg) this.svg.remove();
+      if (this._stage) this._stage.remove();
       if (this._img) this._img.remove();
       if (this.host.__bb === this) this.host.__bb = null;
     }
@@ -429,25 +433,26 @@
       return BB.svg('image', { x: r3(fr.x0), y: r3(fr.y0), width: r3(fr.x1 - fr.x0), height: r3(fr.y1 - fr.y0), preserveAspectRatio: 'none', opacity: 0 }, g);
     }
     _build() {
-      const svg = this.svg, uid = this.uid, sc = this.scene, C = this._C;
+      const svg = this.svg, uid = this.uid, sc = this.scene, C = this._C, st = this._stage;
       while (svg.firstChild) svg.removeChild(svg.firstChild);
-      const defs = BB.svg('defs', null, svg);
-      const g0 = BB.svg('radialGradient', { id: uid + '-gr' }, defs);
+      st.clear();
+      // l'ombre au sol : un disque (rayon 1) au dégradé doux, étiré et placé à chaque image
+      const gc = this._groundC = st.layer({ x0: -1, y0: -1, x1: 1, y1: 1 }, 1.3);
+      const g0 = BB.svg('radialGradient', { id: uid + '-gr' }, gc.defs);
       [[0, 0.5], [0.5, 0.34], [0.78, 0.12], [1, 0]].forEach(([o, a]) => BB.svg('stop', { offset: o, 'stop-color': SHADOW, 'stop-opacity': a }, g0));
-      this._cam = BB.svg('g', { class: 'bb-cam' }, svg);
-      this._ground = BB.svg('ellipse', { fill: 'url(#' + uid + '-gr)', opacity: 0 }, this._cam);
+      BB.svg('ellipse', { cx: 0, cy: 0, rx: 1, ry: 1, fill: 'url(#' + uid + '-gr)' }, gc.g);
+      // par-dessus, dans le repère de la caméra : le couteau (il ne passe qu'un instant)
+      this._camO = BB.svg('g', { class: 'bb-cam' }, svg);
+      this._knife = null;
+      this._knifeA = 0;
       this._imgs = {}; // texture → éléments image qui la montrent
       const reg = (tex, el) => { (this._imgs[tex] || (this._imgs[tex] = [])).push(el); return el; };
+      const shown = (el) => { el.setAttribute('opacity', 1); return el; };
+      // chaque élément dans son calque (voir BB.Burger._kit.Stage), à la taille de ses textures
+      const layer = (texs) => st.layer(Stage.box(texs.filter(Boolean).map((t) => BB.bake.frame(t))));
       // le plat (assiette, ardoise)
-      const bg = BB.svg('g', { class: 'bb-l' }, this._cam);
-      this.base = { tex: sc.base, g: bg, img: reg(sc.base, this._image(bg, sc.base)), frame: BB.bake.frame(sc.base) };
-      // les ingrédients ; pour un wrap, ceux de la galette ouverte dans un groupe découpé pendant qu'on roule
-      let parent = this._cam;
-      if (sc.kind === 'wrap') {
-        const cp = BB.svg('clipPath', { id: uid + '-roll' }, defs);
-        this._rollClip = BB.svg('rect', { x: -3, y: -3, width: 6, height: 6 }, cp);
-        parent = this._flat = BB.svg('g', { 'clip-path': 'url(#' + uid + '-roll)' }, this._cam);
-      }
+      const bc = layer([sc.base]);
+      this.base = { tex: sc.base, cl: bc, img: shown(reg(sc.base, this._image(bc.g, sc.base))), frame: BB.bake.frame(sc.base) };
       const n = sc.layers.length;
       // dessin de l'arrière vers l'avant (le tas de salade d'abord) ; l'ordre d'arrivée reste celui de la scène
       // (desserts et boissons : les scènes sont déjà écrites de l'arrière vers l'avant)
@@ -455,15 +460,24 @@
       const order = flat ? sc.layers.map((x, i) => i)
         : sc.layers.map((x, i) => i).sort((a, b) => (a === 0 && sc.kind === 'salade' ? -9 : DEPTH[sc.layers[a].tex] || 0) - (b === 0 && sc.kind === 'salade' ? -9 : DEPTH[sc.layers[b].tex] || 0));
       this._order = order;
-      const groups = [];
-      order.forEach((i) => { groups[i] = BB.svg('g', { class: 'bb-l', opacity: 0 }, parent); });
       const vkey = this._variant;
+      const texs = sc.layers.map((spec) => { const full = spec.vary ? texOf(spec, vkey) : spec.tex; return { full, tex: spec.pour ? full + '-vide' : full }; });
+      const cls = [];
+      order.forEach((i) => { const spec = sc.layers[i]; cls[i] = layer([spec.under, texs[i].tex, spec.pour ? texs[i].full : null, spec.sliced]); });
+      // un wrap : la galette ouverte se roule (chaque couche garde ce qui est derrière la ligne du rouleau, voir _place)
+      const wrap = sc.kind === 'wrap';
+      this._flatO = 1;
+      this._clipB = null;
       this.layers = sc.layers.map((spec, i) => {
-        const g = groups[i];
-        const full = spec.vary ? texOf(spec, vkey) : spec.tex;
-        const L = { i, spec, full, tex: spec.pour ? full + '-vide' : full, w: spec.w, g, frame: BB.bake.frame(full), c: 0, d: 0, f: 0, imp: 0, al: 0, lz: 0, dz: 0, fill: 1 };
-        if (spec.under) { L.under = spec.under; L.underImg = reg(spec.under, this._image(g, spec.under)); }
-        L.img = reg(L.tex, this._image(g, L.tex));
+        const cl = cls[i], g = cl.g, defs = cl.defs, full = texs[i].full;
+        const L = { i, spec, full, tex: texs[i].tex, w: spec.w, cl, frame: BB.bake.frame(full), c: 0, d: 0, f: 0, imp: 0, al: 0, lz: 0, dz: 0, fill: 1 };
+        if (spec.under) { L.under = spec.under; L.underImg = shown(reg(spec.under, this._image(g, spec.under))); }
+        L.img = shown(reg(L.tex, this._image(g, L.tex)));
+        if (wrap) {
+          const cp = BB.svg('clipPath', { id: uid + '-roll' + i }, defs);
+          L.rollRect = BB.svg('rect', { x: -3, y: -3, width: 6, height: 6 }, cp);
+          L.rollUrl = 'url(#' + uid + '-roll' + i + ')';
+        }
         if (spec.pour) {
           // le verre plein se découvre de bas en haut : la boisson monte
           const fr = L.frame;
@@ -480,17 +494,17 @@
           this._sliceClip = BB.svg('rect', { x: 3, y: -3, width: 6, height: 6 }, cp);
           L.sliced = reg(spec.sliced, this._image(g, spec.sliced));
           L.sliced.setAttribute('clip-path', 'url(#' + uid + '-cut)');
-          this._knife = BB.svg('line', { stroke: '#FFF4DE', 'stroke-linecap': 'round', opacity: 0 }, this._cam);
+          this._knife = BB.svg('line', { stroke: '#FFF4DE', 'stroke-linecap': 'round', opacity: 0 }, this._camO);
         }
         L.kind = kindOf(spec, full);
         return L;
       });
       if (sc.kind === 'wrap') {
-        const mk = (tex) => { const g = BB.svg('g', { class: 'bb-l', opacity: 0 }, this._cam); return { tex, g, img: reg(tex, this._image(g, tex)), frame: BB.bake.frame(tex) }; };
+        const mk = (tex) => { const cl = layer([tex]); return { tex, cl, img: shown(reg(tex, this._image(cl.g, tex))), frame: BB.bake.frame(tex), m6: null, al: 0 }; };
         this.roll = mk('wrap-roule');
         this.halfB = mk('wrap-' + sc.rec + '-b');
         this.halfA = mk('wrap-' + sc.rec + '-a');
-        this._knife = BB.svg('line', { stroke: '#FFF4DE', 'stroke-linecap': 'round', opacity: 0 }, this._cam);
+        this._knife = BB.svg('line', { stroke: '#FFF4DE', 'stroke-linecap': 'round', opacity: 0 }, this._camO);
       }
       this._labG = BB.svg('g', { class: 'bb-lab' }, svg);
       this._labels = [];
@@ -572,6 +586,8 @@
         if (c2 && c2.t.tier >= t.tier) return;
         this._tex[tex] = { t, im, tier: t.tier };
         (this._imgs[tex] || []).forEach((el) => {
+          const cl = el.ownerSVGElement && el.ownerSVGElement.__cl;
+          if (cl && this._stage) this._stage.grow(cl, t.frame);
           el.setAttribute('href', t.url);
           el.setAttributeNS(XLINK, 'xlink:href', t.url);
           el.setAttribute('x', r3(t.frame.x0));
@@ -579,7 +595,7 @@
           el.setAttribute('width', r3(t.frame.x1 - t.frame.x0));
           el.setAttribute('height', r3(t.frame.y1 - t.frame.y0));
         });
-        if (this.o.labels && this._anchMiss && !this._relab) this._relab = requestAnimationFrame(() => { this._relab = 0; if (this._anchMiss) this._layout(); });
+        if (this._labOn && this._anchMiss && !this._relab) this._relab = setTimeout(() => { this._relab = 0; if (this._anchMiss && this._alive && !this._frozen) { this._layout(); this._kick(true); } }, 160);
         this._kick(true);
       };
       im.src = t.url;
@@ -592,7 +608,8 @@
     /* ---------- mise en page ---------- */
     _resize() {
       if (this._frozen || !this.svg) return;
-      const b = this.svg.getBoundingClientRect();
+      const b = this.svg.getBoundingClientRect(), hb = this.host.getBoundingClientRect();
+      this._stage.place(b.left - hb.left - this.host.clientLeft, b.top - hb.top - this.host.clientTop);
       const w = Math.round(b.width), h = Math.round(b.height);
       if (!w || !h || (w === this._w && h === this._h)) return;
       this._w = w;
@@ -653,16 +670,27 @@
       if (lf <= 0) return pc;
       return { k: pc.k + (box.k - pc.k) * lf, cx: pc.cx + (box.cx - pc.cx) * lf, cy: pc.cy + (box.cy - pc.cy) * lf };
     }
-    _layout() {
+    // la plus grande échelle que prendra la caméra (servi, détaillé et entre les deux) : la finesse des calques
+    _kTop() {
+      const wrap = this.scene.kind === 'wrap';
+      let k = 0;
+      for (let E = 0; E <= 1.001; E += 0.125) k = Math.max(k, this._fit(E, wrap ? smooth(0.6, 0.95, E) : smooth(0.2, 0.85, E)).k);
+      return k;
+    }
+    _layout(force) {
       const W = this._w, H = this._h;
       if (!W || !H || !this.layers) return;
       const dpr = window.devicePixelRatio || 1;
       this._kMax = (BB.bake.TIERS[this.hero ? 2 : 1] * 1.7) / dpr;
-      const plan = this.o.labels ? this._labelPlan(W, H) : null;
+      // les étiquettes : leur plan attend que le plat soit composé (_frame) ; ensuite il suit la taille, la langue, la variante
+      if (force) this._labOn = true;
+      const plan = this.o.labels && this._labOn ? this._labelPlan(W, H) : null;
+      this._labStale = !!this.o.labels && !this._labOn;
       this._colL = plan ? plan.colL : 0;
       this._colR = plan ? plan.colR : 0;
       this._cam0 = this._fit(0, 0);
       this._camS = null;
+      if (this._stage) this._stage.scale(this._kTop() * 1.03); // (+3 % : le tassement à l'atterrissage)
       this._layoutLabels(plan);
     }
 
@@ -698,7 +726,7 @@
       const an = aa ? aa[side > 0 ? 0 : 1] : [side > 0 ? f.x1 - 0.15 : f.x0 + 0.15, 0, 0];
       return { x: an[0], y: an[1] * S - (an[2] + lz) * C, lz };
     }
-    _font() { return (getComputedStyle(this.svg).fontFamily || 'system-ui, sans-serif') + CJK; }
+    _font() { return this._fam || (this._fam = (getComputedStyle(this.svg).fontFamily || 'system-ui, sans-serif') + CJK); } // (lue une fois)
     _labelPlan(W, H) {
       const items = this._labelItems();
       if (!items.length) return null;
@@ -834,7 +862,9 @@
       if (!this._alive || this._frozen) return false;
       if (!force && !this._seen && typeof IntersectionObserver !== 'undefined') return false;
       const t = now / 1000;
-      const dt = this._tLast ? Math.min(0.05, Math.max(0, t - this._tLast)) : 1 / 60;
+      let dt = this._tLast ? Math.min(0.05, Math.max(0, t - this._tLast)) : 1 / 60;
+      // au réveil d'une sieste (un temps immobile, voir _sieste) : le temps passé compte en entier
+      if (this._nap) { if (this._auto && !this._frozen2) this._clock += Math.max(0, t - this._nap); this._nap = 0; clearTimeout(this._napT); dt = 1 / 60; }
       this._tLast = t;
       const sc = this.scene, n = this.layers.length, S = this._S, C = this._C;
       const ev = this._ev;
@@ -871,7 +901,10 @@
         if (this._wantAuto && !this._drag && this._resumeAt && t > this._resumeAt) { this._resumeAt = 0; this.play(); }
         ev.seg = -2;
       }
+      // les étiquettes : leur plan (mesures de texte, colonnes) attend que le plat soit composé, ou qu'on l'ouvre au doigt
+      if (this._labStale && !force && (!this._auto || (ph && ph.k !== 'comp'))) this._layout(true);
       let busy = this._auto || this._E !== this._target || this._dirty;
+      let calm = (this._auto || this._E === this._target) && !this._drag; // (rien ne bouge : voir _sieste)
       const E = this._E;
       // l'assiette (ou l'ardoise) : là tout de suite, en fondu
       const bOk = this._ok(this.base.tex);
@@ -879,7 +912,6 @@
       if (ph && ph.k === 'comp') baseA = bOk ? smooth(0, 0.25, ph.u) : 0;
       if (baseA > 0 && !(this._baseA > 0) && ph && ph.k === 'comp') { const kd = kindOf(null, this.base.tex); this._emit('pose', { kind: kd[0], id: this.base.tex, index: -1, force: kd[1], again: false }); }
       this._baseA = baseA;
-      attr(this.base.img, 'opacity', r2(baseA));
       // les éléments : arrivée (chute), éclaté, envol
       for (let i = 0; i < n; i++) {
         const L = this.layers[i];
@@ -895,9 +927,11 @@
         let dz = DROP * (1 - c * c) + 1.4 * d * d;
         let sq = 0;
         if (L.imp) { const u = t - L.imp; if (u < 0.6) sq = Math.exp(-u * 8) * Math.sin(u * 26); else L.imp = 0; }
-        if (L.imp) busy = true;
-        const lz = L.lift * fi + (fi > 0.001 && L.lift > 0 && !BB.reduced ? 0.012 * fi * Math.sin(t * 1.1 + i * 1.7) : 0);
-        if (fi > 0.001 && L.lift > 0 && !BB.reduced) busy = true;
+        if (L.imp) { busy = true; calm = false; }
+        // (détaillé, les éléments soulevés flottent un peu ; pas dans la fiche : option float: false)
+        const fl = fi > 0.001 && L.lift > 0 && !BB.reduced && this.o.float !== false;
+        const lz = L.lift * fi + (fl ? 0.012 * fi * Math.sin(t * 1.1 + i * 1.7) : 0);
+        if (fl) { busy = true; calm = false; }
         L.lz = lz; L.dz = dz;
         const okL = this._ok(L.tex) && (!L.under || this._ok(L.under));
         const al = okL ? smooth(0, 0.12, c) * (1 - smooth(0.45, 0.95, d)) : 0;
@@ -905,11 +939,8 @@
         const ty = -(lz + dz) * C;
         // petit tassement à l'atterrissage (autour du bas de la couche)
         const py = L.frame.y1 - 0.02, sx = 1 + 0.02 * sq, sy = 1 - 0.04 * sq;
-        attr(L.g, 'transform', 'translate(' + r3(0) + ' ' + r3(ty + py * (1 - sy)) + ') scale(' + r3(sx) + ' ' + r3(sy) + ')');
-        attr(L.g, 'opacity', r2(al));
-        attr(L.img, 'opacity', 1);
-        if (L.underImg) attr(L.underImg, 'opacity', 1);
-        if (L.pour) busy = this._pourFrame(L, ph, i) || busy;
+        L.sx = sx; L.sy = sy; L.y = ty + py * (1 - sy); // (placé avec la caméra : _place)
+        if (L.pour && this._pourFrame(L, ph, i)) { busy = true; calm = false; }
         if (L.sliced) {
           // le couteau : la version tranchée se découvre, du bout vers le milieu
           let sl = this._slice;
@@ -924,23 +955,17 @@
           attr(L.sliced, 'opacity', okS ? 1 : 0);
           const kn = sl > 0 && sl < 1 ? Math.sin(Math.PI * sl) : 0;
           attr(this._knife, 'opacity', r2(kn * al * 0.9));
+          this._knifeA = kn * al;
           if (kn > 0) {
             const y0 = BAV.y - 0.3, y1 = BAV.y + 0.28;
             attr(this._knife, 'x1', r3(xs + 0.03)); attr(this._knife, 'y1', r3(y0 * S - (0.16 + lz + dz) * C));
             attr(this._knife, 'x2', r3(xs - 0.03)); attr(this._knife, 'y2', r3(y1 * S - (0.05 + lz + dz) * C));
             attr(this._knife, 'stroke-width', 0.012);
-            busy = true;
+            busy = true; calm = false;
           }
         }
       }
-      if (sc.kind === 'wrap') busy = this._wrapFrame(ph, E, t) || busy;
-      // ombre au sol, sous le plat
-      const fb = this.base.frame, gx = (fb.x0 + fb.x1) / 2;
-      attr(this._ground, 'cx', r3(gx + 0.06));
-      attr(this._ground, 'cy', r3(0.04));
-      attr(this._ground, 'rx', r3((fb.x1 - fb.x0) * 0.56));
-      attr(this._ground, 'ry', r3((fb.x1 - fb.x0) * 0.56 * S * (/^ardoise/.test(sc.base) ? 0.8 : 1.05)));
-      attr(this._ground, 'opacity', r2(baseA * 0.9));
+      if (sc.kind === 'wrap' && this._wrapFrame(ph, E, t)) { busy = true; calm = false; }
       // caméra
       if (this._cam0) {
         const lf = sc.kind === 'wrap' ? smooth(0.6, 0.95, E) : smooth(0.2, 0.85, E);
@@ -949,13 +974,59 @@
         if (!cm) cm = this._camS = { k: tg.k, cx: tg.cx, cy: tg.cy };
         const q = 1 - Math.exp(-dt * 12);
         cm.k += (tg.k - cm.k) * q; cm.cx += (tg.cx - cm.cx) * q; cm.cy += (tg.cy - cm.cy) * q;
-        if (Math.abs(tg.k - cm.k) > 0.01 || Math.abs(tg.cx - cm.cx) > 0.05 || Math.abs(tg.cy - cm.cy) > 0.05) busy = true;
-        attr(this._cam, 'transform', 'translate(' + r2(cm.cx) + ' ' + r2(cm.cy) + ') scale(' + r3(cm.k) + ')');
+        if (Math.abs(tg.k - cm.k) > 0.01 || Math.abs(tg.cx - cm.cx) > 0.05 || Math.abs(tg.cy - cm.cy) > 0.05) { busy = true; calm = false; }
+        this._place(cm, baseA);
         this._k = cm.k; this._cx = cm.cx; this._cy = cm.cy;
         this._drawLabels(E);
       }
       this._dirty = false;
+      if (this._auto && calm && !force && !this._once && !this._frozen2 && ph && ph.k === 'hold' && this._sieste(t)) return false;
       return busy || (this._once && !force);
+    }
+    // un temps immobile du cycle (servi, détaillé…) : plus rien ne bouge ; on dort jusqu'à la suite, sans calculer
+    // une seule image (le temps passé est rendu à l'horloge au réveil)
+    _sieste(t) {
+      const left = this._holdLeft(this._clock);
+      if (left < 0.2) return false;
+      this._nap = t;
+      clearTimeout(this._napT);
+      this._napT = setTimeout(() => { this._napT = 0; this._kick(true); }, (left - 0.03) * 1000);
+      return true;
+    }
+    // le temps qui reste dans un temps immobile du cycle (0 ailleurs)
+    _holdLeft(tc) {
+      const segs = this._segs, P = this._T.P;
+      let u = ((tc % P) + P) % P;
+      for (let i = 0; i < segs.length; i++) {
+        const s = segs[i];
+        if (u < s[1]) return s[0] === 'hold' ? s[1] - u : 0;
+        u -= s[1];
+      }
+      return 0;
+    }
+
+    // chaque calque à sa place : la caméra × la pose de l'élément (BB.Burger._kit.Stage)
+    _place(cm, baseA) {
+      const st = this._stage, sc = this.scene, fb = this.base.frame, S = this._S;
+      const grx = (fb.x1 - fb.x0) * 0.56, gry = grx * S * (/^ardoise/.test(sc.base) ? 0.8 : 1.05);
+      st.put(this._groundC, cm, grx, 0, 0, gry, (fb.x0 + fb.x1) / 2 + 0.06, 0.04, baseA * 0.9); // l'ombre au sol, sous le plat
+      st.put(this.base.cl, cm, 1, 0, 0, 1, 0, 0, baseA);
+      const wrap = sc.kind === 'wrap', fo = wrap ? this._flatO : 1, cb = wrap ? this._clipB : null;
+      for (let i = 0; i < this.layers.length; i++) {
+        const L = this.layers[i];
+        if (L.sy == null) continue;
+        st.put(L.cl, cm, L.sx, 0, 0, L.sy, 0, L.y, L.al * fo);
+        if (!wrap) continue;
+        // la galette qui se roule : la ligne du rouleau, ramenée dans le repère de la couche
+        attr(L.cl.g, 'clip-path', cb == null ? 'none' : L.rollUrl);
+        if (cb != null) {
+          attr(L.rollRect, 'x', r3(-3 / L.sx)); attr(L.rollRect, 'width', r3(6 / L.sx));
+          attr(L.rollRect, 'y', r3((-3 - L.y) / L.sy)); attr(L.rollRect, 'height', r3((cb + 3) / L.sy));
+        }
+      }
+      if (wrap) [this.roll, this.halfB, this.halfA].forEach((R) => { const m = R.m6; if (m) st.put(R.cl, cm, m[0], m[1], m[2], m[3], m[4], m[5], R.al); });
+      // le couteau (dans le SVG des étiquettes) : la caméra seulement quand il passe
+      if (this._knife && this._knifeA > 0) attr(this._camO, 'transform', 'translate(' + r2(cm.cx) + ' ' + r2(cm.cy) + ') scale(' + r3(cm.k) + ')');
     }
 
     /* un verre qui se remplit : le verre plein se découvre de bas en haut ; la mousse, puis les bulles */
@@ -993,9 +1064,8 @@
       const yl = yFront + (yEnd - yFront) * pe;
       const rr = WR.R * (0.28 + 0.72 * pe);
       // la partie encore à plat : ce qui est derrière la ligne
-      const clipB = p > 0.001 ? yl * S - (WR.top + 0.03) * C : 3;
-      attr(this._rollClip, 'height', r3(clipB + 3));
-      attr(this._flat, 'opacity', r2(p >= 0.999 ? 0 : 1));
+      this._clipB = p > 0.001 ? yl * S - (WR.top + 0.03) * C : null;
+      this._flatO = p >= 0.999 ? 0 : 1;
       // le rouleau
       const R = this.roll, okR = this._ok(R.tex);
       const yMax = Math.max(yl, TOR.y);
@@ -1005,29 +1075,28 @@
       const rA = okR ? smooth(0, 0.05, p) * (1 - smooth(0.3, 0.62, q)) * (1 - off) : 0;
       const pvY = WR.y * S - WR.top * C; // pivot : le bas du rouleau, sur l'ardoise
       const tyR = (ya - WR.y) * S;
-      attr(R.g, 'transform', 'translate(0 ' + r3(tyR + pvY * (1 - syr)) + ') scale(' + r3(sxr) + ' ' + r3(syr) + ')');
-      attr(R.g, 'opacity', r2(rA));
-      attr(R.img, 'opacity', 1);
+      R.m6 = [sxr, 0, 0, syr, 0, tyR + pvY * (1 - syr)];
+      R.al = rA;
       // les deux moitiés : elles partent du rouleau et glissent à leur place
       const hq = outCubic(clamp((q - 0.3) / 0.7));
       const hA = (this._ok(this.halfA.tex) && this._ok(this.halfB.tex) ? smooth(0.3, 0.55, q) : 0) * (1 - off);
       [[this.halfA, HALF_Y.a, 0.05], [this.halfB, HALF_Y.b, -0.05]].forEach(([Hh, y0, sx0]) => {
         const dy = (WR.y - y0) * (1 - hq), dx = sx0 * (1 - hq);
         const lift = off * off * 1.2;
-        attr(Hh.g, 'transform', 'translate(' + r3(dx) + ' ' + r3(dy * S - lift * C) + ')');
-        attr(Hh.g, 'opacity', r2(hA));
-        attr(Hh.img, 'opacity', 1);
+        Hh.m6 = [1, 0, 0, 1, dx, dy * S - lift * C];
+        Hh.al = hA;
       });
       // l'éclair du couteau, en biais sur le rouleau
       const kn = q > 0.05 && q < 0.4 ? Math.sin((Math.PI * (q - 0.05)) / 0.35) : 0;
       attr(this._knife, 'opacity', r2(kn * 0.9));
+      this._knifeA = kn;
       if (kn > 0) {
         attr(this._knife, 'x1', r3(0.1)); attr(this._knife, 'y1', r3((WR.y - 0.26) * S - (WR.top + 2.2 * WR.R) * C));
         attr(this._knife, 'x2', r3(-0.08)); attr(this._knife, 'y2', r3((WR.y + 0.26) * S - WR.top * C));
         attr(this._knife, 'stroke-width', 0.014);
       }
       // la galette et sa garniture s'effacent aussi à l'envol
-      if (off > 0) attr(this._flat, 'opacity', r2(1 - off));
+      if (off > 0) this._flatO = 1 - off;
       return p > 0 && p < 1 || q > 0 && q < 1 || off > 0;
     }
 
@@ -1089,7 +1158,8 @@
       this._frozen = true;
       unobserve(this);
       if (this._ro) { this._ro.disconnect(); this._ro = null; }
-      const svg = this.svg;
+      const svg = this.svg, stage = this._stage;
+      this._stage = null;
       this._aria();
       if (svg) {
         if (svg.style.aspectRatio) { img.style.height = 'auto'; img.style.aspectRatio = svg.style.aspectRatio; }
@@ -1098,11 +1168,11 @@
           svg.parentNode.insertBefore(img, svg.nextSibling);
           const show = () => {
             img.style.opacity = '1';
-            setTimeout(() => { img.style.position = ''; img.style.left = ''; img.style.top = ''; img.style.transition = ''; svg.remove(); }, 380);
+            setTimeout(() => { img.style.position = ''; img.style.left = ''; img.style.top = ''; img.style.transition = ''; svg.remove(); if (stage) stage.remove(); }, 380);
           };
           if (img.decode) img.decode().then(show, show); else img.onload = show;
-        } else svg.parentNode.replaceChild(img, svg);
-      } else this.host.appendChild(img);
+        } else { svg.parentNode.replaceChild(img, svg); if (stage) stage.remove(); }
+      } else { this.host.appendChild(img); if (stage) stage.remove(); }
       this.svg = null;
       this._labels = [];
     }

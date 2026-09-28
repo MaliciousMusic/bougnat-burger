@@ -7,37 +7,31 @@
   'use strict';
   const BB = (window.BB = window.BB || {});
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let io = null;
+  let io = null, suivi = null;
+  const visibles = new Set(); // ce qui est à l'écran en ce moment (suivi en continu : aucune mesure à faire)
 
   function watch(el) {
     if (el._rv) return;
     el._rv = true;
     if (!io) { el.classList.add('is-in'); return; }
     io.observe(el);
+    if (suivi) suivi.observe(el);
   }
   BB.reveal = function (root) {
     (root || document).querySelectorAll('.reveal').forEach(watch);
   };
 
-  // en arrivant sur un onglet : ce qui est à l'écran rejoue son entrée, l'un après l'autre
+  // en arrivant sur un onglet : ce qui est à l'écran rejoue son entrée, l'un après l'autre.
+  // Web Animations (opacité, translation : le compositeur s'en charge), sans lire ni forcer la mise en page.
   function replay(view) {
     if (!io) return;
     const box = document.getElementById(view);
     if (!box) return;
-    const sc = box.querySelector('.view-scroll');
-    const h = (sc && sc.clientHeight) || window.innerHeight;
-    const top = sc ? sc.getBoundingClientRect().top : 0;
-    const seen = [...box.querySelectorAll('.reveal.is-in')].filter((el) => {
-      const r = el.getBoundingClientRect();
-      return r.bottom > top && r.top < top + h;
-    });
-    seen.forEach((el) => { el.style.transition = 'none'; el.classList.remove('is-in'); });
-    void box.offsetWidth;
-    seen.forEach((el, i) => {
-      el.style.transition = '';
-      el.style.transitionDelay = Math.min(i * 70, 420) + 'ms';
-      el.classList.add('is-in');
-      setTimeout(() => { el.style.transitionDelay = ''; }, 1200);
+    let i = 0;
+    visibles.forEach((el) => {
+      if (!el.animate || !el.classList.contains('is-in') || !box.contains(el)) return;
+      el.animate([{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }],
+        { duration: 560, delay: Math.min(i++ * 70, 420), easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
     });
   }
 
@@ -50,6 +44,9 @@
           io.unobserve(en.target);
         });
       }, { rootMargin: '0px 0px -6% 0px', threshold: 0.08 });
+      suivi = new IntersectionObserver((entries) => {
+        entries.forEach((en) => { if (en.isIntersecting) visibles.add(en.target); else visibles.delete(en.target); });
+      });
     }
     BB.reveal(document);
     // ce que la carte, le sac ou la réservation ajoutent plus tard
