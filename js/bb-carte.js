@@ -454,7 +454,7 @@
     const cur = variante();
     f.innerHTML = `<legend>${esc(BB.t('choix'))}</legend>` + it.variants.map((v) => `<label class="choix-opt">
         <input type="radio" name="variante" value="${esc(v.id)}"${v === cur ? ' checked' : ''}>
-        <span class="c-nom">${esc(BB.tr(v.name))}</span>${v.desc ? `<span class="c-desc">${esc(BB.tr(v.desc))}</span>` : ''}
+        <span class="c-nom">${esc(BB.tr(v.name))}</span>${v.desc ? `<span class="c-desc">${esc(BB.tr(v.desc)).replace(/(\d) %/g, '$1\u00a0%')}</span>` : ''}
         <span class="c-prix">${esc(BB.fmtPriceL(v.price))}</span></label>`).join('');
     f.addEventListener('change', (e) => {
       if (!e.target.matches('input[name="variante"]')) return;

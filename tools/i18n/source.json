@@ -109,7 +109,7 @@
    "en": "Pick up at the counter"
   },
   "co.who": {
-   "fr": "À quel nom ?",
+   "fr": "À quel nom ?",
    "en": "Name for the order"
   },
   "co.name": {
@@ -161,11 +161,11 @@
    "en": "Tell us when and we'll keep a table for you. For 10 people or more, give us a call."
   },
   "resa.day": {
-   "fr": "Quel jour ?",
+   "fr": "Quel jour ?",
    "en": "Which day?"
   },
   "resa.service": {
-   "fr": "Quel service ?",
+   "fr": "Quel service ?",
    "en": "Lunch or dinner?"
   },
   "resa.lunch": {
@@ -177,11 +177,11 @@
    "en": "Dinner"
   },
   "resa.guests": {
-   "fr": "Combien de couverts ?",
+   "fr": "Combien de couverts ?",
    "en": "How many people?"
   },
   "resa.who": {
-   "fr": "À quel nom ?",
+   "fr": "À quel nom ?",
    "en": "Name for the booking"
   },
   "resa.note": {

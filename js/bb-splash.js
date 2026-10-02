@@ -5,7 +5,7 @@
    · Avant le geste : l'écusson se pose, le vert se peint d'un coup de pinceau, puis le contour ;
      les mots en filigrane ; bouton « Entrer ».
    · « Entrer » (le geste qui autorise le son) : les lettres éclosent une à une, chacune sur sa note,
-     puis accord final, un reflet traverse le volcan et il fume un peu.
+     puis accord final, un reflet traverse le volcan.
    · Son coupé : elle part toute seule. Une fois par session ; ?intro la rejoue ; un tap la passe.
    · ?font=ultra | alfa | holtwood | bagel pour comparer d'autres polices (Shrikhand par défaut).
    ========================================================================== */
@@ -83,13 +83,6 @@
     const glintG = S('g', { 'clip-path': 'url(#sp-glint-clip)' }, volcano);
     const glint = S('rect', { x: -140, y: -20, width: 100, height: L.h + 40, fill: 'url(#sp-glint)', opacity: 0 }, glintG);
 
-    /* la fumée du volcan (après les lettres), au-dessus du pic de gauche */
-    const peak = [vx + 0.35 * VOLCANO_W, vy + 0.06 * vh];
-    const steam = S('g', { class: 'sp-steam', opacity: 0 }, svg);
-    [[-10, 2], [2, -4], [13, 3]].forEach(([dx, dy], i) => {
-      S('path', { d: `M${BB.f(peak[0] + dx)} ${BB.f(peak[1] + dy)}c-5-7 5-11 0-18s5-11 0-18`, fill: 'none', stroke: '#FBF4E6', 'stroke-width': 2.6, 'stroke-linecap': 'round', opacity: 0.75 - i * 0.15 }, steam);
-    });
-
     /* ---------- les mots, lettre par lettre, posés sur l'arc ---------- */
     const words = S('g', { class: 'sp-words' }, svg);
     const letters = [];
@@ -122,7 +115,7 @@
     place('BURGER', false);
     measure.remove();
 
-    return { svg, disc, revGreen, revWhite, glint, steam, letters, L };
+    return { svg, disc, revGreen, revWhite, glint, letters, L };
   }
 
   /* ---------- animation ---------- */
@@ -181,7 +174,6 @@
     setTimeout(() => {
       if (withSound) BB.sfx.play('chord');
       glide(P.glint, P.L, 900, 0);
-      anim(P.steam, [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(-4px)', offset: 0.4 }, { opacity: 0, transform: 'translateY(-24px)' }], { duration: 1600, easing: 'ease-out' });
     }, end);
     return end + 700;
   }

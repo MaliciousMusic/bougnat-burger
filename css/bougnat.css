@@ -684,7 +684,7 @@ a { color: inherit; }
 .p-options .seg button span { white-space: pre-line; text-align: center; }
 /* le choix d'une bière, d'un vin, d'un soft : vrais boutons radio, la ligne entière est cliquable */
 .choix { border: 0; margin: 0; padding: 0; display: grid; gap: 6px; }
-.choix legend { padding: 0; margin: 0 0 6px; font: 700 12px/1 var(--f-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--pomme); }
+.choix legend { padding: 0; margin: 0; font: 700 12px/1 var(--f-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--pomme); }
 .choix-opt { position: relative; display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; grid-template-areas: "rond nom prix" "rond desc prix"; align-items: center; gap: 1px 10px; padding: 10px 14px 10px 12px; border-radius: 16px; background: var(--charbon-3); box-shadow: inset 0 0 0 1px var(--line); cursor: pointer; transition: background 0.2s, box-shadow 0.2s; }
 .choix-opt input { grid-area: rond; appearance: none; -webkit-appearance: none; width: 20px; height: 20px; margin: 0; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--creme-3); transition: box-shadow 0.2s; }
 .choix-opt input:checked { box-shadow: inset 0 0 0 2px var(--pomme), inset 0 0 0 5px var(--charbon-3), inset 0 0 0 10px var(--pomme); }
@@ -884,7 +884,9 @@ button.item:active { transform: scale(0.98); }
 .cart-line .lt { grid-column: 1; font-weight: 800; color: var(--pomme); font-variant-numeric: tabular-nums; }
 .checkout { margin-top: 20px; display: grid; gap: 18px; }
 fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; }
-legend { font: 400 20px/1.1 var(--f-display); margin-bottom: 12px; padding: 0 2px; color: var(--creme); }
+/* (flottante, une légende redevient un simple élément de la grille, sur toute la largeur : Safari lui donnait sinon
+   la largeur de son plus long mot, « Quel / jour / ? ») */
+legend { float: left; width: 100%; font: 400 20px/1.1 var(--f-display); margin-bottom: 2px; padding: 0 2px; color: var(--creme); }
 .slots, .times, .days { display: flex; flex-wrap: wrap; gap: 8px; }
 .slot, .time, .day {
   min-height: 42px;
@@ -901,8 +903,8 @@ legend { font: 400 20px/1.1 var(--f-display); margin-bottom: 12px; padding: 0 2p
 .slot:active, .time:active, .day:active { transform: scale(0.94); }
 .slot[aria-checked="true"], .time[aria-checked="true"], .day[aria-checked="true"] { background: var(--pomme); color: var(--pomme-encre); box-shadow: 0 8px 16px -10px rgba(200, 227, 160, 0.7); animation: tampon 0.38s var(--ease-spring); }
 .slot:disabled, .time:disabled { opacity: 0.3; text-decoration: line-through; }
-.day { display: grid; place-items: center; gap: 3px; min-width: 60px; padding: 9px 6px; }
-.day small { font-size: 11.5px; font-weight: 650; opacity: 0.75; text-transform: capitalize; }
+.day { flex: none; display: grid; place-items: center; gap: 3px; min-width: 62px; padding: 9px 10px; }
+.day small { font-size: 11.5px; font-weight: 650; opacity: 0.75; text-transform: capitalize; white-space: nowrap; }
 .day b { font: 400 20px/1 var(--f-display); }
 .days { flex-wrap: nowrap; overflow-x: auto; margin: 0 calc(-1 * var(--gut)); padding: 2px var(--gut) 8px; scrollbar-width: none; }
 .days::-webkit-scrollbar { display: none; }
@@ -1232,3 +1234,9 @@ legend { font: 400 20px/1.1 var(--f-display); margin-bottom: 12px; padding: 0 2p
    une fois ouvert (.vue, posé par bb-app.js), il reste mis en page quand on le quitte : sa position de défilement est gardée.
    (Pas de content-visibility : sur les onglets cachés, Chrome recalculait tout à chaque image, sans fin.) */
 .view:not(.is-active):not(.vue) { display: none; }
+
+/* le geste du retour (appli installée sur iPhone) : une flèche suit le doigt depuis le bord, verte quand on peut lâcher */
+.retour-cue { position: fixed; z-index: 150; top: 0; left: 0; width: 44px; height: 44px; margin-top: -22px; border-radius: 50%; display: grid; place-items: center; background: var(--charbon-3); color: var(--creme); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5), inset 0 0 0 1px var(--line); opacity: 0; pointer-events: none; transition: opacity 0.18s, background 0.15s, color 0.15s; }
+.retour-cue.droite { left: auto; right: 0; }
+.retour-cue svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.retour-cue.pret { background: var(--vert); color: var(--vert-encre); }
