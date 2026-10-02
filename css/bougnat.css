@@ -884,9 +884,9 @@ button.item:active { transform: scale(0.98); }
 .cart-line .lt { grid-column: 1; font-weight: 800; color: var(--pomme); font-variant-numeric: tabular-nums; }
 .checkout { margin-top: 20px; display: grid; gap: 18px; }
 fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; }
-/* (flottante, une légende redevient un simple élément de la grille, sur toute la largeur : Safari lui donnait sinon
-   la largeur de son plus long mot, « Quel / jour / ? ») */
-legend { float: left; width: 100%; font: 400 20px/1.1 var(--f-display); margin-bottom: 2px; padding: 0 2px; color: var(--creme); }
+/* les questions des formulaires (« Quel jour ? »…) tiennent toujours sur une ligne : Safari donne à une légende la
+   largeur de son plus long mot, et la coupait à chaque espace (flottante, elle redevient un élément de la grille) */
+legend { float: left; width: 100%; white-space: nowrap; font: 400 clamp(17px, 6.25vw, 20px)/1.1 var(--f-display); /* (20 px dès 320 px de large) */ margin-bottom: 2px; padding: 0 2px; color: var(--creme); }
 .slots, .times, .days { display: flex; flex-wrap: wrap; gap: 8px; }
 .slot, .time, .day {
   min-height: 42px;
