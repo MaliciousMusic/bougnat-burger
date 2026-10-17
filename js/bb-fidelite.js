@@ -433,6 +433,8 @@
     rendreTicket();
     rendrePaliers();
     rendrePassages();
+    const sms = $('#fid-sms-m');
+    if (sms && carte) sms.checked = !!carte.sms;
     B.salut = !carte;
   }
 
@@ -451,7 +453,9 @@
       if (telNorm(tel.value).length < 10) { tel.setAttribute('aria-invalid', 'true'); bad = bad || BB.t('needPhone'); }
       if (!ok.checked) { ok.setAttribute('aria-invalid', 'true'); bad = bad || BB.t('fidNeedAccord'); }
       if (bad) { BB.sfx && BB.sfx.play('nope'); BB.toast && BB.toast(bad); return; }
-      api.creer({ prenom: prenom.value, nom: nom.value, tel: tel.value }).then((c) => {
+      // les offres par SMS : une case à part, facultative, jamais cochée d'office
+      const sms = $('#fid-sms');
+      api.creer({ prenom: prenom.value, nom: nom.value, tel: tel.value, sms: !!(sms && sms.checked) }).then((c) => {
         carte = c;
         marquerVu();
         form.reset();
@@ -491,6 +495,12 @@
   function initMembre() {
     const demo = $('#fid-demo');
     if (demo) demo.addEventListener('click', (e) => { const b = e.target.closest('[data-scan]'); if (b) passage(Number(b.dataset.scan)); });
+    // les offres par SMS : oui ou non, à tout moment (le comptoir n'écrit qu'à ceux qui ont dit oui)
+    const sms = $('#fid-sms-m');
+    if (sms) sms.addEventListener('change', () => {
+      if (!carte) return;
+      api.reglerSms(carte.id, sms.checked).then((c) => { carte = c; BB.toast && BB.toast(BB.t(c.sms ? 'fidSmsOui' : 'fidSmsNon')); });
+    });
     // supprimer sa carte : deux touches (la seconde dans les 4 s)
     const q = $('#fid-quitter');
     if (q) q.addEventListener('click', () => {

@@ -1,7 +1,8 @@
 /* ==========================================================================
    Bougnat Burger — réserver une table.
    Les jours proposés sont les jours d'ouverture ; les heures, celles de leur module actuel.
-   MAQUETTE : la demande reste dans le téléphone.
+   MAQUETTE : la demande part au comptoir de démonstration (admin/) par BB.restoApi, dans ce même navigateur ;
+   sa réponse (confirmée, refusée) revient ici en direct.
    PROD : la demande part au restaurant (back-office ou SMS), qui confirme au client par SMS.
    ========================================================================== */
 (function () {
@@ -83,7 +84,22 @@
   }
   function guestsLabel(n) { return n === 1 ? BB.t('guest1') : BB.t('guests', { n }); }
 
-  function submit(e) {
+  /* la réponse du restaurant, en direct */
+  const STATUT_CLE = { demande: 'resaDemande', confirmee: 'resaConfirmee', venue: 'resaVenue', refusee: 'resaRefusee', annulee: 'resaAnnulee', absente: 'resaAnnulee' };
+  let suivie = null;
+  function majStatut(son) {
+    const el = $('#resa-statut');
+    if (!el || !suivie || !BB.restoApi) return;
+    BB.restoApi.resas.get(suivie).then((r) => {
+      if (!r) return;
+      const avant = el.dataset.statut;
+      el.dataset.statut = r.statut;
+      el.querySelector('span').textContent = BB.t(STATUT_CLE[r.statut]);
+      if (son && avant !== r.statut && r.statut === 'confirmee') BB.sfx.play('ding');
+    });
+  }
+
+  async function submit(e) {
     if (enGroupe) { e && e.preventDefault(); return; }
     e.preventDefault();
     const name = $('#resa-name'), phone = $('#resa-phone');
@@ -95,13 +111,20 @@
     if (bad) { BB.sfx.play('nope'); BB.toast(bad); return; }
     const d = st.day;
     const dayTxt = isToday(d) ? BB.t('today') : BB.fmtJour(d, true);
+    // la demande part au restaurant (MAQUETTE : le comptoir de ce navigateur)
+    suivie = null;
+    if (BB.restoApi) {
+      const r = await BB.restoApi.resas.creer({ nom: name.value.trim(), tel: phone.value, jour: BB.restoApi.jourDe(d), heure: st.time, couverts: st.guests });
+      suivie = r.id;
+    }
     const done = $('#resa-done');
     done.innerHTML = `<div class="ticket"><svg class="ticket-stamp" aria-hidden="true"><use href="#tampon"/></svg>
         <h3>${esc(BB.t('resaSent'))}</h3>
         <p class="num">${esc(BB.fmtTime(st.time))}</p>
         <p><b>${esc(name.value.trim())}</b></p>
         <p>${esc(BB.t('resaText', { g: guestsLabel(st.guests), d: dayTxt, t: BB.fmtTime(st.time), p: phone.value.trim() }))}</p>
-        <p class="fine">${esc(BB.tr({ fr: 'Maquette : rien n\'est envoyé.', en: 'Demo: nothing is sent.' }))}</p>
+        ${suivie ? `<p class="co-statut" id="resa-statut" data-statut="demande" aria-live="polite"><i aria-hidden="true"></i><span>${esc(BB.t('resaDemande'))}</span></p>` : ''}
+        <p class="fine">${esc(BB.t('resaDemo'))}</p>
         <p style="margin-top:14px"><button class="btn btn-ghost" type="button" id="resa-again" data-sfx="tap">${esc(BB.t('resaAgain'))}</button></p>
       </div>`;
     done.hidden = false;
@@ -136,7 +159,8 @@
         groupe();
       });
       $('#resa-form').addEventListener('submit', submit);
-      BB.on('lang', () => { renderDays(); renderTimes(); groupe(true); });
+      BB.on('lang', () => { renderDays(); renderTimes(); groupe(true); majStatut(false); });
+      if (BB.restoApi) BB.restoApi.resas.onChange(() => majStatut(true));
       setInterval(() => { renderDays(); renderTimes(); }, 60000);
     },
   };

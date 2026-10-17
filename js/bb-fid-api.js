@@ -11,9 +11,11 @@
        annuler    DELETE /api/fidelite/cartes/:id/passages/dernier (admin)                → carte
        remettre   POST   /api/fidelite/cartes/:id/remises     (admin : un cadeau remis)    → carte
        supprimer  DELETE /api/fidelite/cartes/:id             (le client, ou l'admin)      → true
+       reglerSms  PATCH  /api/fidelite/cartes/:id             { sms }  (le client)          → carte
      Les appels « admin » exigent la session du comptoir ; onChange se branche alors sur un rafraîchissement
      (ou des notifications du serveur) au lieu de l'événement « storage ».
-   Une carte : { id, prenom, nom, tel, cree, points, remis, passages: [{ d, n }] }.
+   Une carte : { id, prenom, nom, tel, cree, points, remis, passages: [{ d, n }], sms }.
+   sms : le client a accepté de recevoir les offres et les soirées par SMS (case à part, jamais cochée d'office).
    ========================================================================== */
 (function () {
   'use strict';
@@ -70,15 +72,17 @@
       const id = BB.store.get(MOI, null);
       return ok(id ? lire()[id] || null : null);
     },
-    creer({ prenom, nom, tel }) {
+    creer({ prenom, nom, tel, sms }) {
       const c = lire();
-      const carte = { id: nouvelId(c), prenom: String(prenom).trim(), nom: String(nom).trim(), tel: telNorm(tel), cree: new Date().toISOString(), points: 0, remis: 0, passages: [] };
+      const carte = { id: nouvelId(c), prenom: String(prenom).trim(), nom: String(nom).trim(), tel: telNorm(tel), cree: new Date().toISOString(), points: 0, remis: 0, passages: [], sms: !!sms, smsLe: sms ? new Date().toISOString() : null };
       c[carte.id] = carte;
       ecrire(c);
       BB.store.set(MOI, carte.id);
       return ok(carte);
     },
     get(id) { return ok(lire()[idNorm(id)] || null); },
+    // toutes les cartes (admin : les destinataires des SMS) ; PROD : GET /api/fidelite/cartes?sms=1
+    toutes() { return ok(Object.values(lire())); },
     // par numéro de téléphone (au moins 4 chiffres), par n° de carte, ou par nom ; vide : les plus récentes
     chercher(q) {
       const l = Object.values(lire());
@@ -113,6 +117,8 @@
         c.remis = (c.remis || 0) + 1;
       });
     },
+    // les offres par SMS : oui ou non (le client, depuis sa carte ; la date du choix est gardée comme preuve)
+    reglerSms(id, oui) { return changer(id, (c) => { c.sms = !!oui; c.smsLe = new Date().toISOString(); }); },
     supprimer(id) {
       const c = lire();
       const k = idNorm(id);

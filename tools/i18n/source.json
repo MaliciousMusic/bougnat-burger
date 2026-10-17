@@ -241,8 +241,8 @@
    "en": "Your order contains alcohol: no sale to under-18s, ID may be requested at pick-up. Please drink responsibly."
   },
   "co.fine": {
-   "fr": "Maquette : le paiement est simulé, aucune commande n'est transmise.",
-   "en": "Demo: payment is simulated, no order is sent."
+   "fr": "Maquette : le paiement est simulé, et la commande n'arrive qu'au comptoir de démonstration, dans ce même navigateur.",
+   "en": "Demo: payment is simulated, and the order only reaches the demo counter, in this same browser."
   },
   "del.lede": {
    "fr": "La livraison passe par ces plateformes :",
@@ -344,6 +344,10 @@
    "fr": "J'accepte que Bougnat Burger garde mon nom et mon numéro pour ma carte de fidélité, et pour rien d'autre (<a href=\"mentions-legales.html#fidelite\">en savoir plus</a>).",
    "en": "I agree that Bougnat Burger keeps my name and number for my loyalty card, and for nothing else (<a href=\"mentions-legales.html#fidelite\">find out more</a>)."
   },
+  "fid.sms": {
+   "fr": "Je veux aussi recevoir par SMS les offres et les soirées du Bougnat (quelques messages par mois au plus ; STOP pour arrêter). Facultatif.",
+   "en": "I'd also like Bougnat's offers and event nights by text (a few a month at most; STOP to opt out). Optional."
+  },
   "fid.create": {
    "fr": "Créer ma carte",
    "en": "Create my card"
@@ -371,6 +375,10 @@
   "fid.demo": {
    "fr": "Maquette : en vrai, ce sont les scans du comptoir qui font avancer le bougnat. Pour essayer, simulez un passage :",
    "en": "Demo: for real, it is the counter's scans that move the bougnat forward. To try it, simulate a visit:"
+  },
+  "fid.smsMembre": {
+   "fr": "Recevoir les offres et les soirées du Bougnat par SMS",
+   "en": "Get Bougnat's offers and event nights by text"
   },
   "fid.delete": {
    "fr": "Supprimer ma carte",
@@ -776,8 +784,8 @@
    "en": "Thank you {n}!"
   },
   "simulated": {
-   "fr": "Maquette : paiement simulé, rien n'est débité ni transmis.",
-   "en": "Demo: simulated payment, nothing is charged or sent."
+   "fr": "Maquette : paiement simulé, rien n'est débité. La commande arrive au comptoir de démonstration.",
+   "en": "Demo: simulated payment, nothing is charged. The order reaches the demo counter."
   },
   "newOrder": {
    "fr": "Nouvelle commande",
@@ -950,6 +958,78 @@
   "fidNeedAccord": {
    "fr": "Cochez la case pour accepter.",
    "en": "Please tick the box to agree."
+  },
+  "epuise": {
+   "fr": "Épuisé aujourd'hui",
+   "en": "Sold out today"
+  },
+  "epuiseCourt": {
+   "fr": "Épuisé",
+   "en": "Sold out"
+  },
+  "plusDispo": {
+   "fr": "{n} n'est plus disponible aujourd'hui : retirez-le du sac.",
+   "en": "{n} is sold out today: please remove it from your bag."
+  },
+  "pauseJusqua": {
+   "fr": "La cuisine est en plein coup de feu : les commandes en ligne reprennent à {t}. Pour commander tout de suite, appelez-nous :",
+   "en": "The kitchen is swamped: online orders resume at {t}. To order right now, give us a call:"
+  },
+  "pauseService": {
+   "fr": "La cuisine est en plein coup de feu : les commandes en ligne sont en pause. Pour commander, appelez-nous :",
+   "en": "The kitchen is swamped: online orders are paused. To order, give us a call:"
+  },
+  "cmdNouvelle": {
+   "fr": "Reçue par le restaurant",
+   "en": "Received by the restaurant"
+  },
+  "cmdCuisine": {
+   "fr": "En préparation",
+   "en": "Being prepared"
+  },
+  "cmdPrete": {
+   "fr": "Prête : elle vous attend au comptoir !",
+   "en": "Ready: waiting for you at the counter!"
+  },
+  "cmdRetiree": {
+   "fr": "Retirée. Bon appétit !",
+   "en": "Picked up. Enjoy!"
+  },
+  "cmdAnnulee": {
+   "fr": "Annulée par le restaurant : il vous rappelle.",
+   "en": "Cancelled by the restaurant: they will call you."
+  },
+  "resaDemande": {
+   "fr": "En attente de la réponse du restaurant",
+   "en": "Waiting for the restaurant to reply"
+  },
+  "resaConfirmee": {
+   "fr": "Confirmée : à bientôt !",
+   "en": "Confirmed: see you soon!"
+  },
+  "resaVenue": {
+   "fr": "Bon appétit !",
+   "en": "Enjoy your meal!"
+  },
+  "resaRefusee": {
+   "fr": "Complet à cette heure : le restaurant vous envoie un SMS.",
+   "en": "Fully booked at that time: the restaurant will text you."
+  },
+  "resaAnnulee": {
+   "fr": "Annulée par le restaurant.",
+   "en": "Cancelled by the restaurant."
+  },
+  "resaDemo": {
+   "fr": "Maquette : la demande n'arrive qu'au comptoir de démonstration, dans ce même navigateur.",
+   "en": "Demo: the request only reaches the demo counter, in this same browser."
+  },
+  "fidSmsOui": {
+   "fr": "C'est noté : vous recevrez nos offres par SMS.",
+   "en": "Done: you'll get our offers by text."
+  },
+  "fidSmsNon": {
+   "fr": "C'est noté : plus de SMS d'offres.",
+   "en": "Done: no more offer texts."
   },
   "fEnceinte": {
    "fr": "Femme enceinte",
@@ -2263,13 +2343,6 @@
    "en": "double potato rösti",
    "ou": [
     "BB.burgerDesc (double)"
-   ]
-  },
-  {
-   "fr": "Maquette : rien n'est envoyé.",
-   "en": "Demo: nothing is sent.",
-   "ou": [
-    "bb-resa.js (demande envoyée)"
    ]
   },
   {

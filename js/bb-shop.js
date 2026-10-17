@@ -1,6 +1,7 @@
 /* ==========================================================================
    Bougnat Burger — le sac, le retrait au comptoir (click & collect) et la livraison.
-   MAQUETTE : le panier vit dans le téléphone, le paiement est simulé.
+   MAQUETTE : le panier vit dans le téléphone, le paiement est simulé ; la commande part au comptoir de
+   démonstration (admin/) par BB.restoApi, qui la garde dans ce navigateur, et son état revient ici en direct.
    PROD : une fonction serveur /api/checkout crée la session de paiement (Stripe) avec des prix
    recalculés côté serveur ; la commande part en cuisine (tablette / imprimante) et par SMS.
    ========================================================================== */
@@ -37,6 +38,53 @@
     if (it.cat === 'burgers' && l.double) p.push(BB.t('double'));
     if (it.veggie || it.burger) p.push(l.veggie ? BB.t('galette') : BB.t('steak'));
     return p.join(' · ');
+  }
+
+  /* la ligne telle que la cuisine la lit : toujours en français, quelle que soit la langue du client */
+  function ligneCuisine(l) {
+    const it = BB.menuItem && BB.menuItem(l.base);
+    if (!it) return { qty: l.qty, nom: l.name, option: '', unit: l.unit };
+    const v = varianteDe(it, l);
+    if (v) return { qty: l.qty, nom: v.name.fr, option: '', unit: l.unit };
+    const p = [];
+    if (it.cat === 'burgers' && l.double) p.push('double');
+    if (it.veggie || it.burger) p.push(l.veggie ? 'galette' : 'steak');
+    return { qty: l.qty, nom: (it.cat === 'burgers' && !l.double ? 'Ti ' : '') + it.name.fr, option: p.join(' · '), unit: l.unit };
+  }
+  // une ligne du sac épuisée depuis (le comptoir l'a marquée « épuisé aujourd'hui ») ?
+  function epuisee(l) {
+    const it = BB.menuItem && BB.menuItem(l.base);
+    if (!it) return false;
+    const v = varianteDe(it, l);
+    return !!(it._epuise || (v && v._epuise));
+  }
+
+  /* ---------- la pause des commandes en ligne (décidée au comptoir quand la cuisine déborde) ---------- */
+  const pause = () => (BB.restoApi ? BB.restoApi.reglages.pause() : null);
+  const t0 = (p) => (p.jusqua ? BB.t('pauseJusqua', { t: BB.fmtTime(p.jusqua.toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', hour12: false })) }) : BB.t('pauseService'));
+  function majPause() {
+    const box = $('#co-pause'), btn = $('#co-pay');
+    if (!box || !btn) return;
+    const p = pause();
+    box.hidden = !p;
+    btn.disabled = !!p;
+    if (!p) return;
+    box.innerHTML = `${esc(t0(p))} <a href="tel:${esc(BB.INFO.phone)}">${esc(BB.INFO.phoneLabel)}</a>`;
+  }
+
+  /* ---------- l'état de la commande, en direct (il change au comptoir) ---------- */
+  const STATUT_CLE = { nouvelle: 'cmdNouvelle', cuisine: 'cmdCuisine', prete: 'cmdPrete', retiree: 'cmdRetiree', annulee: 'cmdAnnulee' };
+  let suivie = null;
+  function majStatut(son) {
+    const el = $('#co-statut');
+    if (!el || !suivie || !BB.restoApi) return;
+    BB.restoApi.commandes.get(suivie).then((c) => {
+      if (!c) return;
+      const avant = el.dataset.statut;
+      el.dataset.statut = c.statut;
+      el.querySelector('span').textContent = BB.t(STATUT_CLE[c.statut]);
+      if (son && avant !== c.statut && c.statut === 'prete') { BB.sfx.play('ding'); BB.vibrate([60, 60, 60]); }
+    });
   }
 
   function toast(msg) {
@@ -151,6 +199,7 @@
     const alc = $('#co-alcool');
     if (alc) alc.hidden = !avecAlcool();
     if (n) renderSlots();
+    majPause();
   }
 
   const avecAlcool = () => cart.some((l) => { const it = BB.menuItem && BB.menuItem(l.base); return !!(it && it.alcool); });
@@ -175,6 +224,9 @@
     if (!slot) bad = BB.t('needSlot');
     if (!validPhone(phone.value)) { phone.setAttribute('aria-invalid', 'true'); bad = bad || BB.t('needPhone'); }
     if (!name.value.trim()) { name.setAttribute('aria-invalid', 'true'); bad = BB.t('needName'); }
+    const finie = cart.find(epuisee);
+    if (finie) bad = BB.t('plusDispo', { n: lineName(finie) });
+    if (pause()) { bad = null; majPause(); BB.sfx.play('nope'); toast(t0(pause())); return; }
     if (bad) { BB.sfx.play('nope'); toast(bad); return; }
     const btn = $('#co-pay');
     btn.disabled = true;
@@ -185,11 +237,21 @@
     await BB.wait(1100);
     label.innerHTML = keep;
     btn.disabled = false;
-    const num = 'B-' + String(100 + Math.floor(Math.random() * 900));
+    // la commande part au comptoir (MAQUETTE : celui de ce navigateur ; PROD : le serveur, après le paiement)
+    let num = 'B-' + String(100 + Math.floor(Math.random() * 900));
+    if (BB.restoApi) {
+      const cmd = await BB.restoApi.commandes.creer({
+        nom: name.value.trim(), tel: phone.value, retrait: { jour: BB.restoApi.jourDe(slot.date), heure: slot.t },
+        lignes: cart.map(ligneCuisine), note: note ? note.value.trim() : '', total: Math.round(total() * 100) / 100, alcool: avecAlcool(), lang: BB.lang,
+      });
+      num = cmd.id;
+      suivie = cmd.id;
+    }
     const lines = cart.map((l) => `<li><span>${l.qty} × ${esc(lineName(l))}${lineOption(l) ? ` <small>(${esc(lineOption(l))})</small>` : ''}</span><b>${esc(BB.fmtPriceL(l.unit * l.qty))}</b></li>`).join('');
     const t = $('#ticket');
     t.innerHTML = `<svg class="ticket-stamp" aria-hidden="true"><use href="#tampon"/></svg><h3>${esc(BB.t('thanks', { n: name.value.trim() }))}</h3>
       <p>${esc(BB.t('orderNum'))}</p><p class="num">${num}</p>
+      ${suivie ? `<p class="co-statut" id="co-statut" data-statut="nouvelle" aria-live="polite"><i aria-hidden="true"></i><span>${esc(BB.t('cmdNouvelle'))}</span></p>` : ''}
       <p><b>${esc(BB.t('pickupAt', { d: dayLabel(slot.date), t: BB.fmtTime(slot.t) }))}</b></p>
       ${note && note.value.trim() ? `<p class="note-cuisine"><b>${esc(BB.t('noteCuisine'))}</b> ${esc(note.value.trim())}</p>` : ''}
       <ul>${lines}<li><span>${esc(BB.t('co.total') || 'Total')}</span><b>${esc(BB.fmtPriceL(total()))}</b></li></ul>
@@ -207,6 +269,7 @@
     renderBadge(false);
     $('#new-order').addEventListener('click', () => {
       t.hidden = true;
+      suivie = null;
       $('#cart').hidden = false;
       renderCart();
       location.hash = '#carte';
@@ -257,8 +320,12 @@
         renderBadge(false);
       });
       $('#checkout').addEventListener('submit', pay);
-      BB.on('lang', () => { renderCart(); renderDelivery(); });
-      setInterval(() => { if (count()) renderSlots(); }, 60000);
+      BB.on('lang', () => { renderCart(); renderDelivery(); majStatut(false); });
+      setInterval(() => { if (count()) renderSlots(); majPause(); }, 30000);
+      if (BB.restoApi) {
+        BB.restoApi.reglages.onChange(majPause);
+        BB.restoApi.commandes.onChange(() => majStatut(true));
+      }
     },
   };
 })();

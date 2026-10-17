@@ -1443,3 +1443,24 @@ li.ecarte .ecarte-ic b { font-size: 30px; }
 .retour-cue.droite { left: auto; right: 0; }
 .retour-cue svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 .retour-cue.pret { background: var(--vert); color: var(--vert-encre); }
+
+/* ---------- réglés au comptoir (admin/) : épuisé du jour, pause des commandes, réponse du restaurant ---------- */
+.epuise-badge { display: inline-block; padding: 4px 9px; border-radius: 999px; background: var(--braise); color: #fff; font: 800 10.5px/1 var(--f-ui); letter-spacing: 0.08em; text-transform: uppercase; vertical-align: 2px; }
+.bcard .epuise-badge { position: absolute; top: 9px; right: 9px; z-index: 3; rotate: 4deg; box-shadow: 0 6px 12px -6px #000; }
+.bcard.epuise .vis, .bcard.epuise h4, .bcard.epuise .price { opacity: 0.45; filter: grayscale(0.7); }
+.item .epuise-badge { margin-left: 8px; }
+.item.epuise > :not(h4) { opacity: 0.5; }
+.c-epuise { font-style: normal; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--braise); }
+.choix-opt:has(input:disabled) { opacity: 0.5; cursor: default; }
+.p-add:disabled { opacity: 0.4; cursor: default; }
+.co-pause { margin: 0; padding: 12px 16px; border-radius: 16px; background: rgba(229, 103, 58, 0.14); box-shadow: inset 0 0 0 1.5px rgba(229, 103, 58, 0.6); color: var(--creme); font-size: 14.5px; line-height: 1.45; }
+.co-pause a { color: var(--pomme); font-weight: 700; white-space: nowrap; }
+.ticket .co-statut { display: inline-flex; align-items: center; gap: 9px; margin: 2px auto 10px; padding: 8px 14px; border-radius: 999px; background: rgba(43, 26, 16, 0.08); color: #2B1A10; font-weight: 700; font-size: 14.5px; }
+.co-statut i { width: 10px; height: 10px; border-radius: 50%; background: #B9A58A; }
+.co-statut[data-statut="nouvelle"] i, .co-statut[data-statut="demande"] i, .co-statut[data-statut="cuisine"] i { background: #D98A2B; animation: statut-bat 1.4s ease-in-out infinite; }
+.co-statut[data-statut="prete"], .co-statut[data-statut="confirmee"], .co-statut[data-statut="venue"] { background: rgba(110, 148, 25, 0.18); }
+.co-statut[data-statut="prete"] i, .co-statut[data-statut="confirmee"] i, .co-statut[data-statut="venue"] i { background: var(--vert-3); }
+.co-statut[data-statut="annulee"] i, .co-statut[data-statut="refusee"] i, .co-statut[data-statut="absente"] i { background: var(--braise); }
+@keyframes statut-bat { 50% { transform: scale(1.35); opacity: 0.6; } }
+.fid-sms-membre { display: flex; align-items: flex-start; gap: 10px; margin: 22px 2px 0; font-size: 14px; line-height: 1.4; color: var(--creme-2); cursor: pointer; }
+.fid-sms-membre input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: var(--vert); }

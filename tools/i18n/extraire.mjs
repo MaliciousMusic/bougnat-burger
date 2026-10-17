@@ -54,7 +54,6 @@ const r = await send('Runtime.evaluate', { returnByValue: true, expression: `(()
   // les formules écrites dans le code (bb-data.js, burgerDesc)
   [{ fr: 'double steak haché façon bouchère VBF', en: 'double butcher-style French beef patty (VBF)', ou: 'BB.burgerDesc (double)' },
    { fr: 'double galette de pommes de terre', en: 'double potato rösti', ou: 'BB.burgerDesc (double)' },
-   { fr: "Maquette : rien n'est envoyé.", en: 'Demo: nothing is sent.', ou: 'bb-resa.js (demande envoyée)' },
    { fr: 'steak haché VBF', en: 'VBF beef patty', ou: 'bb-burger.js (étiquette du Petiot)' },
    { fr: 'salade et mesclun', en: 'salad and mesclun', ou: 'bb-burger.js (étiquette du Petiot)' }]
     .forEach((o) => data.set(o.fr, { fr: o.fr, en: o.en, ou: [o.ou] }));

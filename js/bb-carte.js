@@ -240,26 +240,28 @@
     return t.length ? `<span class="tags">${t.join('')}</span>` : '';
   }
 
+  // « Épuisé aujourd'hui », coché au comptoir (BB.restoApi.carte) : le plat reste à sa place, grisé
+  const epuiseHTML = (item) => (item._epuise ? `<span class="epuise-badge">${esc(BB.t('epuiseCourt'))}</span>` : '');
   function burgerCard(item) {
-    const b = el('button', 'bcard reveal');
+    const b = el('button', 'bcard reveal' + (item._epuise ? ' epuise' : ''));
     b.type = 'button';
     b.dataset.open = item.id;
     b.dataset.item = item.id;
     b.setAttribute('data-sfx', 'open');
-    b.innerHTML = `${tagsHTML(item)}<div class="vis" data-id="${item.id}"><div class="ph">${icon('i-burger')}</div></div>
+    b.innerHTML = `${tagsHTML(item)}<div class="vis" data-id="${item.id}"><div class="ph">${icon('i-burger')}</div></div>${epuiseHTML(item)}
       <h4>${esc(BB.t('ti'))} ${esc(BB.tr(item.name))}</h4>${priceHTML(item)}`;
     return b;
   }
 
   const commandable = (item) => item.price != null || !!item.variants;
   function platCard(item) {
-    const b = el('button', 'bcard reveal' + (commandable(item) ? '' : ' sur-place'));
+    const b = el('button', 'bcard reveal' + (commandable(item) ? '' : ' sur-place') + (item._epuise ? ' epuise' : ''));
     b.type = 'button';
     b.dataset.open = item.id;
     b.dataset.item = item.id;
     b.setAttribute('data-sfx', 'open');
     const cat = BB.CATS.find((c) => c.id === item.cat);
-    b.innerHTML = `${tagsHTML(item)}<div class="vis" data-id="${item.id}"><div class="ph">${icon(cat ? cat.icon : 'i-burger')}</div></div>
+    b.innerHTML = `${tagsHTML(item)}<div class="vis" data-id="${item.id}"><div class="ph">${icon(cat ? cat.icon : 'i-burger')}</div></div>${epuiseHTML(item)}
       <h4>${esc(BB.tr(item.name))}</h4>${priceHTML(item)}`;
     return b;
   }
@@ -267,14 +269,14 @@
     const addable = commandable(item);
     const li = el('li', 'reveal');
     li.dataset.item = item.id;
-    const b = el(addable ? 'button' : 'div', 'item' + (addable ? '' : ' plain'));
+    const b = el(addable ? 'button' : 'div', 'item' + (addable ? '' : ' plain') + (item._epuise ? ' epuise' : ''));
     if (addable) { b.type = 'button'; b.dataset.open = item.id; b.setAttribute('data-sfx', 'open'); }
     const mini = [];
     if (item.sides) mini.push(`<span>${icon('i-frites')}${esc(BB.tr(BB.SIDES).replace(/\.$/, ''))}</span>`);
     if (item.raw) mini.push(`<span>${icon('i-lait-cru')}${esc(BB.t('raw'))}</span>`);
     if (item.homemade) mini.push(`<span>${icon('i-dessert')}${esc(BB.t('homemade'))}</span>`);
     if (item.local) mini.push(`<span>${icon('i-pin')}${esc(BB.t('local'))}</span>`);
-    b.innerHTML = `<h4>${esc(BB.tr(item.name))}</h4>${priceHTML(item)}
+    b.innerHTML = `<h4>${esc(BB.tr(item.name))}${epuiseHTML(item)}</h4>${priceHTML(item)}
       ${item.desc ? `<p>${esc(BB.tr(item.desc))}</p>` : ''}${mini.length ? `<span class="mini">${mini.join('')}</span>` : ''}`;
     li.appendChild(b);
     return li;
@@ -474,7 +476,8 @@
 
   /* ---------- la fiche d'un plat ---------- */
   const sheet = { item: null, double: false, veggie: false, qty: 1, burger: null, variant: null };
-  const variante = () => (sheet.item && sheet.item.variants ? sheet.item.variants.find((v) => v.id === sheet.variant) || sheet.item.variants[0] : null);
+  const variante = () => (sheet.item && sheet.item.variants ? sheet.item.variants.find((v) => v.id === sheet.variant) || sheet.item.variants.find((v) => !v._epuise) || sheet.item.variants[0] : null);
+  const ficheEpuisee = () => { const v = variante(); return !!(sheet.item && (sheet.item._epuise || (v && v._epuise))); };
 
   function unitPrice() {
     const it = sheet.item;
@@ -528,9 +531,12 @@
     // un plat servi seulement sur place : pas de quantité ni d'ajout, une mention à la place
     const ok = commandable(it);
     $('#p-qty').hidden = !ok;
+    const fini = ok && ficheEpuisee();
     $('#p-add').hidden = !ok;
-    $('#p-surplace').hidden = ok;
+    $('#p-add').disabled = fini;
+    $('#p-surplace').hidden = ok && !fini;
     if (!ok) $('#p-surplace').textContent = BB.t('surPlaceLong');
+    if (fini) $('#p-surplace').textContent = BB.t('epuise');
     $('#p-price').textContent = BB.fmtPriceL(unitPrice() * sheet.qty);
     // options
     const opts = $('#p-options');
@@ -545,8 +551,8 @@
     const f = el('fieldset', 'choix');
     const cur = variante();
     f.innerHTML = `<legend>${esc(BB.t('choix'))}</legend>` + it.variants.map((v) => `<label class="choix-opt">
-        <input type="radio" name="variante" value="${esc(v.id)}"${v === cur ? ' checked' : ''}>
-        <span class="c-nom">${esc(BB.tr(v.name))}</span>${v.desc ? `<span class="c-desc">${esc(BB.tr(v.desc)).replace(/(\d) %/g, '$1\u00a0%')}</span>` : ''}
+        <input type="radio" name="variante" value="${esc(v.id)}"${v === cur ? ' checked' : ''}${v._epuise ? ' disabled' : ''}>
+        <span class="c-nom">${esc(BB.tr(v.name))}${v._epuise ? ` <em class="c-epuise">${esc(BB.t('epuiseCourt'))}</em>` : ''}</span>${v.desc ? `<span class="c-desc">${esc(BB.tr(v.desc)).replace(/(\d) %/g, '$1\u00a0%')}</span>` : ''}
         <span class="c-prix">${esc(BB.fmtPriceL(v.price))}</span></label>`).join('');
     f.addEventListener('change', (e) => {
       if (!e.target.matches('input[name="variante"]')) return;
@@ -663,7 +669,7 @@
     });
     $('#p-add').addEventListener('click', () => {
       const it = sheet.item;
-      if (!it) return;
+      if (!it || ficheEpuisee()) return;
       const v = variante();
       BB.shop.add({
         id: it.id + (v ? ':' + v.id : '') + (sheet.double ? ':double' : '') + (sheet.veggie ? ':galette' : ''),
@@ -688,6 +694,8 @@
       if (scMoteur) scMoteur.addEventListener('scroll', planifier, { passive: true });
       if (!BB.VIGNETTES) chargerMoteur(); // pas de vignettes : le moteur tout de suite
       document.addEventListener('pointerdown', (e) => { if (e.target.closest && e.target.closest('[data-open]')) chargerMoteur(); }, { passive: true });
+      // les réglages du comptoir (prix, épuisés, masqués, allergènes) avant le premier rendu
+      if (BB.restoApi) BB.restoApi.carte.appliquer();
       renderChips();
       renderMenu();
       renderFiltres();
@@ -703,6 +711,18 @@
       });
       // les dessins de burgers arrivent (script chargé tard) : on remonte les cartes
       BB.on('burgers-ready', () => { renderMenu(); appliquerFiltres(); renderSignatures(); });
+      // un réglage change au comptoir (un autre onglet ; PROD : une notification du serveur) : la carte suit,
+      // et un épuisé de minuit tombe tout seul au premier rafraîchissement du lendemain
+      if (BB.restoApi) {
+        const suivre = () => {
+          BB.restoApi.carte.appliquer();
+          renderMenu(); appliquerFiltres(); renderSignatures();
+          if (sheet.item && !$('#sheet-product').hidden) refreshSheet(false);
+        };
+        BB.restoApi.carte.onChange(suivre);
+        let jour = BB.restoApi.aujourdhui();
+        setInterval(() => { if (BB.restoApi.aujourdhui() !== jour) { jour = BB.restoApi.aujourdhui(); suivre(); } }, 60000);
+      }
     },
   };
 })();
