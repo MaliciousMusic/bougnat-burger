@@ -62,6 +62,20 @@
     b.classList.toggle('alerte', !!alerte);
   }
 
+  /* ---------- l'écran reste allumé tant que le comptoir est ouvert ----------
+     Sinon le téléphone se met en veille, et les commandes ne sonnent plus (Wake Lock : Chrome, Edge, Safari 16.4+). */
+  let veille = null;
+  async function garderAllume() {
+    if (!('wakeLock' in navigator) || !ouvert() || document.visibilityState !== 'visible' || veille) return;
+    try {
+      veille = await navigator.wakeLock.request('screen');
+      veille.addEventListener('release', () => { veille = null; });
+    } catch (e) { veille = null; /* batterie faible, ou refusé */ }
+  }
+  function laisserDormir() { if (veille) { veille.release().catch(() => {}); veille = null; } }
+  document.addEventListener('visibilitychange', garderAllume);
+  document.addEventListener('pointerdown', garderAllume, { passive: true }); // Safari veut parfois un geste
+
   /* ---------- le verrou ---------- */
   // MAQUETTE : un code en dur ; PROD : POST /api/session { identifiant, mot de passe } → jeton de session
   const CODE = '2012';
@@ -80,7 +94,9 @@
       const id = demandee;
       demandee = null;
       if (id) { montrer('fidelite'); ad.fidelite.ouvrir(id); } else montrer((location.hash || '').slice(1));
+      garderAllume();
     } else {
+      laisserDormir();
       Object.values(modules).forEach((m) => m.verrouiller && m.verrouiller());
     }
   }
