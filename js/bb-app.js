@@ -1,12 +1,12 @@
 /* ==========================================================================
-   Bougnat Burger — l'appli : ouverture, onglets (#accueil, #carte, #commander, #reserver, #nous),
+   Bougnat Burger — l'appli : ouverture, onglets (#accueil, #carte, #commander, #reserver, #fidelite ; « Nous » est en bas de l'accueil),
    feuilles qui montent, son, langue, film de l'accueil, QR sur ordinateur.
    ========================================================================== */
 (function () {
   'use strict';
   const BB = (window.BB = window.BB || {});
   const $ = (s, r = document) => r.querySelector(s);
-  const VIEWS = ['accueil', 'carte', 'commander', 'reserver', 'nous'];
+  const VIEWS = ['accueil', 'carte', 'commander', 'reserver', 'fidelite'];
   let current = null;
   let film = null;
   let filmAllowed = false;
@@ -33,7 +33,14 @@
     if (film && film.stop) film.stop();
     BB.filmSound && BB.filmSound.stop();
   }
-  function syncFilm() { if (filmAllowed && current === 'accueil') startFilm(); else stopFilm(); }
+  // « Nous » est en bas de l'accueil : descendu jusque-là, le film (et son vent) se met en pause
+  let filmVu = true;
+  function syncFilm() { if (filmAllowed && current === 'accueil' && filmVu) startFilm(); else stopFilm(); }
+  function suivreFilm() {
+    const host = $('#film');
+    if (!host || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver((es) => { const vu = es[0].isIntersecting; if (vu !== filmVu) { filmVu = vu; syncFilm(); } }).observe(host);
+  }
 
   /* ---------- onglets ---------- */
   function route(first) {
@@ -76,7 +83,6 @@
       t.classList.toggle('is-active', on);
       if (on) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current');
     });
-    $('#tabbar').classList.toggle('on-nous', view === 'nous');
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.setAttribute('content', '#1A130F'); // le charbon de la barre du haut, sur tous les onglets
     void first; void iOld;
@@ -318,9 +324,11 @@
     BB.carte.init();
     BB.shop.init();
     BB.resa.init();
+    BB.fidelite && BB.fidelite.init();
     initTabs();
     route(true);
     initRetour();
+    suivreFilm();
     BB.splash(() => { filmAllowed = true; syncFilm(); });
     document.addEventListener('visibilitychange', () => { if (document.hidden) stopFilm(); else syncFilm(); });
   }

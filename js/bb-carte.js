@@ -244,6 +244,7 @@
     const b = el('button', 'bcard reveal');
     b.type = 'button';
     b.dataset.open = item.id;
+    b.dataset.item = item.id;
     b.setAttribute('data-sfx', 'open');
     b.innerHTML = `${tagsHTML(item)}<div class="vis" data-id="${item.id}"><div class="ph">${icon('i-burger')}</div></div>
       <h4>${esc(BB.t('ti'))} ${esc(BB.tr(item.name))}</h4>${priceHTML(item)}`;
@@ -255,6 +256,7 @@
     const b = el('button', 'bcard reveal' + (commandable(item) ? '' : ' sur-place'));
     b.type = 'button';
     b.dataset.open = item.id;
+    b.dataset.item = item.id;
     b.setAttribute('data-sfx', 'open');
     const cat = BB.CATS.find((c) => c.id === item.cat);
     b.innerHTML = `${tagsHTML(item)}<div class="vis" data-id="${item.id}"><div class="ph">${icon(cat ? cat.icon : 'i-burger')}</div></div>
@@ -264,6 +266,7 @@
   function itemRow(item) {
     const addable = commandable(item);
     const li = el('li', 'reveal');
+    li.dataset.item = item.id;
     const b = el(addable ? 'button' : 'div', 'item' + (addable ? '' : ' plain'));
     if (addable) { b.type = 'button'; b.dataset.open = item.id; b.setAttribute('data-sfx', 'open'); }
     const mini = [];
@@ -365,6 +368,92 @@
     }, { passive: true });
   }
 
+  /* ---------- les filtres : grossesse et les 14 allergènes ----------
+     Ce qui contient un des allergènes cochés (ou ce qu'on déconseille enceinte) passe à 20 %, son symbole en gros
+     au centre ; ce dont on ne connaît pas la composition, un « ? ». D'après la composition (bb-data.js), à confirmer. */
+  const filtres = new Set((BB.store.get('filtres', []) || []).filter((k) => k === 'enceinte' || BB.ALLERGEN_LABELS[k]));
+  const nomFiltre = (k) => (k === 'enceinte' ? BB.t('fEnceinte') : BB.tr(BB.ALLERGEN_LABELS[k]));
+  const icFiltre = (k) => 'al-' + k;
+  function ecart(item) {
+    const al = BB.allergens(item);
+    const touche = [...filtres].filter((k) => (k === 'enceinte' ? BB.grossesse(item).length > 0 : al.includes(k)));
+    const inconnu = !touche.length && !!item.compoInconnue && [...filtres].some((k) => k !== 'enceinte');
+    return { touche, inconnu };
+  }
+  function renderFiltres() {
+    const rang = $('#filtres-rang');
+    if (!rang) return;
+    rang.innerHTML = ['enceinte', ...BB.ALLERGENES].map((k) => `<button type="button" class="filtre${k === 'enceinte' ? ' f-enceinte' : ''}" data-filtre="${k}" aria-pressed="${filtres.has(k)}" data-sfx="none">${icon(icFiltre(k))}<span>${esc(nomFiltre(k))}</span></button>`).join('');
+    let note = $('#filtres-note');
+    if (!note) {
+      note = el('div', 'filtres-note');
+      note.id = 'filtres-note';
+      note.setAttribute('aria-live', 'polite');
+      rang.after(note);
+    }
+  }
+  function appliquerFiltres() {
+    const menu = $('#menu');
+    if (!menu) return;
+    let n = 0;
+    menu.querySelectorAll('[data-item]').forEach((c) => {
+      const it = byId.get(c.dataset.item);
+      if (!it) return;
+      const e = filtres.size ? ecart(it) : { touche: [], inconnu: false };
+      const hors = e.touche.length > 0 || e.inconnu;
+      c.classList.toggle('ecarte', hors);
+      let marque = c.querySelector(':scope > .ecarte-ic, :scope > .item > .ecarte-ic');
+      const hote = c.matches('li') ? c.querySelector('.item') : c;
+      if (!hors) { if (marque) marque.remove(); return; }
+      n++;
+      if (!marque) { marque = el('span', 'ecarte-ic'); hote.appendChild(marque); }
+      const txt = e.inconnu ? BB.t('fInconnu') : BB.t('fContient', { a: BB.liste(e.touche.map(nomFiltre)) });
+      marque.innerHTML = (e.inconnu ? '<b aria-hidden="true">?</b>' : e.touche.slice(0, 2).map((k) => `<svg aria-hidden="true" class="${k === 'enceinte' ? 'enc' : ''}"><use href="#${icFiltre(k)}-net"/></svg>`).join('')) + `<span class="sr-only">${esc(txt)}</span>`;
+      marque.classList.toggle('deux', !e.inconnu && e.touche.length > 1);
+      marque.classList.toggle('enc', !e.inconnu && e.touche[0] === 'enceinte');
+      marque.title = txt;
+    });
+    // la note sous les filtres, et le rappel dans la rangée collante des rubriques
+    const note = $('#filtres-note');
+    if (note) {
+      note.hidden = !filtres.size;
+      if (filtres.size) note.innerHTML = `<span>${esc(BB.t(n === 1 ? 'fNote1' : 'fNote', { n }))}</span><button type="button" class="filtres-raz" data-sfx="close">${esc(BB.t('fRaz'))}</button>`;
+    }
+    const nav = $('#chips');
+    if (nav) {
+      let r = nav.querySelector('.chip-filtre');
+      if (!filtres.size) { if (r) r.remove(); return; }
+      if (!r) { r = el('button', 'chip chip-filtre'); r.type = 'button'; r.setAttribute('data-sfx', 'tab'); nav.prepend(r); }
+      r.innerHTML = [...filtres].slice(0, 3).map((k) => icon(icFiltre(k) + '-net')).join('') + `<span>${esc(BB.t(filtres.size > 1 ? 'fActifsN' : 'fActifs1', { n: filtres.size }))}</span>`;
+      r.setAttribute('aria-label', BB.t('fActifsLong', { a: BB.liste([...filtres].map(nomFiltre)) }));
+    }
+  }
+  function initFiltres() {
+    const box = $('#filtres');
+    if (!box) return;
+    box.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-filtre]');
+      if (b) {
+        const k = b.dataset.filtre, on = !filtres.has(k);
+        if (on) filtres.add(k); else filtres.delete(k);
+        b.setAttribute('aria-pressed', String(on));
+        BB.sfx && BB.sfx.play(on ? 'stamp' : 'down', on ? { gain: 0.5 } : {});
+      } else if (e.target.closest('.filtres-raz')) {
+        filtres.clear();
+        box.querySelectorAll('[data-filtre]').forEach((x) => x.setAttribute('aria-pressed', 'false'));
+      } else return;
+      BB.store.set('filtres', [...filtres]);
+      appliquerFiltres();
+    });
+    // le rappel des filtres (rangée des rubriques) ramène aux filtres
+    $('#chips').addEventListener('click', (e) => {
+      if (!e.target.closest('.chip-filtre')) return;
+      e.stopPropagation();
+      const sc = $('#carte-scroll');
+      if (sc) sc.scrollTo({ top: Math.max(0, box.offsetTop - 70), behavior: BB.reduced ? 'auto' : 'smooth' });
+    }, true);
+  }
+
   /* ---------- les incontournables de l'accueil ---------- */
   function renderSignatures() {
     const row = $('#sig-row');
@@ -430,6 +519,9 @@
     const v = variante();
     const al = [...new Set([...BB.allergens(it), ...((v && v.allergens) || [])])];
     if (al.length) notes.push(`<li>${icon('i-fromage')}<span>${esc(BB.t('allergens', { a: BB.liste(al.map((a) => BB.tr(BB.ALLERGEN_LABELS[a]))) }))}</span></li>`);
+    const gr = BB.grossesse(it);
+    if (gr.length) notes.push(`<li class="enceinte">${icon('al-enceinte')}<span>${esc(BB.t('fGrossesse', { r: BB.liste(gr.map((k) => BB.tr(BB.GROSSESSE_LABELS[k]))) }))}</span></li>`);
+    if (it.compoInconnue) notes.push(`<li>${icon('i-fromage')}<span>${esc(BB.t('fInconnuLong'))}</span></li>`);
     if (it.alcool) notes.push(`<li class="alcool">${icon('i-biere')}<span>${esc(BB.t('alcool'))}</span></li>`);
     $('#p-notes').innerHTML = notes.join('');
     $('#p-count').textContent = String(sheet.qty);
@@ -598,16 +690,19 @@
       document.addEventListener('pointerdown', (e) => { if (e.target.closest && e.target.closest('[data-open]')) chargerMoteur(); }, { passive: true });
       renderChips();
       renderMenu();
+      renderFiltres();
+      appliquerFiltres();
+      initFiltres();
       renderSignatures();
       spy();
       initSheet();
       BB.on('lang', () => {
-        renderChips(); renderMenu(); renderSignatures();
+        renderChips(); renderMenu(); renderFiltres(); appliquerFiltres(); renderSignatures();
         if (sheet.item && !$('#sheet-product').hidden) refreshSheet(false);
         live.forEach((b) => b.setLang && b.setLang(BB.lang));
       });
       // les dessins de burgers arrivent (script chargé tard) : on remonte les cartes
-      BB.on('burgers-ready', () => { renderMenu(); renderSignatures(); });
+      BB.on('burgers-ready', () => { renderMenu(); appliquerFiltres(); renderSignatures(); });
     },
   };
 })();

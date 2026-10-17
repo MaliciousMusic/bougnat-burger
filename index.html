@@ -46,9 +46,9 @@
   <link rel="alternate" type="text/markdown" href="llms.txt" title="Bougnat Burger · résumé pour assistants IA">
 
   <!-- Polices hébergées sur le site (tools/fetch-fonts.py) : aucun appel à Google -->
-  <link rel="stylesheet" href="css/fonts.css?v=20261002135711">
-  <link rel="stylesheet" href="css/bougnat.css?v=20261002135711">
-  <link rel="stylesheet" href="css/puys.css?v=20261002135711">
+  <link rel="stylesheet" href="css/fonts.css?v=20261018010304">
+  <link rel="stylesheet" href="css/bougnat.css?v=20261018010304">
+  <link rel="stylesheet" href="css/puys.css?v=20261018010304">
 
   <!-- Données structurées (Google et assistants IA) : le restaurant ; la carte est ajoutée par tools/build-menu.mjs -->
   <script type="application/ld+json">
@@ -223,6 +223,86 @@
         </a>
 
         <p class="fine" data-i18n="home.fine">Sur place, à emporter ou en livraison. Terrasse aux beaux jours.</p>
+
+        <!-- ============================== NOUS : la nuit tombe sur les banquettes vertes ==============================
+             Descendu dans l'accueil, sous la note Google : la 5e icône du bas est la carte de fidélité. -->
+        <div class="accueil-nous" id="nous" role="region" aria-labelledby="nous-title">
+          <header class="nous-hero">
+            <p class="kicker" data-i18n="nous.kicker">Depuis le 2 février 2012</p>
+            <h2 id="nous-title" data-i18n="nous.title">Un bougnat, c'est un Auvergnat qui régale.</h2>
+            <!-- Le hublot : les photos du restaurant (photos du propriétaire sur sa fiche Google), en diaporama -->
+            <figure class="nous-photo diapo" id="diapo">
+              <img src="assets/img/nous/01-burger-double.webp" width="720" height="720" alt="Un burger double du Bougnat Burger, tenu à deux mains" class="on">
+              <img src="assets/img/nous/02-devanture.webp" width="720" height="720" alt="La salle et la devanture du Bougnat Burger, le soir" loading="lazy">
+              <img src="assets/img/nous/03-burger-jambon.webp" width="720" height="720" alt="Un burger au jambon sec, sur l'ardoise" loading="lazy">
+              <img src="assets/img/nous/04-cuisine.webp" width="720" height="720" alt="En cuisine : les toasts au Saint-Nectaire et au Bleu d'Auvergne" loading="lazy">
+              <img src="assets/img/nous/05-bieres.webp" width="720" height="720" alt="Les bières artisanales" loading="lazy">
+              <img src="assets/img/nous/06-salade.webp" width="720" height="720" alt="Une salade aux toasts de Bleu d'Auvergne" loading="lazy">
+              <img src="assets/img/nous/07-bavette-frites.webp" width="720" height="720" alt="La bavette, frites maison et salade" loading="lazy">
+              <img src="assets/img/nous/08-tarte-citron.webp" width="720" height="720" alt="La tarte au citron meringuée" loading="lazy">
+            </figure>
+            <p class="diapo-credit" data-i18n="nous.photos">Photos : Bougnat Burger</p>
+          </header>
+
+          <section class="nous-story reveal">
+            <p data-i18n="nous.story1">Aux XIX<sup>e</sup> et XX<sup>e</sup> siècles, les « bougnats » étaient ces Auvergnats montés à Paris qui tenaient les cafés-charbons : du vin, du bois, du charbon, et une table pour tout le monde.</p>
+            <p data-i18n="nous.story2">Au Bougnat Burger, on garde l'esprit et on change le menu : le burger, fait maison, avec ce que l'Auvergne a de meilleur. Tout le reste suit la même idée, des frites coupées ici aux desserts maison.</p>
+          </section>
+
+          <section class="terroir reveal" aria-labelledby="terroir-title">
+            <h3 id="terroir-title" data-i18n="terroir.title">Ce qu'il y a dans le pain</h3>
+            <ul class="terroir-list">
+              <li><svg aria-hidden="true"><use href="#i-fromage"/></svg><div><b data-i18n="terroir.aop">Quatre AOP d'Auvergne</b><span data-i18n="terroir.aop.t">Saint-Nectaire fermier, Cantal, Salers et Bleu d'Auvergne.</span></div></li>
+              <li><svg aria-hidden="true"><use href="#i-steak"/></svg><div><b data-i18n="terroir.beef">Du bœuf français</b><span data-i18n="terroir.beef.t">Steak haché façon bouchère VBF, bavette de charolais bio.</span></div></li>
+              <li><svg aria-hidden="true"><use href="#i-frites"/></svg><div><b data-i18n="terroir.fries">Frites maison</b><span data-i18n="terroir.fries.t">Avec chaque burger, et une salade maison.</span></div></li>
+              <li><svg aria-hidden="true"><use href="#i-biere"/></svg><div><b data-i18n="terroir.beer">Bières du coin</b><span data-i18n="terroir.beer.t">Brasserie des Sagnes, Brasserie Desprat, vins d'Auvergne.</span></div></li>
+            </ul>
+          </section>
+
+          <section class="avis reveal" id="nous-avis" aria-labelledby="avis-title">
+            <h3 id="avis-title" data-i18n="avis.title">Ce que disent les clients</h3>
+            <div class="avis-score">
+              <span class="avis-num"><span data-nombre="4.6">4,6</span><small>/5</small></span>
+              <span class="avis-meta"><span data-i18n="avis.count">2 039 avis Google</span><span data-i18n="avis.asof">au 27 septembre 2026</span></span>
+            </div>
+            <!-- La fenêtre sur les avis Google (bb-avis.js) ; le premier avis est écrit ici pour les robots -->
+            <div class="avis-fenetre" role="region" aria-label="Avis Google" data-i18n-attr="aria-label:avis.window">
+              <div class="avis-barre">
+                <span class="avis-pastilles" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="avis-titre"><b data-i18n="avis.bar">Avis Google</b> · <span data-nombre="4.6">4,6</span> <svg aria-hidden="true"><use href="#i-etoile"/></svg></span>
+                <a class="avis-ext" href="https://www.google.com/maps/place/?q=place_id:ChIJ-SIFuukb90cRnD9t-Ioq67Y" target="_blank" rel="noopener" aria-label="Ouvrir les avis sur Google" data-i18n-attr="aria-label:avis.open"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5h10v10M19 5 6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              </div>
+              <div class="avis-piste" id="avis-piste">
+                <article class="avis-carte"><p class="avis-texte">« Toujours bien accueilli, on mange bien et c'est très bon. On adore et recommande »</p><footer><b>Mika</b><span>août 2026</span></footer></article>
+              </div>
+              <div class="avis-points" id="avis-points"></div>
+            </div>
+            <p class="fine" data-i18n="avis.fine">Une sélection d'avis Google, reproduits tels quels avec leur date, et non vérifiés par le restaurant. Tous les avis, bons et moins bons, sont à lire sur Google. En production, ils s'affichent ici en direct.</p>
+            <div class="avis-links">
+              <a class="btn btn-ghost" href="https://www.google.com/maps/place/?q=place_id:ChIJ-SIFuukb90cRnD9t-Ioq67Y" target="_blank" rel="noopener" data-i18n="avis.read">Lire les avis</a>
+              <a class="btn btn-ghost" href="https://search.google.com/local/writereview?placeid=ChIJ-SIFuukb90cRnD9t-Ioq67Y" target="_blank" rel="noopener" data-i18n="avis.write">Laisser un avis</a>
+            </div>
+          </section>
+
+          <section class="infos reveal" aria-labelledby="infos-title">
+            <h3 id="infos-title" data-i18n="infos.title">Nous trouver</h3>
+            <address class="infos-card">
+              <p><svg aria-hidden="true"><use href="#i-pin"/></svg><span>10 boulevard Léon-Malfreyt<br>63000 Clermont-Ferrand</span></p>
+              <p><svg aria-hidden="true"><use href="#i-tel"/></svg><a href="tel:+33760120063">07 60 12 00 63</a></p>
+              <p><svg aria-hidden="true"><use href="#i-mail"/></svg><a href="mailto:bougnatburger@hotmail.fr">bougnatburger@hotmail.fr</a></p>
+            </address>
+            <div class="infos-actions">
+              <a class="btn btn-main" id="route-google" href="https://www.google.com/maps/dir/?api=1&amp;destination=45.7739412,3.0856348&amp;destination_place_id=ChIJ-SIFuukb90cRnD9t-Ioq67Y" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-pin"/></svg><span data-i18n="infos.route">Itinéraire</span></a>
+              <a class="btn btn-ghost" href="https://www.instagram.com/bougnatburger/" target="_blank" rel="noopener">Instagram</a>
+              <a class="btn btn-ghost" href="https://www.facebook.com/BougnatBurger" target="_blank" rel="noopener">Facebook</a>
+            </div>
+          </section>
+
+          <footer class="nous-foot">
+            <a href="mentions-legales.html" data-i18n="foot.legal">Mentions légales et confidentialité</a>
+            <p data-i18n="foot.demo">Maquette de démonstration. Prix et informations issus de la carte du restaurant, septembre 2026.</p>
+          </footer>
+        </div>
       </div>
     </section>
 
@@ -234,6 +314,11 @@
           <p data-i18n="carte.lede">Chaque burger est servi avec frites maison et salade. Steak façon bouchère ou galette de pommes de terre, au choix.</p>
         </header>
         <nav class="chips" id="chips" aria-label="Rubriques de la carte" data-i18n-attr="aria-label:carte.nav"></nav>
+        <!-- Les filtres : grossesse et les 14 allergènes ; ce qui ne convient pas passe à 20 % (bb-carte.js) -->
+        <div class="filtres" id="filtres" role="group" aria-labelledby="filtres-titre">
+          <p class="filtres-titre" id="filtres-titre" data-i18n="filtres.title">Allergies, grossesse : touchez ce qui vous concerne</p>
+          <div class="filtres-rang" id="filtres-rang"></div>
+        </div>
         <div class="menu" id="menu">
 <!-- MENU:START -->
 <section class="menu-sec" id="m-burgers"><h3>Burgers</h3>
@@ -348,15 +433,8 @@
         </div>
 
         <div class="mode" id="mode-livraison" hidden>
-          <p class="lede-sm" data-i18n="del.lede">Aujourd'hui, la livraison passe par ces plateformes :</p>
+          <p class="lede-sm" data-i18n="del.lede">La livraison passe par ces plateformes :</p>
           <div class="delivery" id="delivery"></div>
-          <div class="soon">
-            <svg aria-hidden="true"><use href="#i-velo"/></svg>
-            <div>
-              <h3 data-i18n="del.soon.title">Bientôt, directement ici</h3>
-              <p data-i18n="del.soon.text">Vous commandez dans l'appli Bougnat Burger, un coursier vous livre. Mêmes prix qu'au restaurant, sans commission de plateforme.</p>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -404,84 +482,68 @@
       </div>
     </section>
 
-    <!-- ============================== NOUS (la nuit tombe sur les banquettes vertes) ============================== -->
-    <section class="view view-nous" id="nous" data-view="nous" aria-labelledby="nous-title">
+    <!-- ============================== FIDÉLITÉ : le bougnat marche vers le puy de Dôme ==============================
+         Un point par personne et par venue ; un cadeau au sommet de chaque puy, tous les 15 points (bb-fidelite.js). -->
+    <section class="view view-fid" id="fidelite" data-view="fidelite" aria-labelledby="fid-title">
       <div class="view-scroll">
-        <header class="nous-hero">
-          <p class="kicker" data-i18n="nous.kicker">Depuis le 2 février 2012</p>
-          <h2 id="nous-title" data-i18n="nous.title">Un bougnat, c'est un Auvergnat qui régale.</h2>
-          <!-- Le hublot : les photos du restaurant (photos du propriétaire sur sa fiche Google), en diaporama -->
-          <figure class="nous-photo diapo" id="diapo">
-            <img src="assets/img/nous/01-burger-double.webp" width="720" height="720" alt="Un burger double du Bougnat Burger, tenu à deux mains" class="on">
-            <img src="assets/img/nous/02-devanture.webp" width="720" height="720" alt="La salle et la devanture du Bougnat Burger, le soir" loading="lazy">
-            <img src="assets/img/nous/03-burger-jambon.webp" width="720" height="720" alt="Un burger au jambon sec, sur l'ardoise" loading="lazy">
-            <img src="assets/img/nous/04-cuisine.webp" width="720" height="720" alt="En cuisine : les toasts au Saint-Nectaire et au Bleu d'Auvergne" loading="lazy">
-            <img src="assets/img/nous/05-bieres.webp" width="720" height="720" alt="Les bières artisanales" loading="lazy">
-            <img src="assets/img/nous/06-salade.webp" width="720" height="720" alt="Une salade aux toasts de Bleu d'Auvergne" loading="lazy">
-            <img src="assets/img/nous/07-bavette-frites.webp" width="720" height="720" alt="La bavette, frites maison et salade" loading="lazy">
-            <img src="assets/img/nous/08-tarte-citron.webp" width="720" height="720" alt="La tarte au citron meringuée" loading="lazy">
-          </figure>
-          <p class="diapo-credit" data-i18n="nous.photos">Photos : Bougnat Burger</p>
+        <header class="view-head fid-head">
+          <p class="kicker" data-i18n="fid.kicker">La carte de fidélité</p>
+          <h2 id="fid-title" data-i18n="fid.title">En route pour le puy de Dôme</h2>
+          <p data-i18n="fid.lede">Un point par personne, à chaque venue. Tous les 15 points, un cadeau vous attend au sommet d'un puy.</p>
         </header>
 
-        <section class="nous-story reveal">
-          <p data-i18n="nous.story1">Aux XIX<sup>e</sup> et XX<sup>e</sup> siècles, les « bougnats » étaient ces Auvergnats montés à Paris qui tenaient les cafés-charbons : du vin, du bois, du charbon, et une table pour tout le monde.</p>
-          <p data-i18n="nous.story2">Au Bougnat Burger, on garde l'esprit et on change le menu : le burger, fait maison, avec ce que l'Auvergne a de meilleur. Tout le reste suit la même idée, des frites coupées ici aux desserts maison.</p>
+        <!-- La chaîne des Puys, six sommets, six cadeaux ; le bougnat avance au fil des points (dessiné par bb-fidelite.js) -->
+        <figure class="fid-carte" id="fid-carte" role="img" aria-label="La chaîne des Puys en six sommets, un cadeau sur chacun ; le petit bougnat avance d'un sommet à l'autre au fil des points." data-i18n-attr="aria-label:fid.alt"></figure>
+        <div class="fid-etat" id="fid-etat" aria-live="polite"></div>
+
+        <!-- Pas encore de carte : comment ça marche, l'inscription -->
+        <div class="fid-invite" id="fid-invite">
+          <ol class="fid-etapes">
+            <li><b data-i18n="fid.step1">Créez votre carte</b><span data-i18n="fid.step1.t">Votre prénom, votre nom et votre numéro de téléphone : c'est tout.</span></li>
+            <li><b data-i18n="fid.step2">Montrez votre QR code</b><span data-i18n="fid.step2.t">Au comptoir, on le scanne et on compte les personnes à table : un point chacune.</span></li>
+            <li><b data-i18n="fid.step3">Le bougnat grimpe</b><span data-i18n="fid.step3.t">Il avance de puy en puy. À chaque sommet, son cadeau, à retirer au comptoir.</span></li>
+          </ol>
+          <form class="fid-form who" id="fid-form" novalidate>
+            <h3 data-i18n="fid.join">Créer ma carte</h3>
+            <label><span data-i18n="fid.prenom">Prénom</span><input id="fid-prenom" name="prenom" autocomplete="given-name" required></label>
+            <label><span data-i18n="fid.nom">Nom</span><input id="fid-nom" name="nom" autocomplete="family-name" required></label>
+            <label><span data-i18n="co.phone">Téléphone</span><input id="fid-tel" name="tel" type="tel" autocomplete="tel" inputmode="tel" required></label>
+            <label class="fid-accord"><input id="fid-accord" type="checkbox" required><span data-i18n="fid.accord">J'accepte que Bougnat Burger garde mon nom et mon numéro pour ma carte de fidélité, et pour rien d'autre (<a href="mentions-legales.html#fidelite">en savoir plus</a>).</span></label>
+            <button class="btn btn-main" type="submit" data-sfx="none"><svg aria-hidden="true"><use href="#i-cadeau"/></svg><span data-i18n="fid.create">Créer ma carte</span></button>
+            <p class="fine" data-i18n="fid.fine">Maquette : la carte reste sur ce téléphone. En vrai, elle est enregistrée au restaurant et se retrouve avec votre numéro.</p>
+          </form>
+        </div>
+
+        <!-- Une carte : le QR code à montrer au comptoir -->
+        <div class="fid-ticket" id="fid-ticket" hidden>
+          <div class="fid-qr" id="fid-qr"></div>
+          <div class="fid-qui"><b id="fid-qui-nom"></b><span id="fid-qui-num"></span></div>
+          <p data-i18n="fid.show">Montrez ce code au comptoir : on le scanne et on ajoute un point par personne à table.</p>
+        </div>
+
+        <section class="fid-cadeaux" aria-labelledby="fid-cadeaux-title">
+          <h3 id="fid-cadeaux-title" data-i18n="fid.gifts">Six puys, six cadeaux</h3>
+          <ol class="fid-paliers" id="fid-paliers"></ol>
+          <p class="fine" data-i18n="fid.gifts.fine">Les cadeaux sont à retirer au comptoir, sur présentation de la carte. La liste peut évoluer.</p>
         </section>
 
-        <section class="terroir reveal" aria-labelledby="terroir-title">
-          <h3 id="terroir-title" data-i18n="terroir.title">Ce qu'il y a dans le pain</h3>
-          <ul class="terroir-list">
-            <li><svg aria-hidden="true"><use href="#i-fromage"/></svg><div><b data-i18n="terroir.aop">Quatre AOP d'Auvergne</b><span data-i18n="terroir.aop.t">Saint-Nectaire fermier, Cantal, Salers et Bleu d'Auvergne.</span></div></li>
-            <li><svg aria-hidden="true"><use href="#i-steak"/></svg><div><b data-i18n="terroir.beef">Du bœuf français</b><span data-i18n="terroir.beef.t">Steak haché façon bouchère VBF, bavette de charolais bio.</span></div></li>
-            <li><svg aria-hidden="true"><use href="#i-frites"/></svg><div><b data-i18n="terroir.fries">Frites maison</b><span data-i18n="terroir.fries.t">Avec chaque burger, et une salade maison.</span></div></li>
-            <li><svg aria-hidden="true"><use href="#i-biere"/></svg><div><b data-i18n="terroir.beer">Bières du coin</b><span data-i18n="terroir.beer.t">Brasserie des Sagnes, Brasserie Desprat, vins d'Auvergne.</span></div></li>
-          </ul>
-        </section>
-
-        <section class="avis reveal" id="nous-avis" aria-labelledby="avis-title">
-          <h3 id="avis-title" data-i18n="avis.title">Ce que disent les clients</h3>
-          <div class="avis-score">
-            <span class="avis-num"><span data-nombre="4.6">4,6</span><small>/5</small></span>
-            <span class="avis-meta"><span data-i18n="avis.count">2 039 avis Google</span><span data-i18n="avis.asof">au 27 septembre 2026</span></span>
-          </div>
-          <!-- La fenêtre sur les avis Google (bb-avis.js) ; le premier avis est écrit ici pour les robots -->
-          <div class="avis-fenetre" role="region" aria-label="Avis Google" data-i18n-attr="aria-label:avis.window">
-            <div class="avis-barre">
-              <span class="avis-pastilles" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="avis-titre"><b data-i18n="avis.bar">Avis Google</b> · <span data-nombre="4.6">4,6</span> <svg aria-hidden="true"><use href="#i-etoile"/></svg></span>
-              <a class="avis-ext" href="https://www.google.com/maps/place/?q=place_id:ChIJ-SIFuukb90cRnD9t-Ioq67Y" target="_blank" rel="noopener" aria-label="Ouvrir les avis sur Google" data-i18n-attr="aria-label:avis.open"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5h10v10M19 5 6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <div class="fid-membre" id="fid-membre" hidden>
+          <section aria-labelledby="fid-passages-title">
+            <h3 id="fid-passages-title" data-i18n="fid.visits">Mes passages</h3>
+            <ul class="fid-passages" id="fid-passages"></ul>
+          </section>
+          <!-- MAQUETTE : en vrai, les points arrivent du panneau de François (scan du QR code + nombre de personnes) -->
+          <div class="fid-demo">
+            <p data-i18n="fid.demo">Maquette : en vrai, ce sont les scans du comptoir qui font avancer le bougnat. Pour essayer, simulez un passage :</p>
+            <div class="fid-demo-btns" id="fid-demo">
+              <button class="btn btn-ghost" type="button" data-scan="1" data-sfx="none">+1</button>
+              <button class="btn btn-ghost" type="button" data-scan="2" data-sfx="none">+2</button>
+              <button class="btn btn-ghost" type="button" data-scan="4" data-sfx="none">+4</button>
+              <button class="btn btn-ghost" type="button" data-scan="8" data-sfx="none">+8</button>
             </div>
-            <div class="avis-piste" id="avis-piste">
-              <article class="avis-carte"><p class="avis-texte">« Toujours bien accueilli, on mange bien et c'est très bon. On adore et recommande »</p><footer><b>Mika</b><span>août 2026</span></footer></article>
-            </div>
-            <div class="avis-points" id="avis-points"></div>
           </div>
-          <p class="fine" data-i18n="avis.fine">Une sélection d'avis Google, reproduits tels quels avec leur date, et non vérifiés par le restaurant. Tous les avis, bons et moins bons, sont à lire sur Google. En production, ils s'affichent ici en direct.</p>
-          <div class="avis-links">
-            <a class="btn btn-ghost" href="https://www.google.com/maps/place/?q=place_id:ChIJ-SIFuukb90cRnD9t-Ioq67Y" target="_blank" rel="noopener" data-i18n="avis.read">Lire les avis</a>
-            <a class="btn btn-ghost" href="https://search.google.com/local/writereview?placeid=ChIJ-SIFuukb90cRnD9t-Ioq67Y" target="_blank" rel="noopener" data-i18n="avis.write">Laisser un avis</a>
-          </div>
-        </section>
-
-        <section class="infos reveal" aria-labelledby="infos-title">
-          <h3 id="infos-title" data-i18n="infos.title">Nous trouver</h3>
-          <address class="infos-card">
-            <p><svg aria-hidden="true"><use href="#i-pin"/></svg><span>10 boulevard Léon-Malfreyt<br>63000 Clermont-Ferrand</span></p>
-            <p><svg aria-hidden="true"><use href="#i-tel"/></svg><a href="tel:+33760120063">07 60 12 00 63</a></p>
-            <p><svg aria-hidden="true"><use href="#i-mail"/></svg><a href="mailto:bougnatburger@hotmail.fr">bougnatburger@hotmail.fr</a></p>
-          </address>
-          <div class="infos-actions">
-            <a class="btn btn-main" id="route-google" href="https://www.google.com/maps/dir/?api=1&amp;destination=45.7739412,3.0856348&amp;destination_place_id=ChIJ-SIFuukb90cRnD9t-Ioq67Y" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-pin"/></svg><span data-i18n="infos.route">Itinéraire</span></a>
-            <a class="btn btn-ghost" href="https://www.instagram.com/bougnatburger/" target="_blank" rel="noopener">Instagram</a>
-            <a class="btn btn-ghost" href="https://www.facebook.com/BougnatBurger" target="_blank" rel="noopener">Facebook</a>
-          </div>
-        </section>
-
-        <footer class="nous-foot">
-          <a href="mentions-legales.html" data-i18n="foot.legal">Mentions légales et confidentialité</a>
-          <p data-i18n="foot.demo">Maquette de démonstration. Prix et informations issus de la carte du restaurant, septembre 2026.</p>
-        </footer>
+          <button class="fid-quitter" id="fid-quitter" type="button" data-i18n="fid.delete">Supprimer ma carte</button>
+        </div>
       </div>
     </section>
   </main>
@@ -491,7 +553,7 @@
     <a href="#carte" class="tab" data-tab="carte" data-sfx="tab" data-sfx-i="1"><svg aria-hidden="true"><use href="#i-burger"/></svg><span data-i18n="tab.menu">Carte</span></a>
     <a href="#commander" class="tab" data-tab="commander" data-sfx="tab" data-sfx-i="2"><svg aria-hidden="true"><use href="#i-sac"/></svg><span data-i18n="tab.order">Commander</span><i class="tab-dot" id="tab-dot" hidden></i></a>
     <a href="#reserver" class="tab" data-tab="reserver" data-sfx="tab" data-sfx-i="3"><svg aria-hidden="true"><use href="#i-couverts"/></svg><span data-i18n="tab.book">Réserver</span></a>
-    <a href="#nous" class="tab" data-tab="nous" data-sfx="tab" data-sfx-i="4"><svg aria-hidden="true"><use href="#i-casquette"/></svg><span data-i18n="tab.us">Nous</span></a>
+    <a href="#fidelite" class="tab" data-tab="fidelite" data-sfx="tab" data-sfx-i="4"><svg aria-hidden="true"><use href="#i-cadeau"/></svg><span data-i18n="tab.loyalty">Fidélité</span></a>
   </nav>
 
   <!-- Fiche d'un plat -->
@@ -630,26 +692,62 @@
     <symbol id="i-piment-net" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd"><path d="M16.8 7.2c2.8 1.5 3.6 5.1 1.7 8.7-2.6 4.8-8.6 6.7-14.8 5 5.3-1.9 7.8-5.5 9.1-9.4.7-2 2.1-3.6 4-4.3zM15.5 10.2c-.8 2.6-2.3 4.8-4.4 6.4l-.5-.6c2-1.5 3.4-3.6 4.1-6z"/><path d="M16.9 7.4c-.2-1.7.4-3.2 1.9-4.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g></symbol>
     <symbol id="i-horloge" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M12 3.1a8.9 8.9 0 1 1 0 17.8 8.9 8.9 0 0 1 0-17.8zM11.3 6.6h1.4v5l3.2 1.9-.7 1.2-3.9-2.3zM11.6 4.4h.8v1.1h-.8zM11.6 18.5h.8v1.1h-.8zM4.4 11.6h1.1v.8H4.4zM18.5 11.6h1.1v.8h-1.1z"/></g></symbol>
     <symbol id="i-carte-bancaire" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" filter="url(#encre)"><path d="M5.2 5.4h13.6c1.3 0 2.4 1.1 2.4 2.4v8.4c0 1.3-1.1 2.4-2.4 2.4H5.2c-1.3 0-2.4-1.1-2.4-2.4V7.8c0-1.3 1.1-2.4 2.4-2.4zM2.8 8.6h18.4v1.8H2.8zM5.6 13.1h3.6v2.5H5.6z"/></g></symbol>
+    <!-- Les allergènes (filtres de la carte) et la grossesse : dessin net (-net, pour les dizaines de cartes grisées), et tamponné -->
+    <symbol id="al-gluten-net" viewBox="0 0 24 24"><g fill="currentColor"><path d="M11.4 8.6h1.2v13h-1.2z"/><ellipse cx="12" cy="4.6" rx="1.5" ry="2.4"/><ellipse cx="9.9" cy="8" rx="1.5" ry="2.5" transform="rotate(-32 9.9 8)"/><ellipse cx="14.1" cy="8" rx="1.5" ry="2.5" transform="rotate(32 14.1 8)"/><ellipse cx="9.9" cy="11.8" rx="1.5" ry="2.5" transform="rotate(-32 9.9 11.8)"/><ellipse cx="14.1" cy="11.8" rx="1.5" ry="2.5" transform="rotate(32 14.1 11.8)"/><ellipse cx="9.9" cy="15.6" rx="1.5" ry="2.5" transform="rotate(-32 9.9 15.6)"/><ellipse cx="14.1" cy="15.6" rx="1.5" ry="2.5" transform="rotate(32 14.1 15.6)"/></g></symbol>
+    <symbol id="al-lait-net" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8.6 2.6h6.8v2.2H8.6zM8.4 5.6h7.2L18 9.4v11c0 .7-.6 1.3-1.3 1.3H7.3c-.7 0-1.3-.6-1.3-1.3v-11zM12 11.2c-1.3 1.7-2.3 3.1-2.3 4.4a2.3 2.3 0 0 0 4.6 0c0-1.3-1-2.7-2.3-4.4z"/></symbol>
+    <symbol id="al-oeufs-net" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 2.6c3.7 0 6.8 5.4 6.8 10.4 0 4.6-3 7.9-6.8 7.9s-6.8-3.3-6.8-7.9C5.2 8 8.3 2.6 12 2.6zM9.6 7.4c-1.3 1.4-2 3.3-2.1 5.1l1.2.1c.1-1.6.7-3.2 1.8-4.4z"/></symbol>
+    <symbol id="al-fruitsACoque-net" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M11.3 2h1.4v2.6h-1.4zM5.3 10.4C5.7 6.8 8.6 4.2 12 4.2s6.3 2.6 6.7 6.2c-1.9-1-4.2-1.6-6.7-1.6s-4.8.6-6.7 1.6zM12 9.8c3.8 0 6.4 2.5 6.4 5.8 0 3.3-2.9 5.8-6.4 5.8s-6.4-2.5-6.4-5.8c0-3.3 2.6-5.8 6.4-5.8zM8.6 13.4c-.6.8-.9 1.7-.9 2.6h1.2c0-.7.2-1.3.6-1.9z"/></symbol>
+    <symbol id="al-poisson-net" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M2.6 12c2.4-3.6 5.6-5.4 9-5.4 3.6 0 6 1.9 7.4 3.7l2.4-2.5v8.4L19 13.7c-1.4 1.8-3.8 3.7-7.4 3.7-3.4 0-6.6-1.8-9-5.4zM7.3 9.9a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM10.2 8.6c1 1 1.5 2.1 1.5 3.4s-.5 2.4-1.5 3.4l.8.6c1.2-1.2 1.9-2.5 1.9-4s-.7-2.8-1.9-4z"/></symbol>
+    <symbol id="al-sulfites-net" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M6.8 2.8h10.4c.4 4.8-1.4 8.6-5.2 8.9-3.8-.3-5.6-4.1-5.2-8.9zM7.9 6.6c.4 2.4 1.7 4 4.1 4.2 2.4-.2 3.7-1.8 4.1-4.2zM11.3 11.6h1.4v6.6h-1.4zM7.8 18.2h8.4a1.2 1.2 0 0 1 0 2.4H7.8a1.2 1.2 0 0 1 0-2.4z"/></symbol>
+    <symbol id="al-moutarde-net" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M10.4 2.8h3.2v2.4h-3.2zM6 5.8h12v2.4H6zM6.6 9h10.8v10.7c0 1-.8 1.8-1.8 1.8H8.4c-1 0-1.8-.8-1.8-1.8zM8.7 12.2v4.6h6.6v-4.6zM10.6 13.8a.8.8 0 1 0 0 1.6.8.8 0 0 0 0-1.6zM13.4 13.8a.8.8 0 1 0 0 1.6.8.8 0 0 0 0-1.6z"/></symbol>
+    <symbol id="al-sesame-net" viewBox="0 0 24 24"><g fill="currentColor"><path transform="translate(7.6 8.6) rotate(-28)" d="M0-4.4c1.7 1.7 2.6 3.3 2.6 4.8 0 1.7-1.2 2.8-2.6 2.8s-2.6-1.1-2.6-2.8c0-1.5.9-3.1 2.6-4.8z"/><path transform="translate(16.2 8.2) rotate(24)" d="M0-4.4c1.7 1.7 2.6 3.3 2.6 4.8 0 1.7-1.2 2.8-2.6 2.8s-2.6-1.1-2.6-2.8c0-1.5.9-3.1 2.6-4.8z"/><path transform="translate(11.8 17) rotate(4)" d="M0-4.4c1.7 1.7 2.6 3.3 2.6 4.8 0 1.7-1.2 2.8-2.6 2.8s-2.6-1.1-2.6-2.8c0-1.5.9-3.1 2.6-4.8z"/></g></symbol>
+    <symbol id="al-soja-net" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M3.2 16.4c2.4-6.3 8.6-11 16-11.8 1.2-.1 1.9 1.1 1.3 2.1-3.9 6.8-10 11.3-16.4 12-1.2.1-1.4-1.2-.9-2.3zM8.4 12.6a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM12.4 9.6a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM16.3 6.6a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/><path fill="currentColor" d="M8.4 13.5a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12.4 10.5a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM16.3 7.5a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2z"/></symbol>
+    <symbol id="al-arachides-net" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 2.6c2.8 0 4.8 2.1 4.8 4.8 0 1.8-1 2.7-1 4.6s1.5 3 1.5 5.1c0 2.7-2.3 4.5-5.3 4.5s-5.3-1.8-5.3-4.5c0-2.1 1.5-3.2 1.5-5.1s-1-2.8-1-4.6C7.2 4.7 9.2 2.6 12 2.6zM10.5 5.8a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5zM13.4 7.4a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5zM10.4 15a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5zM13.6 16.6a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5zM11.2 18.8a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5z"/></symbol>
+    <symbol id="al-celeri-net" viewBox="0 0 24 24"><g fill="currentColor"><path d="M8.5 11.6c0-.6.5-1 1-1h.4c.6 0 1 .4 1 1v9.6c0 .5-.4.9-.9.9H9.4c-.5 0-.9-.4-.9-.9zM11.2 10.4c0-.6.4-1 1-1h.4c.6 0 1 .4 1 1v10.8c0 .5-.4.9-.9.9H12c-.5 0-.8-.4-.8-.9zM13.9 11.6c0-.6.5-1 1-1h.4c.6 0 1 .4 1 1v9.6c0 .5-.4.9-.9.9h-.6c-.5 0-.9-.4-.9-.9z"/><circle cx="9.4" cy="8.4" r="2.3"/><circle cx="12.4" cy="5.6" r="2.6"/><circle cx="15.4" cy="8.4" r="2.3"/><circle cx="7.6" cy="5" r="1.7"/><circle cx="17.2" cy="5" r="1.7"/></g></symbol>
+    <symbol id="al-crustaces-net" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd"><path d="M12 9.8c3.6 0 6.4 1.9 6.4 4.4S15.6 18.6 12 18.6s-6.4-1.9-6.4-4.4S8.4 9.8 12 9.8z"/><path d="M5.4 3.6a3 3 0 0 1 2.4 4.8L6.2 7.1l-.4 2.2A3 3 0 0 1 5.4 3.6zM18.6 3.6a3 3 0 0 0-2.4 4.8l1.6-1.3.4 2.2a3 3 0 0 0 .4-5.7z"/></g><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6.4 9.6 8.6 11.4M17.6 9.6l-2.2 1.8M5.8 15.4l-2.6 1.4M5.9 17.4l-2.2 2.4M18.2 15.4l2.6 1.4M18.1 17.4l2.2 2.4M10.2 9.8l-.6-2M13.8 9.8l.6-2"/></g></symbol>
+    <symbol id="al-mollusques-net" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 3.8c3.4 0 6.2 2.2 7.6 5.8 1.1 2.8.8 6-.8 8.8L12 20.6l-6.8-2.2c-1.6-2.8-1.9-6-.8-8.8C5.8 6 8.6 3.8 12 3.8zM12 19.4 6.5 9.5l.9-.4zM12 19.4 9.4 6.6l.9-.2zM12 19.4l-.5-13.6h1zM12 19.4l2.6-12.8.9.2zM12 19.4l4.6-10.3.9.4zM9.2 20.6h5.6l-.6 1.6H9.8z"/></symbol>
+    <symbol id="al-lupin-net" viewBox="0 0 24 24"><g fill="currentColor"><path d="M11.4 12.8h1.2v8.8h-1.2z"/><circle cx="12" cy="3.4" r="1.3"/><circle cx="10.9" cy="5.5" r="1.4"/><circle cx="13.1" cy="5.5" r="1.4"/><circle cx="10.6" cy="8" r="1.6"/><circle cx="13.4" cy="8" r="1.6"/><circle cx="10.4" cy="10.8" r="1.8"/><circle cx="13.6" cy="10.8" r="1.8"/><ellipse cx="8.4" cy="17.2" rx="1.1" ry="3" transform="rotate(-55 8.4 17.2)"/><ellipse cx="15.6" cy="17.2" rx="1.1" ry="3" transform="rotate(55 15.6 17.2)"/><ellipse cx="9.4" cy="15.2" rx="1" ry="2.6" transform="rotate(-25 9.4 15.2)"/><ellipse cx="14.6" cy="15.2" rx="1" ry="2.6" transform="rotate(25 14.6 15.2)"/></g></symbol>
+    <symbol id="al-enceinte-net" viewBox="0 0 24 24"><g fill="currentColor"><circle cx="10.6" cy="4.2" r="2.4"/><path d="M8.9 7.6h3.4c.9 0 1.6.5 2 1.3l.8 1.9c2.4 1 3.9 3 3.9 5.2 0 2.2-1.6 3.8-3.9 4.2v1.6c0 .4-.3.7-.7.7h-1.4c-.4 0-.7-.3-.7-.7v-1.4h-.8v1.4c0 .4-.3.7-.7.7H9.4c-.4 0-.7-.3-.7-.7v-5.4l-1.5-2.3c-.5-.8-.6-1.7-.3-2.5l1.2-3c.2-.6.5-1 .8-1z"/></g></symbol>
+    <symbol id="i-cadeau-net" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 9.8c-1.1-2.6-4.5-4.6-5.9-2.8-1 1.4.7 2.8 5.9 2.8zM12 9.8c1.1-2.6 4.5-4.6 5.9-2.8 1 1.4-.7 2.8-5.9 2.8zM3.8 10.4h16.4v3.4H3.8zM11.1 10.4v3.4h1.8v-3.4zM5 14.6h14v6.2c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1zM11.1 14.6v7.2h1.8v-7.2z"/></symbol>
+    <symbol id="al-gluten" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-gluten-net"/></g></symbol>
+    <symbol id="al-lait" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-lait-net"/></g></symbol>
+    <symbol id="al-oeufs" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-oeufs-net"/></g></symbol>
+    <symbol id="al-fruitsACoque" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-fruitsACoque-net"/></g></symbol>
+    <symbol id="al-poisson" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-poisson-net"/></g></symbol>
+    <symbol id="al-sulfites" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-sulfites-net"/></g></symbol>
+    <symbol id="al-moutarde" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-moutarde-net"/></g></symbol>
+    <symbol id="al-sesame" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-sesame-net"/></g></symbol>
+    <symbol id="al-soja" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-soja-net"/></g></symbol>
+    <symbol id="al-arachides" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-arachides-net"/></g></symbol>
+    <symbol id="al-celeri" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-celeri-net"/></g></symbol>
+    <symbol id="al-crustaces" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-crustaces-net"/></g></symbol>
+    <symbol id="al-mollusques" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-mollusques-net"/></g></symbol>
+    <symbol id="al-lupin" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-lupin-net"/></g></symbol>
+    <symbol id="al-enceinte" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#al-enceinte-net"/></g></symbol>
+    <symbol id="i-cadeau" viewBox="0 0 24 24"><g filter="url(#encre)"><use href="#i-cadeau-net"/></g></symbol>
   </defs>
 </svg>
 
-<script src="js/bb-core.js?v=20261002135711"></script>
-<script src="js/bb-anim.js?v=20261002135711"></script>
-<script src="js/bb-data.js?v=20261002135711"></script>
-<script src="js/i18n/bb-lang-es.js?v=20261002135711"></script>
-<script src="js/i18n/bb-lang-zh.js?v=20261002135711"></script>
-<script src="js/bb-i18n.js?v=20261002135711"></script>
-<script src="js/bb-logo.js?v=20261002135711"></script>
-<script src="js/bb-splash.js?v=20261002135711"></script>
-<script src="js/bb-hours.js?v=20261002135711"></script>
-<script src="js/film/bb-bougnat-dessin.js?v=20261002135711" onerror="void 0"></script>
-<script src="js/film/bb-histoire.js?v=20261002135711" onerror="void 0"></script>
-<script src="js/bb-film-sound.js?v=20261002135711"></script>
-<script src="js/bb-vignettes.js?v=20261002135711"></script>
-<script src="js/bb-carte.js?v=20261002135711"></script>
-<script src="js/bb-shop.js?v=20261002135711"></script>
-<script src="js/bb-avis.js?v=20261002135711"></script>
-<script src="js/bb-resa.js?v=20261002135711"></script>
-<script src="js/bb-app.js?v=20261002135711"></script>
+<script src="js/bb-core.js?v=20261018010304"></script>
+<script src="js/bb-anim.js?v=20261018010304"></script>
+<script src="js/bb-data.js?v=20261018010304"></script>
+<script src="js/i18n/bb-lang-es.js?v=20261018010304"></script>
+<script src="js/i18n/bb-lang-zh.js?v=20261018010304"></script>
+<script src="js/bb-i18n.js?v=20261018010304"></script>
+<script src="js/bb-logo.js?v=20261018010304"></script>
+<script src="js/bb-splash.js?v=20261018010304"></script>
+<script src="js/bb-hours.js?v=20261018010304"></script>
+<script src="js/film/bb-bougnat-dessin.js?v=20261018010304" onerror="void 0"></script>
+<script src="js/film/bb-histoire.js?v=20261018010304" onerror="void 0"></script>
+<script src="js/bb-film-sound.js?v=20261018010304"></script>
+<script src="js/bb-vignettes.js?v=20261018010304"></script>
+<script src="js/bb-carte.js?v=20261018010304"></script>
+<script src="js/bb-shop.js?v=20261018010304"></script>
+<script src="js/bb-avis.js?v=20261018010304"></script>
+<script src="js/bb-qr.js?v=20261018010304"></script>
+<script src="js/bb-fid-api.js?v=20261018010304"></script>
+<script src="js/bb-fidelite.js?v=20261018010304"></script>
+<script src="js/bb-resa.js?v=20261018010304"></script>
+<script src="js/bb-app.js?v=20261018010304"></script>
 </body>
 </html>

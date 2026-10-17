@@ -864,7 +864,7 @@ button.item:active { transform: scale(0.98); }
 .seg [aria-selected="true"], .seg [aria-checked="true"] { background: var(--olive); color: var(--pomme-2); box-shadow: inset 0 0 0 1px rgba(200, 227, 160, 0.3), 0 6px 14px -8px rgba(124, 138, 58, 0.9); }
 .seg-sm button { min-height: 38px; }
 
-.stepper { display: inline-flex; align-items: center; gap: 4px; padding: 4px; border-radius: 999px; background: var(--charbon-3); box-shadow: inset 0 0 0 1px var(--line); }
+.stepper { justify-self: start; display: inline-flex; align-items: center; gap: 4px; padding: 4px; border-radius: 999px; background: var(--charbon-3); box-shadow: inset 0 0 0 1px var(--line); }
 .stepper button { width: 38px; height: 38px; border-radius: 50%; border: 0; background: var(--charbon-4); color: var(--creme); display: grid; place-items: center; transition: transform 0.15s var(--ease), background 0.2s; }
 .stepper button:active { transform: scale(0.88); background: var(--olive); color: var(--pomme-2); }
 .stepper button svg { width: 18px; height: 18px; }
@@ -978,27 +978,27 @@ legend { float: left; width: 100%; white-space: nowrap; font: 400 clamp(17px, 6.
 .dlv b { display: block; font-size: 16.5px; }
 .dlv small { color: var(--ink-2); }
 .dlv .go { margin-left: auto; width: 22px; height: 22px; color: var(--pomme); }
-.soon { display: flex; gap: 14px; margin-top: 18px; padding: 18px; border-radius: var(--radius); background: repeating-linear-gradient(135deg, rgba(124, 138, 58, 0.16) 0 10px, transparent 10px 20px), var(--charbon-2); box-shadow: inset 0 0 0 1px rgba(124, 138, 58, 0.45); }
-.soon svg { width: 36px; height: 36px; color: var(--pomme); flex: none; }
-.soon h3 { margin: 0 0 4px; font: 400 19px/1.1 var(--f-display); }
-.soon p { margin: 0; font-size: 14px; color: var(--ink-2); }
 
 /* ---------- réserver ---------- */
 .resa { display: grid; gap: 24px; }
 .resa .times { margin-top: 10px; }
 .resa-done { margin-top: 10px; }
 
-/* ---------- « Nous » : la nuit tombe sur les banquettes vertes ---------- */
-.view-nous .view-scroll {
+/* ---------- « Nous » : la nuit tombe sur les banquettes vertes (en bas de l'accueil, toute la largeur) ---------- */
+.accueil-nous {
+  margin: 30px calc(-1 * var(--gut)) 0;
+  padding: 30px var(--gut) 0;
+  border-radius: 30px 30px 0 0;
   background:
     radial-gradient(120% 50% at 100% 0%, rgba(124, 138, 58, 0.34), transparent 60%),
-    linear-gradient(180deg, var(--olive-4) 0%, #1C1F10 34%, var(--charbon) 78%);
+    linear-gradient(180deg, var(--olive-4) 0%, #1C1F10 34%, var(--charbon) 92%);
+  box-shadow: inset 0 1px 0 rgba(200, 227, 160, 0.22);
 }
 .nous-hero { padding-top: 8px; }
-.view-nous h2 { font: 400 32px/1.08 var(--f-display); margin: 0 2px 20px; color: var(--creme); }
-.view-nous h2 em { font-style: normal; color: var(--pomme); }
-.view-nous h3 { position: relative; font: 400 23px/1.1 var(--f-display); margin: 34px 2px 22px; color: var(--creme); }
-.view-nous h3::after { content: none; } /* pas de ligne des Puys sous les titres de « Nous » */
+.accueil-nous h2 { font: 400 32px/1.08 var(--f-display); margin: 0 2px 20px; color: var(--creme); }
+.accueil-nous h2 em { font-style: normal; color: var(--pomme); }
+.accueil-nous h3 { position: relative; font: 400 23px/1.1 var(--f-display); margin: 34px 2px 22px; color: var(--creme); }
+.accueil-nous h3::after { content: none; } /* pas de ligne des Puys sous les titres de « Nous » */
 /* la salle, vue par son hublot */
 .nous-photo {
   position: relative;
@@ -1081,7 +1081,210 @@ legend { float: left; width: 100%; white-space: nowrap; font: 400 clamp(17px, 6.
 .nous-foot { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13px; color: var(--creme-3); }
 .nous-foot a { color: var(--pomme); font-weight: 650; }
 .nous-foot p { margin: 8px 0 0; }
-.tabbar.on-nous .tab.is-active::before { background: rgba(124, 138, 58, 0.45); }
+
+/* ---------- les filtres de la carte : grossesse et les 14 allergènes ---------- */
+.filtres { margin: 2px 0 18px; }
+.filtres-titre { margin: 0 2px 8px; font: 700 12px/1.2 var(--f-ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--creme-3); }
+.filtres-rang {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  margin: 0 calc(-1 * var(--gut));
+  padding: 2px var(--gut) 6px;
+  scrollbar-width: none;
+  -webkit-mask: linear-gradient(90deg, transparent, #000 10px, #000 calc(100% - 28px), transparent);
+  mask: linear-gradient(90deg, transparent, #000 10px, #000 calc(100% - 28px), transparent);
+}
+.filtres-rang::-webkit-scrollbar { display: none; }
+.filtre {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px 0 8px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: inset 0 0 0 1.2px rgba(245, 234, 212, 0.18);
+  color: var(--creme-2);
+  font: 600 13px/1 var(--f-ui);
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.18s var(--ease);
+}
+.filtre svg { width: 21px; height: 21px; color: var(--olive-clair); transition: color 0.2s; }
+.filtre:active { transform: scale(0.94); }
+/* coché : le tampon rouge brique, comme une mise en garde */
+.filtre[aria-pressed="true"] { background: rgba(229, 103, 58, 0.16); color: var(--creme); box-shadow: inset 0 0 0 1.5px rgba(229, 103, 58, 0.75); }
+.filtre[aria-pressed="true"] svg { color: #F08A62; animation: tampon 0.4s var(--ease-spring); }
+.filtre.f-enceinte svg { color: var(--rose); }
+.filtre.f-enceinte[aria-pressed="true"] { background: rgba(231, 184, 172, 0.18); box-shadow: inset 0 0 0 1.5px rgba(231, 184, 172, 0.8); }
+.filtre.f-enceinte[aria-pressed="true"] svg { color: var(--rose); }
+.filtres-note { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 6px 2px 0; font-size: 12.5px; line-height: 1.35; color: var(--creme-3); }
+.filtres-raz { flex: none; padding: 6px 0; border: 0; background: none; color: var(--pomme); font: 650 13px/1 var(--f-ui); text-decoration: underline; text-underline-offset: 3px; }
+/* le rappel dans la rangée collante des rubriques */
+.chip-filtre { gap: 3px; padding: 0 13px 0 9px; background: rgba(229, 103, 58, 0.16); box-shadow: inset 0 0 0 1.5px rgba(229, 103, 58, 0.7); }
+.chip-filtre svg { width: 18px; height: 18px; color: #F08A62; }
+.chip-filtre span { margin-left: 4px; }
+
+/* ce qui ne convient pas : à 20 %, le symbole en gros au centre */
+.bcard.ecarte > :not(.ecarte-ic), .bcard.ecarte::before, li.ecarte .item > :not(.ecarte-ic) { opacity: 0.2; transition: opacity 0.3s var(--ease); }
+.bcard.ecarte .bb-still { animation: none; } /* (plus de balancement) */
+.ecarte-ic {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  top: 50%;
+  width: 70px;
+  height: 70px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #F08A62;
+  background: rgba(15, 11, 8, 0.72);
+  box-shadow: 0 0 0 2px rgba(229, 103, 58, 0.85), 0 0 0 5px rgba(15, 11, 8, 0.5);
+  translate: -50% -58%; /* (propre : l'animation du tampon, elle, joue sur transform) */
+  pointer-events: none;
+  animation: tampon 0.42s var(--ease-spring) both;
+}
+.ecarte-ic svg { width: 44px; height: 44px; grid-area: 1 / 1; }
+.ecarte-ic.deux svg { width: 34px; height: 34px; }
+.ecarte-ic.deux svg:first-child { transform: translate(-11px, -9px); }
+.ecarte-ic.deux svg:nth-child(2) { transform: translate(11px, 9px); }
+.ecarte-ic b { font: 400 40px/1 var(--f-display); color: var(--creme-2); }
+.ecarte-ic.enc { color: var(--rose); box-shadow: 0 0 0 2px rgba(231, 184, 172, 0.85), 0 0 0 5px rgba(15, 11, 8, 0.5); }
+.ecarte-ic svg.enc { color: var(--rose); }
+.item { position: relative; }
+li.ecarte .ecarte-ic { width: 52px; height: 52px; translate: -50% -50%; }
+li.ecarte .ecarte-ic svg { width: 32px; height: 32px; }
+li.ecarte .ecarte-ic b { font-size: 30px; }
+.p-notes li.enceinte { color: var(--creme); }
+.p-notes li.enceinte svg { color: var(--rose); }
+
+/* ---------- la carte de fidélité ---------- */
+.fid-head { padding-bottom: 6px; }
+/* la chaîne : une bande plus large que l'écran, qu'on fait glisser (et qui suit le bougnat) */
+.fid-carte {
+  position: relative;
+  margin: 8px calc(-1 * var(--gut) + 6px) 0;
+  height: 250px;
+  border-radius: 24px;
+  background: #2C2238;
+  box-shadow: 0 0 0 2px var(--olive), 0 0 0 6px var(--charbon-2), 0 0 0 7px rgba(200, 227, 160, 0.25), var(--shadow-lg);
+  overflow: hidden;
+}
+.fid-piste { height: 100%; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-width: none; cursor: grab; }
+.fid-piste::-webkit-scrollbar { display: none; }
+.fid-piste.tenu { cursor: grabbing; user-select: none; }
+.fid-svg { display: block; height: 100%; width: auto; max-width: none; }
+.fid-nom { font: 700 8.6px/1 var(--f-ui); fill: var(--creme); letter-spacing: 0.02em; paint-order: stroke; stroke: rgba(44, 34, 56, 0.55); stroke-width: 2px; }
+.fid-nom.cadeau { font-size: 9.6px; fill: var(--soleil); }
+.fid-alt { font: 600 7px/1 var(--f-ui); fill: var(--creme-2); opacity: 0.8; font-variant-numeric: tabular-nums; }
+.fid-trait { fill: none; stroke: var(--creme); stroke-width: 0.55; stroke-dasharray: 1.2 2.2; opacity: 0.55; }
+.fid-glisser {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  translate: -50% 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px 7px 10px;
+  border-radius: 999px;
+  background: rgba(15, 11, 8, 0.66);
+  color: var(--creme);
+  font: 650 12px/1 var(--f-ui);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: fid-glisse 2.4s var(--ease) infinite;
+  transition: opacity 0.5s;
+}
+.fid-glisser svg { width: 16px; height: 16px; fill: none; stroke: var(--pomme); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.fid-glisser.parti { opacity: 0; }
+@keyframes fid-glisse { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-6px); } }
+.fid-cadeau { color: var(--creme-3); }
+.fid-cadeau .fid-boite { opacity: 0.75; transform-box: fill-box; transform-origin: 50% 100%; }
+.fid-cadeau .fid-halo { fill: none; }
+.fid-cadeau .fid-pts { font: 800 7.5px/1 var(--f-ui); fill: var(--creme); opacity: 0.75; letter-spacing: 0.04em; }
+.fid-cadeau.prochain { color: var(--soleil); }
+.fid-cadeau.prochain .fid-boite { opacity: 1; animation: fid-sautille 1.6s var(--ease) infinite; }
+.fid-cadeau.prochain .fid-pts { opacity: 1; fill: var(--soleil); }
+.fid-cadeau.gagne { color: var(--vert); }
+.fid-cadeau.gagne .fid-boite { opacity: 1; }
+.fid-cadeau.gagne .fid-halo { fill: rgba(150, 193, 36, 0.22); stroke: rgba(200, 227, 160, 0.7); stroke-width: 0.8; stroke-dasharray: 1.4 1.6; }
+.fid-cadeau.gagne .fid-pts { fill: var(--pomme); opacity: 1; }
+.fid-cadeau.saute .fid-boite { animation: fid-saute 0.7s var(--ease-spring); }
+@keyframes fid-sautille { 0%, 100% { transform: none; } 50% { transform: translateY(-2.5px); } }
+@keyframes fid-saute { 0% { transform: scale(1); } 35% { transform: translateY(-7px) scale(1.45) rotate(-8deg); } 100% { transform: none; } }
+.fid-feu { animation: fid-feu 1.8s steps(1) infinite; }
+@keyframes fid-feu { 50% { opacity: 0.25; } }
+.fid-etat { margin: 22px 2px 0; }
+.fid-points { display: flex; align-items: baseline; gap: 8px; margin: 0; }
+.fid-points b { font: 400 52px/0.9 var(--f-display); color: var(--vert); }
+.fid-points span { font: 400 22px/1 var(--f-display); color: var(--creme); }
+.fid-suite { margin: 10px 0 0; font-size: 15.5px; line-height: 1.45; color: var(--creme-2); }
+.fid-invite-txt { margin: 0; font: 400 20px/1.25 var(--f-display); color: var(--creme); }
+.fid-retirer { display: inline-flex; align-items: center; gap: 8px; margin: 12px 0 0; padding: 8px 14px 8px 10px; border-radius: 999px; background: rgba(150, 193, 36, 0.16); box-shadow: inset 0 0 0 1.5px rgba(150, 193, 36, 0.6); color: var(--pomme-2); font-weight: 700; font-size: 14px; }
+.fid-retirer svg { width: 22px; height: 22px; color: var(--vert); }
+.fid-etapes { list-style: none; margin: 26px 0 0; padding: 0; display: grid; gap: 10px; counter-reset: etape; }
+.fid-etapes li { position: relative; display: grid; gap: 2px; padding: 14px 16px 14px 62px; border-radius: 20px; background: var(--charbon-2); box-shadow: inset 0 0 0 1px var(--line); counter-increment: etape; }
+.fid-etapes li::before { content: counter(etape); position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: var(--olive); color: var(--pomme-2); font: 400 19px/1 var(--f-display); box-shadow: 0 0 0 3px var(--charbon-2), 0 0 0 4.5px rgba(124, 138, 58, 0.6); }
+.fid-etapes b { font-size: 16px; color: var(--creme); }
+.fid-etapes span { font-size: 14px; color: var(--creme-2); line-height: 1.4; }
+.fid-form { margin-top: 26px; display: grid; gap: 12px; }
+.fid-form h3, .fid-cadeaux h3, .fid-membre h3 { font: 400 23px/1.1 var(--f-display); margin: 8px 2px 4px; color: var(--creme); }
+.who label.fid-accord { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; font-weight: 500; line-height: 1.4; color: var(--creme-2); }
+.who .fid-accord input { flex: none; width: 22px; height: 22px; margin: 0; padding: 0; border-radius: 6px; accent-color: var(--vert); box-shadow: none; }
+.who .fid-accord input[aria-invalid="true"] { outline: 2px solid var(--braise); outline-offset: 2px; }
+.fid-accord a { color: var(--pomme); }
+.fid-form .btn { margin-top: 4px; }
+.fid-form .fine { margin-top: 2px; }
+/* le ticket : le QR code sur la crème, le nom, le numéro de carte */
+.fid-ticket {
+  position: relative;
+  margin: 24px 0 0;
+  padding: 20px 20px 18px;
+  border-radius: 24px;
+  background: var(--creme);
+  color: var(--charbon);
+  text-align: center;
+  box-shadow: 0 0 0 3px var(--olive), var(--shadow-lg);
+}
+.fid-qr { width: min(64%, 230px); aspect-ratio: 1; margin: 0 auto; padding: 10px; border-radius: 14px; background: #FFFDF6; box-shadow: inset 0 0 0 1.5px rgba(26, 19, 15, 0.12); }
+.fid-qr svg { width: 100%; height: 100%; }
+.fid-qui { display: grid; gap: 2px; margin: 14px 0 0; }
+.fid-qui b { font: 400 22px/1.1 var(--f-display); color: var(--charbon); }
+.fid-qui span { font: 700 12.5px/1.2 var(--f-ui); letter-spacing: 0.12em; color: var(--olive-2); }
+.fid-ticket p { margin: 16px 0 0; padding-top: 14px; border-top: 1.5px dashed rgba(26, 19, 15, 0.25); font-size: 13.5px; line-height: 1.4; color: #4B3A2E; }
+.fid-cadeaux { margin-top: 30px; }
+.fid-paliers { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+.fid-paliers li { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 20px; background: var(--charbon-2); box-shadow: inset 0 0 0 1px var(--line); }
+.fid-pal-ic { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; background: var(--charbon); box-shadow: 0 0 0 2px var(--charbon-4); color: var(--creme-3); }
+.fid-pal-ic svg { width: 25px; height: 25px; }
+.fid-pal-txt { display: grid; gap: 2px; min-width: 0; }
+.fid-pal-txt small { font: 700 11.5px/1.2 var(--f-ui); letter-spacing: 0.08em; text-transform: uppercase; color: var(--creme-3); }
+.fid-pal-txt b { font-size: 15.5px; color: var(--creme); }
+.fid-pal-txt em { font-style: normal; font-size: 13px; color: var(--soleil); }
+.fid-pal-txt em.ok { color: var(--pomme); font-weight: 650; }
+.fid-paliers li.prochain { box-shadow: inset 0 0 0 1.5px rgba(249, 222, 158, 0.45); }
+.fid-paliers li.prochain .fid-pal-ic { color: var(--soleil); box-shadow: 0 0 0 2px rgba(249, 222, 158, 0.5); }
+.fid-paliers li.gagne { background: rgba(124, 138, 58, 0.16); box-shadow: inset 0 0 0 1px rgba(150, 193, 36, 0.4); }
+.fid-paliers li.gagne .fid-pal-ic { color: var(--vert); box-shadow: 0 0 0 2px var(--olive); }
+.fid-membre { margin-top: 30px; }
+.fid-passages { list-style: none; margin: 12px 0 0; padding: 0; border-radius: 20px; background: var(--charbon-2); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+.fid-passages li { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; font-size: 14px; color: var(--creme-2); }
+.fid-passages li + li { border-top: 1px dashed var(--line); }
+.fid-passages li b { color: var(--pomme); font-weight: 650; }
+.fid-passages li.vide { color: var(--creme-3); }
+.fid-demo { margin-top: 22px; padding: 14px 16px 16px; border-radius: 20px; background: repeating-linear-gradient(135deg, rgba(124, 138, 58, 0.12) 0 10px, transparent 10px 20px), var(--charbon-2); box-shadow: inset 0 0 0 1px rgba(124, 138, 58, 0.4); }
+.fid-demo p { margin: 0 0 12px; font-size: 13px; color: var(--creme-2); line-height: 1.4; }
+.fid-demo-btns { display: flex; gap: 8px; }
+.fid-demo-btns .btn { flex: 1; padding-inline: 0; min-width: 0; }
+.fid-quitter { display: block; margin: 26px auto 0; padding: 10px 6px; border: 0; background: none; color: var(--creme-3); font: 600 13.5px/1 var(--f-ui); text-decoration: underline; text-underline-offset: 3px; }
+.fid-quitter.confirme { color: var(--braise); font-weight: 700; }
+@media (prefers-reduced-motion: reduce) {
+  .fid-cadeau.prochain .fid-boite, .fid-feu, .fid-glisser { animation: none; }
+}
 
 /* ---------- toast ---------- */
 .toast {
@@ -1191,7 +1394,7 @@ legend { float: left; width: 100%; white-space: nowrap; font: 400 clamp(17px, 6.
 /* le chinois : les idéogrammes n'existent ni en Shrikhand ni en Instrument Sans → polices du système, en gras pour les titres
    (font-synthesis-weight: none : Shrikhand, qui n'a qu'une graisse, n'est pas épaissi artificiellement) */
 :lang(zh) { --f-display: 'Shrikhand', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', 'Source Han Sans SC', sans-serif; --f-ui: 'Instrument Sans', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', 'Source Han Sans SC', system-ui, sans-serif; }
-:lang(zh) :is(h1, h2, h3, h4, legend, .p-name, .ardoise-state, .splash-go, .soon h3, .ticket h3, .avis-quote p, .day b) { font-weight: 700; font-synthesis-weight: none; }
+:lang(zh) :is(h1, h2, h3, h4, legend, .p-name, .ardoise-state, .splash-go, .ticket h3, .avis-quote p, .day b) { font-weight: 700; font-synthesis-weight: none; }
 :lang(zh) .kicker, :lang(zh) .choix legend { letter-spacing: 0.08em; }
 
 /* accessibilité : le lien d'évitement (visible au clavier), des cibles tactiles d'au moins 24 px */

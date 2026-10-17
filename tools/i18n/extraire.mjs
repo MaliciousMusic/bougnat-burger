@@ -50,7 +50,7 @@ const r = await send('Runtime.evaluate', { returnByValue: true, expression: `(()
     if (typeof o.fr === 'string') { if (!data.has(o.fr)) data.set(o.fr, { fr: o.fr, en: o.en, ou: [] }); const d = data.get(o.fr); if (d.ou.length < 3) d.ou.push(p); return; }
     for (const k of Object.keys(o)) { if (k === 'I18N' || k === 'LANGS' || k === 'texte') continue; try { walk(o[k], p + '.' + k); } catch (e) {} }
   };
-  ['INFO', 'CATS', 'BURGER_LIST', 'MENU_OTHER', 'ING', 'SIDES', 'RAW', 'ALLERGEN_LABELS', 'AVIS', 'HOURS', 'WEEK'].forEach((k) => BB[k] && walk(BB[k], 'BB.' + k));
+  ['INFO', 'CATS', 'BURGER_LIST', 'MENU_OTHER', 'ING', 'SIDES', 'RAW', 'ALLERGEN_LABELS', 'GROSSESSE_LABELS', 'FIDELITE', 'AVIS', 'HOURS', 'WEEK'].forEach((k) => BB[k] && walk(BB[k], 'BB.' + k));
   // les formules écrites dans le code (bb-data.js, burgerDesc)
   [{ fr: 'double steak haché façon bouchère VBF', en: 'double butcher-style French beef patty (VBF)', ou: 'BB.burgerDesc (double)' },
    { fr: 'double galette de pommes de terre', en: 'double potato rösti', ou: 'BB.burgerDesc (double)' },

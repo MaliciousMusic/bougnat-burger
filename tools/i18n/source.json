@@ -72,130 +72,6 @@
    "fr": "Sur place, à emporter ou en livraison. Terrasse aux beaux jours.",
    "en": "Eat in, take away or delivered. Terrace when the sun is out."
   },
-  "carte.title": {
-   "fr": "La carte",
-   "en": "The menu"
-  },
-  "carte.lede": {
-   "fr": "Chaque burger est servi avec frites maison et salade. Steak façon bouchère ou galette de pommes de terre, au choix.",
-   "en": "Every burger comes with homemade fries and salad. Butcher-style beef patty or potato rösti, your choice."
-  },
-  "carte.fine": {
-   "fr": "Prix nets, service compris. Allergènes : demandez à l'équipe, elle vous renseigne plat par plat.",
-   "en": "Prices include service. Allergies: ask the team, they will go through each dish with you."
-  },
-  "cmd.title": {
-   "fr": "Commander",
-   "en": "Order"
-  },
-  "cmd.takeaway": {
-   "fr": "À emporter",
-   "en": "Takeaway"
-  },
-  "cmd.delivery": {
-   "fr": "En livraison",
-   "en": "Delivery"
-  },
-  "cart.empty": {
-   "fr": "Votre sac est vide.",
-   "en": "Your bag is empty."
-  },
-  "cart.browse": {
-   "fr": "Voir la carte",
-   "en": "See the menu"
-  },
-  "co.when": {
-   "fr": "Retrait au comptoir",
-   "en": "Pick up at the counter"
-  },
-  "co.who": {
-   "fr": "À quel nom ?",
-   "en": "Name for the order"
-  },
-  "co.name": {
-   "fr": "Prénom",
-   "en": "First name"
-  },
-  "co.phone": {
-   "fr": "Téléphone",
-   "en": "Phone"
-  },
-  "co.note": {
-   "fr": "Allergies ou précisions pour la cuisine (facultatif)",
-   "en": "Allergies or notes for the kitchen (optional)"
-  },
-  "co.total": {
-   "fr": "Total",
-   "en": "Total"
-  },
-  "co.pay": {
-   "fr": "Payer et commander",
-   "en": "Pay and order"
-  },
-  "co.alcool": {
-   "fr": "Votre commande contient de l'alcool : vente interdite aux mineurs, une pièce d'identité peut être demandée au retrait. L'abus d'alcool est dangereux pour la santé, à consommer avec modération.",
-   "en": "Your order contains alcohol: no sale to under-18s, ID may be requested at pick-up. Please drink responsibly."
-  },
-  "co.fine": {
-   "fr": "Maquette : le paiement est simulé, aucune commande n'est transmise.",
-   "en": "Demo: payment is simulated, no order is sent."
-  },
-  "del.lede": {
-   "fr": "Aujourd'hui, la livraison passe par ces plateformes :",
-   "en": "For now, delivery goes through these apps:"
-  },
-  "del.soon.title": {
-   "fr": "Bientôt, directement ici",
-   "en": "Soon, right here"
-  },
-  "del.soon.text": {
-   "fr": "Vous commandez dans l'appli Bougnat Burger, un coursier vous livre. Mêmes prix qu'au restaurant, sans commission de plateforme.",
-   "en": "Order in the Bougnat Burger app and a courier brings it to you. Same prices as in the restaurant, no platform commission."
-  },
-  "resa.title": {
-   "fr": "Réserver une table",
-   "en": "Book a table"
-  },
-  "resa.lede": {
-   "fr": "Dites-nous quand, on vous garde la table. À partir de 10 personnes, appelez-nous.",
-   "en": "Tell us when and we'll keep a table for you. For 10 people or more, give us a call."
-  },
-  "resa.day": {
-   "fr": "Quel jour ?",
-   "en": "Which day?"
-  },
-  "resa.service": {
-   "fr": "Quel service ?",
-   "en": "Lunch or dinner?"
-  },
-  "resa.lunch": {
-   "fr": "Midi",
-   "en": "Lunch"
-  },
-  "resa.dinner": {
-   "fr": "Soir",
-   "en": "Dinner"
-  },
-  "resa.guests": {
-   "fr": "Combien de couverts ?",
-   "en": "How many people?"
-  },
-  "resa.who": {
-   "fr": "À quel nom ?",
-   "en": "Name for the booking"
-  },
-  "resa.note": {
-   "fr": "Un mot pour l'équipe (facultatif)",
-   "en": "A note for the team (optional)"
-  },
-  "resa.send": {
-   "fr": "Demander la table",
-   "en": "Request the table"
-  },
-  "resa.fine": {
-   "fr": "Maquette : la demande n'est pas transmise. En vrai, le restaurant confirme par SMS.",
-   "en": "Demo: the request is not sent. For real, the restaurant confirms by text message."
-  },
   "nous.kicker": {
    "fr": "Depuis le 2 février 2012",
    "en": "Since 2 February 2012"
@@ -296,6 +172,210 @@
    "fr": "Maquette de démonstration. Prix et informations issus de la carte du restaurant, septembre 2026.",
    "en": "Demo version. Prices and details taken from the restaurant's menu, September 2026."
   },
+  "carte.title": {
+   "fr": "La carte",
+   "en": "The menu"
+  },
+  "carte.lede": {
+   "fr": "Chaque burger est servi avec frites maison et salade. Steak façon bouchère ou galette de pommes de terre, au choix.",
+   "en": "Every burger comes with homemade fries and salad. Butcher-style beef patty or potato rösti, your choice."
+  },
+  "filtres.title": {
+   "fr": "Allergies, grossesse : touchez ce qui vous concerne",
+   "en": "Allergies, pregnancy: tap what applies to you"
+  },
+  "carte.fine": {
+   "fr": "Prix nets, service compris. Allergènes : demandez à l'équipe, elle vous renseigne plat par plat.",
+   "en": "Prices include service. Allergies: ask the team, they will go through each dish with you."
+  },
+  "cmd.title": {
+   "fr": "Commander",
+   "en": "Order"
+  },
+  "cmd.takeaway": {
+   "fr": "À emporter",
+   "en": "Takeaway"
+  },
+  "cmd.delivery": {
+   "fr": "En livraison",
+   "en": "Delivery"
+  },
+  "cart.empty": {
+   "fr": "Votre sac est vide.",
+   "en": "Your bag is empty."
+  },
+  "cart.browse": {
+   "fr": "Voir la carte",
+   "en": "See the menu"
+  },
+  "co.when": {
+   "fr": "Retrait au comptoir",
+   "en": "Pick up at the counter"
+  },
+  "co.who": {
+   "fr": "À quel nom ?",
+   "en": "Name for the order"
+  },
+  "co.name": {
+   "fr": "Prénom",
+   "en": "First name"
+  },
+  "co.phone": {
+   "fr": "Téléphone",
+   "en": "Phone"
+  },
+  "co.note": {
+   "fr": "Allergies ou précisions pour la cuisine (facultatif)",
+   "en": "Allergies or notes for the kitchen (optional)"
+  },
+  "co.total": {
+   "fr": "Total",
+   "en": "Total"
+  },
+  "co.pay": {
+   "fr": "Payer et commander",
+   "en": "Pay and order"
+  },
+  "co.alcool": {
+   "fr": "Votre commande contient de l'alcool : vente interdite aux mineurs, une pièce d'identité peut être demandée au retrait. L'abus d'alcool est dangereux pour la santé, à consommer avec modération.",
+   "en": "Your order contains alcohol: no sale to under-18s, ID may be requested at pick-up. Please drink responsibly."
+  },
+  "co.fine": {
+   "fr": "Maquette : le paiement est simulé, aucune commande n'est transmise.",
+   "en": "Demo: payment is simulated, no order is sent."
+  },
+  "del.lede": {
+   "fr": "La livraison passe par ces plateformes :",
+   "en": "Delivery goes through these apps:"
+  },
+  "resa.title": {
+   "fr": "Réserver une table",
+   "en": "Book a table"
+  },
+  "resa.lede": {
+   "fr": "Dites-nous quand, on vous garde la table. À partir de 10 personnes, appelez-nous.",
+   "en": "Tell us when and we'll keep a table for you. For 10 people or more, give us a call."
+  },
+  "resa.day": {
+   "fr": "Quel jour ?",
+   "en": "Which day?"
+  },
+  "resa.service": {
+   "fr": "Quel service ?",
+   "en": "Lunch or dinner?"
+  },
+  "resa.lunch": {
+   "fr": "Midi",
+   "en": "Lunch"
+  },
+  "resa.dinner": {
+   "fr": "Soir",
+   "en": "Dinner"
+  },
+  "resa.guests": {
+   "fr": "Combien de couverts ?",
+   "en": "How many people?"
+  },
+  "resa.who": {
+   "fr": "À quel nom ?",
+   "en": "Name for the booking"
+  },
+  "resa.note": {
+   "fr": "Un mot pour l'équipe (facultatif)",
+   "en": "A note for the team (optional)"
+  },
+  "resa.send": {
+   "fr": "Demander la table",
+   "en": "Request the table"
+  },
+  "resa.fine": {
+   "fr": "Maquette : la demande n'est pas transmise. En vrai, le restaurant confirme par SMS.",
+   "en": "Demo: the request is not sent. For real, the restaurant confirms by text message."
+  },
+  "fid.kicker": {
+   "fr": "La carte de fidélité",
+   "en": "The loyalty card"
+  },
+  "fid.title": {
+   "fr": "En route pour le puy de Dôme",
+   "en": "Heading for the Puy de Dôme"
+  },
+  "fid.lede": {
+   "fr": "Un point par personne, à chaque venue. Tous les 15 points, un cadeau vous attend au sommet d'un puy.",
+   "en": "One point per person, every visit. Every 15 points, a gift waits for you at the top of a volcano."
+  },
+  "fid.step1": {
+   "fr": "Créez votre carte",
+   "en": "Create your card"
+  },
+  "fid.step1.t": {
+   "fr": "Votre prénom, votre nom et votre numéro de téléphone : c'est tout.",
+   "en": "Your first name, surname and phone number: that's all."
+  },
+  "fid.step2": {
+   "fr": "Montrez votre QR code",
+   "en": "Show your QR code"
+  },
+  "fid.step2.t": {
+   "fr": "Au comptoir, on le scanne et on compte les personnes à table : un point chacune.",
+   "en": "At the counter we scan it and count the people at your table: one point each."
+  },
+  "fid.step3": {
+   "fr": "Le bougnat grimpe",
+   "en": "The bougnat climbs"
+  },
+  "fid.step3.t": {
+   "fr": "Il avance de puy en puy. À chaque sommet, son cadeau, à retirer au comptoir.",
+   "en": "He walks from volcano to volcano. Each summit has its gift, to collect at the counter."
+  },
+  "fid.join": {
+   "fr": "Créer ma carte",
+   "en": "Create my card"
+  },
+  "fid.prenom": {
+   "fr": "Prénom",
+   "en": "First name"
+  },
+  "fid.nom": {
+   "fr": "Nom",
+   "en": "Surname"
+  },
+  "fid.accord": {
+   "fr": "J'accepte que Bougnat Burger garde mon nom et mon numéro pour ma carte de fidélité, et pour rien d'autre (<a href=\"mentions-legales.html#fidelite\">en savoir plus</a>).",
+   "en": "I agree that Bougnat Burger keeps my name and number for my loyalty card, and for nothing else (<a href=\"mentions-legales.html#fidelite\">find out more</a>)."
+  },
+  "fid.create": {
+   "fr": "Créer ma carte",
+   "en": "Create my card"
+  },
+  "fid.fine": {
+   "fr": "Maquette : la carte reste sur ce téléphone. En vrai, elle est enregistrée au restaurant et se retrouve avec votre numéro.",
+   "en": "Demo: the card stays on this phone. For real, it is saved at the restaurant and found again with your number."
+  },
+  "fid.show": {
+   "fr": "Montrez ce code au comptoir : on le scanne et on ajoute un point par personne à table.",
+   "en": "Show this code at the counter: we scan it and add one point per person at the table."
+  },
+  "fid.gifts": {
+   "fr": "Six puys, six cadeaux",
+   "en": "Six volcanoes, six gifts"
+  },
+  "fid.gifts.fine": {
+   "fr": "Les cadeaux sont à retirer au comptoir, sur présentation de la carte. La liste peut évoluer.",
+   "en": "Gifts are collected at the counter with your card. The list may change."
+  },
+  "fid.visits": {
+   "fr": "Mes passages",
+   "en": "My visits"
+  },
+  "fid.demo": {
+   "fr": "Maquette : en vrai, ce sont les scans du comptoir qui font avancer le bougnat. Pour essayer, simulez un passage :",
+   "en": "Demo: for real, it is the counter's scans that move the bougnat forward. To try it, simulate a visit:"
+  },
+  "fid.delete": {
+   "fr": "Supprimer ma carte",
+   "en": "Delete my card"
+  },
   "tab.home": {
    "fr": "Accueil",
    "en": "Home"
@@ -312,9 +392,9 @@
    "fr": "Réserver",
    "en": "Book"
   },
-  "tab.us": {
-   "fr": "Nous",
-   "en": "About"
+  "tab.loyalty": {
+   "fr": "Fidélité",
+   "en": "Rewards"
   },
   "p.add": {
    "fr": "Ajouter",
@@ -340,6 +420,16 @@
    "en": "Quick actions",
    "attr": "aria-label"
   },
+  "avis.window": {
+   "fr": "Avis Google",
+   "en": "Google reviews",
+   "attr": "aria-label"
+  },
+  "avis.open": {
+   "fr": "Ouvrir les avis sur Google",
+   "en": "Open the reviews on Google",
+   "attr": "aria-label"
+  },
   "carte.nav": {
    "fr": "Rubriques de la carte",
    "en": "Menu sections",
@@ -360,14 +450,9 @@
    "en": "One more guest",
    "attr": "aria-label"
   },
-  "avis.window": {
-   "fr": "Avis Google",
-   "en": "Google reviews",
-   "attr": "aria-label"
-  },
-  "avis.open": {
-   "fr": "Ouvrir les avis sur Google",
-   "en": "Open the reviews on Google",
+  "fid.alt": {
+   "fr": "La chaîne des Puys en six sommets, un cadeau sur chacun ; le petit bougnat avance d'un sommet à l'autre au fil des points.",
+   "en": "The Chaîne des Puys in six summits, a gift on each; the little bougnat walks from one summit to the next as the points add up.",
    "attr": "aria-label"
   },
   "close": {
@@ -392,6 +477,11 @@
   "meta.desc": {
    "fr": "Bougnat Burger, 10 bd Léon-Malfreyt à Clermont-Ferrand : burgers au Saint-Nectaire, Cantal et Bleu d'Auvergne AOP, steak façon bouchère VBF, frites maison. Du mercredi au samedi, midi et soir. Réservation, à emporter, livraison.",
    "en": "Bougnat Burger, 10 bd Léon-Malfreyt in Clermont-Ferrand: burgers with Saint-Nectaire, Cantal and Bleu d'Auvergne PDO cheeses, butcher-style French beef, homemade fries. Wednesday to Saturday, lunch and dinner. Book a table, take away, delivery."
+  },
+  "tab.us": {
+   "fr": null,
+   "en": "About",
+   "note": "clé sans élément dans la page"
   }
  },
  "dyn": {
@@ -756,6 +846,154 @@
   "addOne": {
    "fr": "Ajouter un",
    "en": "Add one"
+  },
+  "fidPts": {
+   "fr": "{n} points",
+   "en": "{n} points"
+  },
+  "fidPt1": {
+   "fr": "1 point",
+   "en": "1 point"
+  },
+  "fidPt0": {
+   "fr": "0 point",
+   "en": "0 points"
+  },
+  "fidMotPts": {
+   "fr": "points",
+   "en": "points"
+  },
+  "fidMotPt1": {
+   "fr": "point",
+   "en": "point"
+  },
+  "fidInvite": {
+   "fr": "Créez votre carte : le bougnat vous attend au pied des Puys.",
+   "en": "Create your card: the bougnat is waiting for you at the foot of the volcanoes."
+  },
+  "fidNext": {
+   "fr": "Prochain cadeau dans {n} : {c}, au sommet du {p}.",
+   "en": "Next gift in {n}: {c}, at the top of the {p}."
+  },
+  "fidDone": {
+   "fr": "Au sommet du puy de Dôme ! Tous les cadeaux sont à vous.",
+   "en": "At the top of the Puy de Dôme! All the gifts are yours."
+  },
+  "fidRetirer": {
+   "fr": "{n} cadeau à retirer au comptoir",
+   "en": "{n} gift to collect at the counter"
+  },
+  "fidRetirerN": {
+   "fr": "{n} cadeaux à retirer au comptoir",
+   "en": "{n} gifts to collect at the counter"
+  },
+  "fidNum": {
+   "fr": "Carte n° {id}",
+   "en": "Card no. {id}"
+  },
+  "fidPalier": {
+   "fr": "{n} points · {p}",
+   "en": "{n} points · {p}"
+  },
+  "fidGagne": {
+   "fr": "Débloqué : à retirer au comptoir",
+   "en": "Unlocked: collect it at the counter"
+  },
+  "fidRemis": {
+   "fr": "Remis au comptoir",
+   "en": "Collected at the counter"
+  },
+  "fidGlisser": {
+   "fr": "Faites glisser : toute la chaîne est à parcourir",
+   "en": "Swipe: the whole chain lies ahead"
+  },
+  "fidReste": {
+   "fr": "encore {n}",
+   "en": "{n} to go"
+  },
+  "fidPassageN": {
+   "fr": "{n} personnes · +{n} points",
+   "en": "{n} people · +{n} points"
+  },
+  "fidPassage1": {
+   "fr": "1 personne · +1 point",
+   "en": "1 person · +1 point"
+  },
+  "fidVide": {
+   "fr": "Pas encore de passage. À très vite !",
+   "en": "No visits yet. See you soon!"
+  },
+  "fidBienvenue": {
+   "fr": "Bienvenue {n} ! Votre carte est prête.",
+   "en": "Welcome {n}! Your card is ready."
+  },
+  "fidCadeau": {
+   "fr": "Cadeau débloqué : {c} !",
+   "en": "Gift unlocked: {c}!"
+  },
+  "fidSupprConfirm": {
+   "fr": "Toucher encore pour supprimer",
+   "en": "Tap again to delete"
+  },
+  "fidSupprime": {
+   "fr": "Carte supprimée",
+   "en": "Card deleted"
+  },
+  "fidNeedPrenom": {
+   "fr": "Indiquez votre prénom.",
+   "en": "Please add your first name."
+  },
+  "fidNeedNom": {
+   "fr": "Indiquez votre nom.",
+   "en": "Please add your surname."
+  },
+  "fidNeedAccord": {
+   "fr": "Cochez la case pour accepter.",
+   "en": "Please tick the box to agree."
+  },
+  "fEnceinte": {
+   "fr": "Femme enceinte",
+   "en": "Pregnant"
+  },
+  "fContient": {
+   "fr": "Contient : {a}",
+   "en": "Contains: {a}"
+  },
+  "fInconnu": {
+   "fr": "Composition à demander au restaurant",
+   "en": "Ask the restaurant for the ingredients"
+  },
+  "fInconnuLong": {
+   "fr": "Composition non détaillée : demandez les allergènes au restaurant.",
+   "en": "Ingredients not listed: ask the restaurant about allergens."
+  },
+  "fNote": {
+   "fr": "{n} plats grisés, d'après leur composition (à confirmer au restaurant).",
+   "en": "{n} dishes greyed out, based on their recipe (to be confirmed at the restaurant)."
+  },
+  "fNote1": {
+   "fr": "1 plat grisé, d'après sa composition (à confirmer au restaurant).",
+   "en": "1 dish greyed out, based on its recipe (to be confirmed at the restaurant)."
+  },
+  "fRaz": {
+   "fr": "Tout effacer",
+   "en": "Clear all"
+  },
+  "fActifs1": {
+   "fr": "{n} filtre",
+   "en": "{n} filter"
+  },
+  "fActifsN": {
+   "fr": "{n} filtres",
+   "en": "{n} filters"
+  },
+  "fActifsLong": {
+   "fr": "Filtres actifs : {a}. Toucher pour les modifier.",
+   "en": "Active filters: {a}. Tap to change them."
+  },
+  "fGrossesse": {
+   "fr": "Déconseillé aux femmes enceintes : {r} (à confirmer au restaurant).",
+   "en": "Not recommended during pregnancy: {r} (to be confirmed at the restaurant)."
   },
   "noFilm": {
    "fr": "",
@@ -1816,6 +2054,13 @@
    ]
   },
   {
+   "fr": "œufs",
+   "en": "eggs",
+   "ou": [
+    "BB.ALLERGEN_LABELS.oeufs"
+   ]
+  },
+  {
    "fr": "fruits à coque",
    "en": "tree nuts",
    "ou": [
@@ -1830,17 +2075,131 @@
    ]
   },
   {
-   "fr": "œufs",
-   "en": "eggs",
-   "ou": [
-    "BB.ALLERGEN_LABELS.oeufs"
-   ]
-  },
-  {
    "fr": "sulfites",
    "en": "sulphites",
    "ou": [
     "BB.ALLERGEN_LABELS.sulfites"
+   ]
+  },
+  {
+   "fr": "moutarde",
+   "en": "mustard",
+   "ou": [
+    "BB.ALLERGEN_LABELS.moutarde"
+   ]
+  },
+  {
+   "fr": "sésame",
+   "en": "sesame",
+   "ou": [
+    "BB.ALLERGEN_LABELS.sesame"
+   ]
+  },
+  {
+   "fr": "soja",
+   "en": "soy",
+   "ou": [
+    "BB.ALLERGEN_LABELS.soja"
+   ]
+  },
+  {
+   "fr": "arachides",
+   "en": "peanuts",
+   "ou": [
+    "BB.ALLERGEN_LABELS.arachides"
+   ]
+  },
+  {
+   "fr": "céleri",
+   "en": "celery",
+   "ou": [
+    "BB.ALLERGEN_LABELS.celeri"
+   ]
+  },
+  {
+   "fr": "crustacés",
+   "en": "crustaceans",
+   "ou": [
+    "BB.ALLERGEN_LABELS.crustaces"
+   ]
+  },
+  {
+   "fr": "mollusques",
+   "en": "molluscs",
+   "ou": [
+    "BB.ALLERGEN_LABELS.mollusques"
+   ]
+  },
+  {
+   "fr": "lupin",
+   "en": "lupin",
+   "ou": [
+    "BB.ALLERGEN_LABELS.lupin"
+   ]
+  },
+  {
+   "fr": "lait cru",
+   "en": "raw milk",
+   "ou": [
+    "BB.GROSSESSE_LABELS.laitCru"
+   ]
+  },
+  {
+   "fr": "charcuterie crue",
+   "en": "cured meats",
+   "ou": [
+    "BB.GROSSESSE_LABELS.charcuterie"
+   ]
+  },
+  {
+   "fr": "poisson fumé",
+   "en": "smoked fish",
+   "ou": [
+    "BB.GROSSESSE_LABELS.poissonFume"
+   ]
+  },
+  {
+   "fr": "œufs crus ou peu cuits",
+   "en": "raw or soft eggs",
+   "ou": [
+    "BB.GROSSESSE_LABELS.oeufsCrus"
+   ]
+  },
+  {
+   "fr": "alcool",
+   "en": "alcohol",
+   "ou": [
+    "BB.GROSSESSE_LABELS.alcool"
+   ]
+  },
+  {
+   "fr": "Le mug du Bougnat",
+   "en": "The Bougnat mug",
+   "ou": [
+    "BB.FIDELITE.paliers.0.cadeau"
+   ]
+  },
+  {
+   "fr": "Le t-shirt du Bougnat",
+   "en": "The Bougnat T-shirt",
+   "ou": [
+    "BB.FIDELITE.paliers.1.cadeau"
+   ]
+  },
+  {
+   "fr": "Cadeau surprise",
+   "en": "Surprise gift",
+   "ou": [
+    "BB.FIDELITE.paliers.2.cadeau",
+    "BB.FIDELITE.paliers.3.cadeau",
+    "BB.FIDELITE.paliers.4.cadeau"
+   ]
+  },
+  {
+   "fr": "Le grand cadeau du sommet",
+   "en": "The big summit gift",
+   "ou": [
+    "BB.FIDELITE.paliers.5.cadeau"
    ]
   },
   {

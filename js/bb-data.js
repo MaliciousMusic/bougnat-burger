@@ -155,16 +155,16 @@
       desc: { fr: 'Génoise nature, mousse bavaroise, framboises, amandes hachées torréfiées.', en: 'Plain sponge, Bavarian cream, raspberries, toasted chopped almonds.' } },
     { id: 'foret-noire', cat: 'desserts', name: { fr: 'Forêt noire', en: 'Black Forest cake' }, price: 7.9, homemade: true, allergens: ['gluten', 'oeufs', 'lait'],
       desc: { fr: 'Génoise au chocolat, chantilly maison, copeaux de chocolat au lait. Sans cerises, sans alcool.', en: 'Chocolate sponge, homemade whipped cream, milk chocolate shavings. No cherries, no alcohol.' } },
-    { id: 'moelleux', cat: 'desserts', name: { fr: 'Moelleux au chocolat', en: 'Chocolate molten cake' }, price: 5.9, allergens: ['gluten', 'oeufs', 'lait'],
+    { id: 'moelleux', cat: 'desserts', name: { fr: 'Moelleux au chocolat', en: 'Chocolate molten cake' }, price: 5.9, oeufsCrus: true, allergens: ['gluten', 'oeufs', 'lait'],
       desc: { fr: 'Gâteau au chocolat au cœur fondant, servi tiède.', en: 'Chocolate cake with a molten centre, served warm.' } },
     { id: 'nougat-glace', cat: 'desserts', name: { fr: 'Nougat glacé', en: 'Iced nougat' }, price: 5.9, allergens: ['lait', 'fruitsACoque'],
       desc: { fr: 'Crème fraîche, abricots, raisins secs, noisettes, pistaches et amandes.', en: 'Fresh cream, apricots, raisins, hazelnuts, pistachios and almonds.' } },
-    { id: 'tiramisu-framboise', cat: 'desserts', name: { fr: 'Tiramisu framboise', en: 'Raspberry tiramisu' }, price: null, surPlace: true, homemade: true },
-    { id: 'tiramisu-cafe', cat: 'desserts', name: { fr: 'Tiramisu café', en: 'Coffee tiramisu' }, price: null, surPlace: true, homemade: true },
-    { id: 'mousse-chocolat', cat: 'desserts', name: { fr: 'Mousse au chocolat', en: 'Chocolate mousse' }, price: null, surPlace: true, homemade: true },
-    { id: 'givres', cat: 'desserts', name: { fr: 'Citron, coco ou orange givrés', en: 'Frosted lemon, coconut or orange' }, price: null, surPlace: true },
-    { id: 'glaces', cat: 'desserts', name: { fr: 'Glaces et sorbets', en: 'Ice creams and sorbets' }, price: null, surPlace: true },
-    { id: 'plateau', cat: 'desserts', name: { fr: 'Plateau gourmand', en: 'Dessert platter' }, price: null, surPlace: true },
+    { id: 'tiramisu-framboise', cat: 'desserts', name: { fr: 'Tiramisu framboise', en: 'Raspberry tiramisu' }, price: null, allergens: ['gluten', 'oeufs', 'lait'], oeufsCrus: true, surPlace: true, homemade: true },
+    { id: 'tiramisu-cafe', cat: 'desserts', name: { fr: 'Tiramisu café', en: 'Coffee tiramisu' }, price: null, allergens: ['gluten', 'oeufs', 'lait'], oeufsCrus: true, surPlace: true, homemade: true },
+    { id: 'mousse-chocolat', cat: 'desserts', name: { fr: 'Mousse au chocolat', en: 'Chocolate mousse' }, price: null, allergens: ['oeufs', 'lait'], oeufsCrus: true, surPlace: true, homemade: true },
+    { id: 'givres', cat: 'desserts', name: { fr: 'Citron, coco ou orange givrés', en: 'Frosted lemon, coconut or orange' }, price: null, compoInconnue: true, surPlace: true },
+    { id: 'glaces', cat: 'desserts', name: { fr: 'Glaces et sorbets', en: 'Ice creams and sorbets' }, price: null, compoInconnue: true, surPlace: true },
+    { id: 'plateau', cat: 'desserts', name: { fr: 'Plateau gourmand', en: 'Dessert platter' }, price: null, compoInconnue: true, surPlace: true },
     // Boissons : une vignette par famille, le choix dans la fiche (variants) ; mêmes sources et prix que les desserts.
     // teinte : pour le dessin (couleur de la bière, du vin, du soda).
     { id: 'softs', cat: 'boissons', name: { fr: 'Softs', en: 'Soft drinks' },
@@ -212,7 +212,7 @@
         { id: 'domaine-cailles', teinte: 'blanc', name: { fr: 'Domaine des Cailles', en: 'Domaine des Cailles' }, desc: { fr: 'Blanc sec · Saint-Pourçain AOP', en: 'Dry white · Saint-Pourçain PDO' }, price: 19 },
         { id: 'villa-dria', teinte: 'blanc', name: { fr: 'Villa Dria', en: 'Villa Dria' }, desc: { fr: 'Blanc moelleux · Côtes de Gascogne IGP', en: 'Sweet white · Côtes de Gascogne PGI' }, price: 18 },
       ] },
-    { id: 'aperitifs', cat: 'boissons', name: { fr: 'Apéritifs', en: 'Aperitifs' }, price: null, surPlace: true, alcool: true,
+    { id: 'aperitifs', cat: 'boissons', name: { fr: 'Apéritifs', en: 'Aperitifs' }, price: null, compoInconnue: true, surPlace: true, alcool: true,
       desc: { fr: 'Rhum, vodka, whisky, tequila, pastis.', en: 'Rum, vodka, whisky, tequila, pastis.' } },
   ];
 
@@ -259,13 +259,62 @@
     (item.allergens || []).forEach((k) => a.add(k)); // desserts, bières, vins : donnés tels quels
     return [...a];
   };
+  // les 14 allergènes à déclarer (règlement INCO), dans l'ordre des filtres de la carte : ceux qu'on trouve
+  // dans la carte d'abord. Chacun a son icône tamponnée (#al-…, dans le sprite de index.html).
   BB.ALLERGEN_LABELS = {
     gluten: { fr: 'gluten', en: 'gluten' },
     lait: { fr: 'lait', en: 'milk' },
+    oeufs: { fr: 'œufs', en: 'eggs' },
     fruitsACoque: { fr: 'fruits à coque', en: 'tree nuts' },
     poisson: { fr: 'poisson', en: 'fish' },
-    oeufs: { fr: 'œufs', en: 'eggs' },
     sulfites: { fr: 'sulfites', en: 'sulphites' },
+    moutarde: { fr: 'moutarde', en: 'mustard' },
+    sesame: { fr: 'sésame', en: 'sesame' },
+    soja: { fr: 'soja', en: 'soy' },
+    arachides: { fr: 'arachides', en: 'peanuts' },
+    celeri: { fr: 'céleri', en: 'celery' },
+    crustaces: { fr: 'crustacés', en: 'crustaceans' },
+    mollusques: { fr: 'mollusques', en: 'molluscs' },
+    lupin: { fr: 'lupin', en: 'lupin' },
+  };
+  BB.ALLERGENES = Object.keys(BB.ALLERGEN_LABELS);
+
+  /* Femme enceinte : ce qu'on déconseille d'après la composition (⚠ à valider par le restaurant).
+     Lait cru, charcuterie crue (jambon sec, chorizo), poisson fumé, œufs crus ou peu cuits, alcool. */
+  BB.GROSSESSE_LABELS = {
+    laitCru: { fr: 'lait cru', en: 'raw milk' },
+    charcuterie: { fr: 'charcuterie crue', en: 'cured meats' },
+    poissonFume: { fr: 'poisson fumé', en: 'smoked fish' },
+    oeufsCrus: { fr: 'œufs crus ou peu cuits', en: 'raw or soft eggs' },
+    alcool: { fr: 'alcool', en: 'alcohol' },
+  };
+  BB.grossesse = function (item) {
+    const r = [];
+    const d = item.desc ? item.desc.fr : '';
+    const ings = item.ings || [];
+    if (item.raw) r.push('laitCru');
+    if (ings.includes('jambon') || ings.includes('chorizo') || /jambon|chorizo/i.test(d)) r.push('charcuterie');
+    if (/saumon fumé/i.test(d)) r.push('poissonFume');
+    if (item.oeufsCrus) r.push('oeufsCrus');
+    if (item.alcool) r.push('alcool');
+    return r;
+  };
+
+  /* ---------- La carte de fidélité ----------
+     Un point par personne et par venue : au comptoir, François scanne le QR code du client et saisit le
+     nombre de couverts. Six paliers de 15 points, un par puy à cadeau, sur la chaîne parcourue du nord au sud
+     (de la Louchadière au puy de Dôme, treize puys dessinés dans bb-fidelite.js).
+     ⚠ Paliers et cadeaux provisoires : à fixer avec François (seuls le mug et le t-shirt sont connus). */
+  BB.FIDELITE = {
+    pas: 15,
+    paliers: [
+      { puy: 'Puy de la Louchadière', cadeau: { fr: 'Le mug du Bougnat', en: 'The Bougnat mug' }, objet: 'mug' },
+      { puy: 'Puy Chopine', cadeau: { fr: 'Le t-shirt du Bougnat', en: 'The Bougnat T-shirt' }, objet: 'tshirt' },
+      { puy: 'Puy de Côme', cadeau: { fr: 'Cadeau surprise', en: 'Surprise gift' }, objet: 'surprise' },
+      { puy: 'Puy de Pariou', cadeau: { fr: 'Cadeau surprise', en: 'Surprise gift' }, objet: 'surprise' },
+      { puy: 'Grand Sarcoui', cadeau: { fr: 'Cadeau surprise', en: 'Surprise gift' }, objet: 'surprise' },
+      { puy: 'Puy de Dôme', cadeau: { fr: 'Le grand cadeau du sommet', en: 'The big summit gift' }, objet: 'sommet' },
+    ],
   };
 
   /* ---------- Une sélection d'avis Google réels (fiche du restaurant, relevés le 27 septembre 2026) ----------

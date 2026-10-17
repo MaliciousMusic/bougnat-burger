@@ -107,8 +107,11 @@ Dans cette maquette, le paiement est simulé : pour commander pour de vrai aujou
 ## Réserver une table
 Onglet « Réserver » : jour, midi ou soir, heure, nombre de couverts, prénom et téléphone ; le restaurant confirme par SMS. À partir de 10 personnes, il faut appeler le restaurant (07 60 12 00 63) pour confirmer.
 
+## Carte de fidélité
+Onglet « Fidélité » : un point par personne à chaque venue, un cadeau tous les 15 points (six paliers, de la Louchadière au puy de Dôme, en parcourant la chaîne du nord au sud : mug, t-shirt, puis cadeaux à définir). On crée sa carte avec son prénom, son nom et son téléphone, puis on montre son QR code au comptoir. Dans cette maquette, la carte reste dans le téléphone.
+
 ## Allergènes
-La fiche de chaque plat indique les allergènes déduits de sa composition (gluten, lait, œufs, fruits à coque, poisson, sulfites) ; la liste complète est à confirmer auprès du restaurant.
+La fiche de chaque plat indique les allergènes déduits de sa composition (gluten, lait, œufs, fruits à coque, poisson, sulfites) ; la liste complète est à confirmer auprès du restaurant. Sur la carte, des filtres (les 14 allergènes et « femme enceinte » : lait cru, charcuterie crue, poisson fumé, œufs crus ou peu cuits, alcool) grisent les plats qui ne conviennent pas.
 
 ## Livraison
 - Uber Eats : https://www.ubereats.com/fr/store/bougnat-burger-clermont/liGEKfrmXW-DfAmCzAOFBA

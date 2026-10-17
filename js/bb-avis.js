@@ -22,6 +22,16 @@
     </article>`;
   }
 
+  // « Nous » est en bas de l'accueil : la fenêtre des avis et le hublot ne bougent que s'ils sont à l'écran
+  const vus = new Set();
+  const regard = 'IntersectionObserver' in window ? new IntersectionObserver((es) => es.forEach((e) => {
+    if (e.isIntersecting) { vus.add(e.target.id); if (e.target.id === 'avis-piste') replis(); } else vus.delete(e.target.id);
+  })) : null;
+  function aLEcran(id) {
+    const e = document.getElementById(id), v = e && e.closest('.view');
+    return !!e && !!v && v.classList.contains('is-active') && (!regard || vus.has(id));
+  }
+
   let timer = 0, idx = 0, touche = false;
   function render() {
     const piste = $('#avis-piste'), points = $('#avis-points');
@@ -30,7 +40,7 @@
     points.innerHTML = BB.AVIS.map((_, i) => `<button type="button" aria-label="${esc(BB.t('avisN', { n: i + 1 }))}" data-i="${i}"></button>`).join('');
     points.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { touche = true; aller(+b.dataset.i); }));
     majPoints();
-    if (document.getElementById('nous') && document.getElementById('nous').classList.contains('is-active')) replis();
+    if (aLEcran('avis-piste')) replis();
   }
   // « Lire la suite » seulement pour les avis qui dépassent leurs lignes
   function replis() {
@@ -82,12 +92,11 @@
     clearInterval(timer);
     if (BB.reduced) return;
     timer = setInterval(() => {
-      const nous = document.getElementById('nous');
-      if (touche || document.hidden || !nous || !nous.classList.contains('is-active') || !BB.AVIS) return;
+      if (touche || document.hidden || !aLEcran('avis-piste') || !BB.AVIS) return;
       aller((idx + 1) % BB.AVIS.length);
     }, 6000);
   }
-  /* le hublot : fondu enchaîné toutes les 4,5 s, seulement quand « Nous » est à l'écran */
+  /* le hublot : fondu enchaîné toutes les 4,5 s, seulement quand il est à l'écran */
   function diaporama() {
     const box = document.getElementById('diapo');
     if (!box) return;
@@ -95,8 +104,7 @@
     if (imgs.length < 2) return;
     let i = 0;
     setInterval(() => {
-      const nous = document.getElementById('nous');
-      if (document.hidden || !nous || !nous.classList.contains('is-active') || BB.reduced) return;
+      if (document.hidden || !aLEcran('diapo') || BB.reduced) return;
       const next = (i + 1) % imgs.length;
       const im = imgs[next];
       const go = () => { imgs[i].classList.remove('on'); im.classList.add('on'); i = next; };
@@ -105,11 +113,12 @@
     }, 4500);
   }
   function init() {
+    ['avis-piste', 'diapo'].forEach((id) => { const e = document.getElementById(id); if (e && regard) regard.observe(e); });
     render();
     suivre();
     defiler();
     diaporama();
-    if (BB.on) { BB.on('lang', render); BB.on('view', (v) => { if (v === 'nous') replis(); }); }
+    if (BB.on) { BB.on('lang', render); BB.on('view', (v) => { if (v === 'accueil') replis(); }); }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
