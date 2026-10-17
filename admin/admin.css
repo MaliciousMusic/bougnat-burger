@@ -19,8 +19,8 @@ body.admin { min-height: 100%; height: auto; overflow: auto; overscroll-behavior
 /* le verrou */
 .ad-verrou { padding-top: 10px; }
 .ad-verrou > p { color: var(--creme-2); margin: 0 2px; }
-.ad-pin { display: grid; gap: 12px; margin-top: 24px; }
-.ad-pin input { font-size: 24px; letter-spacing: 0.5em; text-align: center; }
+.ad-pin { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 24px; }
+.ad-pin input { width: 100%; min-width: 0; font-size: 24px; letter-spacing: 0.5em; text-align: center; }
 .ad-pin.secoue { animation: ad-secoue 0.4s; }
 @keyframes ad-secoue { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
 
@@ -33,7 +33,7 @@ body.admin { min-height: 100%; height: auto; overflow: auto; overscroll-behavior
 .ad-viseur { position: absolute; left: 50%; top: calc(50% - 26px); width: 58%; aspect-ratio: 1; translate: -50% -50%; border-radius: 24px; box-shadow: 0 0 0 2000px rgba(15, 11, 8, 0.45), inset 0 0 0 3px var(--vert); }
 .ad-camera p { position: absolute; left: 0; right: 0; bottom: 64px; margin: 0; text-align: center; font-size: 14px; color: var(--creme); }
 .ad-camera .btn { position: absolute; left: 50%; bottom: 12px; translate: -50% 0; background: rgba(15, 11, 8, 0.7); }
-.ad-cherche { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 10px; margin-top: 18px; }
+.ad-cherche { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 10px; margin-top: 18px; }
 .ad-cherche .btn { height: 50px; }
 .ad-resultats { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
 .ad-resultats li.titre { margin: 8px 2px 0; font: 700 12px/1 var(--f-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--creme-3); }
@@ -104,3 +104,4 @@ body.admin { min-height: 100%; height: auto; overflow: auto; overscroll-behavior
 .ad-toast { position: fixed; bottom: calc(var(--safe-b) + 24px); }
 .ad-toast { border-radius: 20px; text-align: center; line-height: 1.35; }
 .ad .nw { white-space: nowrap; }
+.ad-cherche input { width: 100%; min-width: 0; }
