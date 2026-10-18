@@ -1,6 +1,6 @@
 /* ==========================================================================
    Bougnat Burger — le restaurant : UNE porte d'entrée pour le site (la carte, le sac, la réservation)
-   et pour le comptoir (admin/). Même principe que BB.fidApi : tout répond par des promesses.
+   et pour le comptoir (dépôt privé bougnat-comptoir, qui en garde une copie). Même principe que BB.fidApi : tout répond par des promesses.
    · MAQUETTE : tout est gardé dans le navigateur (localStorage) ; sur un même appareil, le site et le comptoir
      voient donc les mêmes données (deux onglets suffisent pour essayer : une commande passée sur le site
      sonne au comptoir).

@@ -1,7 +1,7 @@
 /* ==========================================================================
    Bougnat Burger — réserver une table.
    Les jours proposés sont les jours d'ouverture ; les heures, celles de leur module actuel.
-   MAQUETTE : la demande part au comptoir de démonstration (admin/) par BB.restoApi, dans ce même navigateur ;
+   MAQUETTE : la demande part au comptoir de démonstration (comptoir/) par BB.restoApi, dans ce même navigateur ;
    sa réponse (confirmée, refusée) revient ici en direct.
    PROD : la demande part au restaurant (back-office ou SMS), qui confirme au client par SMS.
    ========================================================================== */

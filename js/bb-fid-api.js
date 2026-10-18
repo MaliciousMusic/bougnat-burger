@@ -1,6 +1,6 @@
 /* ==========================================================================
    Bougnat Burger — les cartes de fidélité : UNE porte d'entrée pour la carte du client (bb-fidelite.js)
-   et pour le panneau du comptoir (admin/). Tout passe par BB.fidApi, qui répond par des promesses.
+   et pour le comptoir (dépôt privé bougnat-comptoir, qui en garde une copie). Tout passe par BB.fidApi, qui répond par des promesses.
    · MAQUETTE : les cartes sont gardées dans le navigateur (localStorage, clé « bb:fid-cartes ») ; sur un même
      appareil, le panneau et la carte du client voient donc les mêmes données (deux onglets suffisent pour essayer).
    · PROD : remplacer le corps de chaque fonction par un appel au serveur du restaurant, par exemple :

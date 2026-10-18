@@ -2,9 +2,9 @@
    Bougnat Burger — la carte de fidélité : la chaîne des Puys du nord au sud, de la Louchadière au puy de Dôme,
    six puys à cadeau, et le petit bougnat (celui du film) qui marche de puy en puy au fil des points.
    · Un point par personne et par venue : au comptoir, François scanne le QR code du client et saisit
-     le nombre de personnes (le comptoir, admin/) ; ici, des boutons « maquette » le simulent aussi.
+     le nombre de personnes (le comptoir, dépôt privé bougnat-comptoir) ; ici, des boutons « maquette » le simulent aussi.
    · Inscription : prénom, nom, téléphone. Les cartes passent par BB.fidApi (bb-fid-api.js) : gardées dans le
-     navigateur pour la maquette, au restaurant en production ; le panneau du comptoir (admin/) y ajoute les points.
+     navigateur pour la maquette, au restaurant en production ; le comptoir (dépôt privé bougnat-comptoir) y ajoute les points.
    · Paliers et cadeaux : BB.FIDELITE (bb-data.js).
    ========================================================================== */
 (function () {
@@ -383,11 +383,14 @@
       ${aRetirer > 0 ? `<p class="fid-retirer"><svg aria-hidden="true"><use href="#i-cadeau"/></svg>${esc(BB.t(aRetirer > 1 ? 'fidRetirerN' : 'fidRetirer', { n: aRetirer }))}</p>` : ''}`;
   }
   function lienQR(id) {
-    // le QR code mène au panneau du comptoir (admin/), qui ouvre la carte de ce client :
+    // le QR code mène au comptoir (dépôt privé, BB.INFO.comptoir), qui ouvre la carte de ce client :
     // le téléphone du comptoir le lit avec l'appareil photo, sans appli
-    const can = document.querySelector('link[rel="canonical"]');
-    const base = (can && can.href) || location.origin + location.pathname.replace(/[^/]*$/, '');
-    return base.replace(/\/?$/, '/') + 'admin/?carte=' + encodeURIComponent(id);
+    let base = BB.INFO.comptoir;
+    if (!base) {
+      const can = document.querySelector('link[rel="canonical"]');
+      base = ((can && can.href) || location.origin + location.pathname.replace(/[^/]*$/, '')).replace(/\/?$/, '/') + 'comptoir/';
+    }
+    return base.replace(/\/?$/, '/') + '?carte=' + encodeURIComponent(id);
   }
   function rendreTicket() {
     const t = $('#fid-ticket');
@@ -469,7 +472,7 @@
   }
 
   /* ---------- des points arrivent : le bougnat se met en marche ----------
-     Ils viennent du panneau du comptoir (admin/, un autre onglet dans la maquette) ou des boutons « maquette ». */
+     Ils viennent du comptoir (comptoir/, un autre onglet dans la maquette) ou des boutons « maquette ». */
   function arrivee(c, son) {
     carte = c;
     if (son) BB.sfx && BB.sfx.play('add');

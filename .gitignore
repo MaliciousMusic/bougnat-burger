@@ -24,3 +24,6 @@ node_modules/
 *.bak
 .DS_Store
 Thumbs.db
+
+# Le comptoir de François : son propre dépôt, privé (bougnat-comptoir), rangé ici en développement
+comptoir/

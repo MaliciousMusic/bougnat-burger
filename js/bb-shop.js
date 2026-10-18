@@ -1,7 +1,7 @@
 /* ==========================================================================
    Bougnat Burger — le sac, le retrait au comptoir (click & collect) et la livraison.
    MAQUETTE : le panier vit dans le téléphone, le paiement est simulé ; la commande part au comptoir de
-   démonstration (admin/) par BB.restoApi, qui la garde dans ce navigateur, et son état revient ici en direct.
+   démonstration (comptoir/) par BB.restoApi, qui la garde dans ce navigateur, et son état revient ici en direct.
    PROD : une fonction serveur /api/checkout crée la session de paiement (Stripe) avec des prix
    recalculés côté serveur ; la commande part en cuisine (tablette / imprimante) et par SMS.
    ========================================================================== */

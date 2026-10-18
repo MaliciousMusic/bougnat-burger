@@ -46,6 +46,11 @@
     tableSlots: { midi: ['11:30', '12:00', '12:30', '13:00', '13:30'], soir: ['18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30'] },
     maxGuests: 40,        // le compteur de couverts va jusque-là
     groupFrom: 10,        // à partir de 10 : on appelle pour confirmer
+    /* Le comptoir de François : un dépôt privé à part (bougnat-comptoir), derrière Cloudflare Access.
+       Le QR code de la carte de fidélité d'un client y mène. null : le dossier comptoir/ à côté de la page
+       (en développement, le comptoir est rangé dans le dossier du site). ⚠ À la mise en ligne : son adresse,
+       par exemple 'https://comptoir.bougnatburger.fr/'. */
+    comptoir: null,
   };
 
   /* ---------- Libellés partagés ---------- */

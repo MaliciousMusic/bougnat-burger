@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Estampille les CSS et JS de index.html et de admin/index.html (?v=AAAAMMJJhhmmss) avant chaque publication.
+// Estampille les CSS et JS de index.html (?v=AAAAMMJJhhmmss) avant chaque publication.
+// (Le comptoir, dépôt privé à part, a son propre outil : comptoir/outils/synchro.mjs.)
 // GitHub Pages garde les fichiers 10 minutes en cache : sans ça, un téléphone pourrait
 // mélanger la nouvelle page et d'anciens scripts.
 // Usage : node tools/bump.mjs
@@ -21,6 +22,4 @@ const estampiller = (f, re) => {
   writeFileSync(f, out);
 };
 estampiller(file, /(href|src)="((?:css|js)\/[^"?]+\.(?:css|js))(?:\?v=[^"]*)?"/g);
-// le panneau du comptoir : ses propres fichiers et ceux du site (../css, ../js)
-estampiller(join(dirname(file), 'admin', 'index.html'), /(href|src)="((?:\.\.\/(?:css|js)\/)?[^"?:/]+\.(?:css|js))(?:\?v=[^"]*)?"/g);
 console.log(`${n} fichier(s) estampillé(s) v=${stamp}`);
