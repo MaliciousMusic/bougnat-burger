@@ -50,7 +50,8 @@
        Le QR code de la carte de fidélité d'un client y mène. null : le dossier comptoir/ à côté de la page
        (en développement, le comptoir est rangé dans le dossier du site). ⚠ À la mise en ligne : son adresse,
        par exemple 'https://comptoir.bougnatburger.fr/'. */
-    comptoir: null,
+    // MAQUETTE : publié sur GitHub Pages, au même domaine que le site (donc les mêmes données de démo dans le navigateur)
+    comptoir: 'https://maliciousmusic.github.io/bougnat-comptoir/',
   };
 
   /* ---------- Libellés partagés ---------- */
